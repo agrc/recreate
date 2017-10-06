@@ -1,15 +1,15 @@
+$button-padding: 10px;
+
 .home {
     background-image: url('./images/Delicate_arch_sunset.jpg');
     background-position: center;
     height: 100%;
     display: flex;
     flex-direction: column;
+    justify-content: space-around;
     color: white;
     > * {
         align-self: center;
-    }
-    .tagline, .buttons {
-        flex: 2;
     }
     .tagline {
         h1 {
@@ -21,6 +21,32 @@
         }
         .secondline {
 
+        }
+    }
+    .buttons {
+        display: flex;
+        flex-direction: column;
+        border-radius: 0.25rem;
+        border: 1px solid gray;
+        width: calc(100% - #{$button-padding * 2});
+        max-width: 350px;
+        background-color: rgba(0, 0, 0, 0.35);
+        padding: $button-padding;
+        a {
+            margin-bottom: $button-padding;
+        }
+        .search-form {
+            margin-top: $button-padding;
+            input {
+                margin-bottom: $button-padding;
+            }
+            .button-group {
+                display: flex;
+                justify-content: space-between;
+            }
+            button {
+                width: 130px;
+            }
         }
     }
 }
