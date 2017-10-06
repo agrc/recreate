@@ -1,13 +1,13 @@
+$header-height: 50px;
+
 .app {
   height: 100%;
   width: 100%;
-  display: flex;
-  flex-direction: column;
   .header {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    height: 50px;
+    height: $header-height;
     background-color: #B24328;
     a {
       color: white;
@@ -17,6 +17,10 @@
     }
   }
   .main {
-    height: 100%;
+    position: absolute;
+    top: $header-height;
+    left: 0;
+    right: 0;
+    bottom: 0;
   }
 }
