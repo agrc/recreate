@@ -17,11 +17,12 @@
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+    "build": "yarn run build-css && react-scripts build",
+    "eject": "react-scripts eject",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js",
-    "build": "yarn run build-css && react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "test-debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
+    "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
   }
 }
