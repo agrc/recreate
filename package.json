@@ -5,15 +5,11 @@
   "dependencies": {
     "bootstrap": "^4.0.0-beta",
     "mapbox-gl": "^0.40.1",
-    "mapbox-gl-js-mock": "^0.28.0",
-    "node-sass-chokidar": "^0.0.3",
-    "npm-run-all": "^4.1.1",
     "query-string": "^5.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-map-gl": "^3.0.5",
     "react-router-dom": "^4.2.2",
-    "react-scripts": "1.0.14",
     "reactstrap": "^5.0.0-alpha.3"
   },
   "scripts": {
@@ -25,5 +21,12 @@
     "test": "react-scripts test --env=jsdom",
     "test-debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
     "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
+  },
+  "devDependencies": {
+    "mapbox-gl-js-mock": "https://github.com/stdavis/mapbox-gl-js-mock",
+    "mock-geolocation": "^1.0.11",
+    "node-sass-chokidar": "^0.0.3",
+    "npm-run-all": "^4.1.1",
+    "react-scripts": "1.0.14"
   }
 }
