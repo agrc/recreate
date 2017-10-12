@@ -43,9 +43,13 @@ $button-padding: 10px;
             .button-group {
                 display: flex;
                 justify-content: space-between;
+                button {
+                    width: 130px;
+                }
             }
-            button {
-                width: 130px;
+            .alert {
+                margin-top: $button-padding;
+                margin-bottom: 0;
             }
         }
     }

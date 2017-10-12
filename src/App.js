@@ -15,7 +15,7 @@ class App extends Component {
           </header>
           <div className='main'>
             <Route exact={true} path='/' component={Home} />
-            <Route path='/map' component={MapView} />
+            <Route path='/map/:extent?' component={MapView} />
           </div>
         </div>
       </Router>

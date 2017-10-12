@@ -8,6 +8,7 @@
     "mapbox-gl-js-mock": "^0.28.0",
     "node-sass-chokidar": "^0.0.3",
     "npm-run-all": "^4.1.1",
+    "query-string": "^5.0.0",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
     "react-map-gl": "^3.0.5",
