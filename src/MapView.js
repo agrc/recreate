@@ -67,6 +67,7 @@ class MapView extends Component {
       }, (error) => {
         console.error(error);
         this.initMap([-111.8, 40.55]); // east side of salt lake valley
+        this.setState({ findingCurrentLocation: false });
       });
     }
   }
