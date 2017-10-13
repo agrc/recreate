@@ -1,0 +1,12 @@
+.scroller {
+  position: absolute;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  top: 54px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  .list-table {
+    width: 100%;
+  }
+}

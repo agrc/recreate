@@ -1,3 +1,29 @@
-.mapboxgl-map {
+$padding: 9px;
+
+.map-view {
+  height: 100%;
+  .btn-group {
+    position: absolute;
+    z-index: 1;
+    width: 100%;
+    padding: $padding;
+    .btn {
+      width: 50%;
+    }
+  }
+  .finding-text {
+    position: absolute;
+    z-index: 1;
+    top: 50px;
+    left: $padding;
+  }
+  .mapboxgl-map {
     height: 100%;
+    .mapboxgl-ctrl-top-right {
+      top: 48px;
+    }
+  }
+  .list-group {
+      padding: $padding;
+  }
 }
