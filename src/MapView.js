@@ -97,6 +97,7 @@ class MapView extends Component {
       keys[f.id] = true;
       return true;
     });
+
     this.setState({
       featuresInCurrentExtent: features
     });
