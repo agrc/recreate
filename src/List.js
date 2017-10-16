@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import config from './config';
+import ListItem from './ListItem';
+import distance from '@turf/distance';
 
 import './css/List.css';
 
@@ -9,6 +11,9 @@ class List extends Component {
     const grouped = {};
 
     features.forEach(f => {
+      const diviser = 10;
+      f.properties.miles = Math.round(distance(this.props.currentLocation, f.geometry.coordinates, 'miles') * diviser)/diviser;
+
       const type = f.properties.Type;
       if (!grouped[type]) {
         grouped[type] = [f];
@@ -16,6 +21,7 @@ class List extends Component {
         grouped[type].push(f);
       }
     });
+
     return grouped;
   }
 
@@ -31,13 +37,8 @@ class List extends Component {
                   <tr>
                     <th colSpan='2'>{ config.poi_type_lookup[group] }</th>
                   </tr>
-                  { grouped_features[group].map(f => {
-                      return (
-                        <tr key={f.id}>
-                          <td>{f.properties.Name}</td>
-                          <td>8 mi</td>
-                        </tr>
-                      );
+                  { grouped_features[group].sort((a, b) => a.properties.miles - b.properties.miles).map(f => {
+                      return <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} />;
                     })
                   }
                 </tbody>

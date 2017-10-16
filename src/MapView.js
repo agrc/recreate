@@ -19,7 +19,8 @@ class MapView extends Component {
     this.state = {
       currentView: VIEWS.MAP,
       findingCurrentLocation: false,
-      featuresInCurrentExtent: []
+      featuresInCurrentExtent: [],
+      currentLocation: null
     };
   }
   loadPointsOfInterest() {
@@ -61,6 +62,7 @@ class MapView extends Component {
       this.initMap(this.props.match.params.extent.split(',').map(parseFloat));
     } else {
       this.setState({ findingCurrentLocation: true });
+
       navigator.geolocation.getCurrentPosition((position) => {
         this.initMap([position.coords.longitude, position.coords.latitude]);
         this.setState({ findingCurrentLocation: false });
@@ -72,6 +74,7 @@ class MapView extends Component {
     }
   }
   initMap(center) {
+    this.setState({ currentLocation: center });
     this.map = new mapboxgl.Map({
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/outdoors-v10',
@@ -79,12 +82,17 @@ class MapView extends Component {
       zoom: 12
     });
     this.map.addControl(new mapboxgl.NavigationControl());
-    this.map.addControl(new mapboxgl.GeolocateControl({
+
+    const geolocateControl = new mapboxgl.GeolocateControl({
       positionOptions: {
         enableHighAccuracy: true
       },
       trackUserLocation: true
-    }))
+    });
+    geolocateControl.on('geolocate', position => {
+      this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
+    });
+    this.map.addControl(geolocateControl);
     this.map.on('load', this.loadPointsOfInterest.bind(this));
     this.map.on('moveend', this.onMapExtentChange.bind(this));
   }
@@ -114,7 +122,7 @@ class MapView extends Component {
         </ButtonGroup>
         { this.state.findingCurrentLocation && <span className='finding-text'>Finding your current location...</span> }
         <div ref={(el) => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
-        { this.state.currentView === VIEWS.LIST && <List features={this.state.featuresInCurrentExtent} /> }
+        { this.state.currentView === VIEWS.LIST && <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> }
       </div>
     );
   }

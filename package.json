@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@turf/distance": "^5.0.0",
     "bootstrap": "^4.0.0-beta",
     "mapbox-gl": "^0.40.1",
     "query-string": "^5.0.0",
