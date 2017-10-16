@@ -23,6 +23,7 @@
     "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
   },
   "devDependencies": {
+    "eslint-config-react-app": "^2.0.1",
     "mapbox-gl-js-mock": "https://github.com/stdavis/mapbox-gl-js-mock",
     "mock-geolocation": "^1.0.11",
     "node-sass-chokidar": "^0.0.3",
