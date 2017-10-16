@@ -3,6 +3,9 @@ $header-height: 50px;
 .app {
   height: 100%;
   width: 100%;
+  .btn:focus {
+    box-shadow: none;
+  }
   .header {
     display: flex;
     flex-direction: column;
