@@ -39,7 +39,7 @@ class Home extends Component {
       const responseJson = await response.json();
       if (responseJson.result.length) {
         const extent = this.getMapboxCentroid(responseJson.result[0].geometry);
-        this.props.history.push(`/map/${extent}`);
+        this.props.history.push(`/map/${extent},11`);
       } else {
         this.setState({ searchError: true });
       }

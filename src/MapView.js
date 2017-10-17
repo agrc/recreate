@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import { Route } from 'react-router';
 import mapboxgl from 'mapbox-gl';
 import { Button, ButtonGroup } from 'reactstrap';
 import List from './List';
+import round from 'lodash.round';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './css/MapView.css';
@@ -58,28 +60,33 @@ class MapView extends Component {
     this.map.on('sourcedata', onDataLoad);
   }
   componentDidMount() {
-    if (this.props.match.params.extent) {
-      this.initMap(this.props.match.params.extent.split(',').map(parseFloat));
+    // location is [Lng,Lat,Zoom]
+    if (this.props.match.params.location) {
+      this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
     } else {
       this.setState({ findingCurrentLocation: true });
 
       navigator.geolocation.getCurrentPosition((position) => {
-        this.initMap([position.coords.longitude, position.coords.latitude]);
+        this.initMap(position.coords.longitude, position.coords.latitude, 10);
         this.setState({ findingCurrentLocation: false });
       }, (error) => {
         console.error(error);
-        this.initMap([-111.8, 40.55]); // east side of salt lake valley
+        this.initMap(-111.8, 40.55, 12); // east side of salt lake valley
         this.setState({ findingCurrentLocation: false });
       });
     }
+
+    if (this.props.match.params.list) {
+      this.setState({ currentView: VIEWS.LIST });
+    }
   }
-  initMap(center) {
-    this.setState({ currentLocation: center });
+  initMap(long, lat, zoom) {
+    this.setState({ currentLocation: [long, lat] });
     this.map = new mapboxgl.Map({
       container: this.mapContainer,
       style: 'mapbox://styles/mapbox/outdoors-v10',
-      center: center,
-      zoom: 12
+      center: [long, lat],
+      zoom: zoom
     });
     this.map.addControl(new mapboxgl.NavigationControl());
 
@@ -109,9 +116,22 @@ class MapView extends Component {
     this.setState({
       featuresInCurrentExtent: features
     });
+
+    const mapLocation = this.map.getCenter().toArray().map(num => round(num, 2));
+    mapLocation.push(round(this.map.getZoom(), 1));
+    let route = `/map/${mapLocation.join(',')}`;
+    if (this.state.currentView === VIEWS.LIST) {
+      route += '/list';
+    }
+    this.props.history.replace(route);
   }
-  onRadioButtonClick(currentView) {
-    this.setState({currentView});
+  onRadioButtonClick(newView) {
+    this.setState({ currentView: newView });
+    if (newView === VIEWS.LIST) {
+      this.props.history.push(`${this.props.history.location.pathname}/list`);
+    } else {
+      this.props.history.push(`${this.props.history.location.pathname.replace('/list', '')}`);
+    }
   }
   render() {
     return (
@@ -122,7 +142,7 @@ class MapView extends Component {
         </ButtonGroup>
         { this.state.findingCurrentLocation && <span className='finding-text'>Finding your current location...</span> }
         <div ref={(el) => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
-        { this.state.currentView === VIEWS.LIST && <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> }
+        <Route path='/map/:location/list' render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
       </div>
     );
   }

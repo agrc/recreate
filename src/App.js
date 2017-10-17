@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
 import Home from './Home';
 import MapView from './MapView';
 
@@ -11,11 +11,13 @@ class App extends Component {
       <Router>
         <div className='app'>
           <header className='header'>
-            <a href='/'>Recreation.Utah.Gov</a>
+            <Link to='/'>Recreation.Utah.Gov</Link>
           </header>
           <div className='main'>
-            <Route exact={true} path='/' component={Home} />
-            <Route path='/map/:extent?' component={MapView} />
+            <Switch>
+              <Route exact={true} path='/' component={Home} />
+              <Route path='/map/:location?/:list?' component={MapView} />
+            </Switch>
           </div>
         </div>
       </Router>
