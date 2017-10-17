@@ -7,8 +7,6 @@
     bottom: 0;
     left: 0;
     right: 0;
-    padding-left: 10px;
-    padding-right: 10px;
     padding-top: 5px;
   }
   .header {
@@ -18,5 +16,9 @@
       padding: 0;
     }
     margin-bottom: 10px;
+  }
+  .padder {
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }

@@ -20,5 +20,6 @@ export default {
       h: 'TrailID',
       w: 'BRID'
     }
-  }
+  },
+  metersPerMile: 1609.34
 };

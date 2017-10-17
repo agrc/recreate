@@ -14,7 +14,9 @@ class DetailsBase extends Component {
     const params = {
       where: `${config.fieldnames.ids[this.props[config.fieldnames.Type]]} = '${this.props[config.fieldnames.ID]}'`,
       f: 'geojson',
-      outFields: '*'
+      outFields: '*',
+      outSR: 4326,
+      maxAllowableOffset: 0.0001
     };
 
     const response = await fetch(`${config.urls[this.props[config.fieldnames.Type]]}?${queryString.stringify(params)}`);
@@ -22,7 +24,7 @@ class DetailsBase extends Component {
       const responseJson = await response.json();
       if (responseJson.features.length > 0) {
         const feature = responseJson.features[0];
-        this.setState({...feature.properties, geometry: feature.geometry});
+        this.setState({...feature.properties, geojson: JSON.stringify(feature)});
       } else {
         // TODO: handle no features found
       }

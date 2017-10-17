@@ -1,5 +1,6 @@
 import React from 'react';
 import DetailsBase from './DetailsBase';
+import StaticMap from './StaticMap';
 
 
 class ParksDetails extends DetailsBase {
@@ -15,8 +16,11 @@ class ParksDetails extends DetailsBase {
   render() {
     return (
       <div className='detail'>
-        <p>{this.state.TYPE}</p>
-        <p>Acres: {this.state.ACRES}</p>
+        <div className='padder'>
+          <p>{this.state.TYPE}</p>
+          <p>Acres: {this.state.ACRES}</p>
+        </div>
+        <StaticMap geojson={this.state.geojson} />
       </div>
     );
   }

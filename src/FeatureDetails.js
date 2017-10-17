@@ -25,12 +25,14 @@ export default function FeatureDetails(props) {
   }
   return (
     <div className='feature-details scroller'>
-      <div className='header'>
+      <div className='header padder'>
         <Button color='link' onClick={() => props.history.goBack()}>Back to List</Button>
         <span>Distance From You: {itemProps.miles} miles</span>
       </div>
-      <h4>{config.poi_type_lookup[itemProps.Type]}</h4>
-      <h5>{itemProps.Name}</h5>
+      <div className='padder'>
+        <h4>{config.poi_type_lookup[itemProps.Type]}</h4>
+        <h5>{itemProps.Name}</h5>
+      </div>
       <Details { ...itemProps } />
     </div>
   );
