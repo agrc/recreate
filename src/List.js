@@ -37,9 +37,9 @@ class List extends Component {
                   <tr>
                     <th colSpan='2'>{ config.poi_type_lookup[group] }</th>
                   </tr>
-                  { grouped_features[group].sort((a, b) => a.properties.miles - b.properties.miles).map(f => {
-                      return <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} />;
-                    })
+                  { grouped_features[group]
+                      .sort((a, b) => a.properties.miles - b.properties.miles)
+                      .map(f => <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} />)
                   }
                 </tbody>
               );
