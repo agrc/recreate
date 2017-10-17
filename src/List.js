@@ -29,7 +29,7 @@ class List extends Component {
     const grouped_features = this.groupFeatures(this.props.features);
 
     return (
-      <div className='scroller'>
+      <div className='list scroller'>
         <table className='list-table'>
           { Object.keys(grouped_features).map(group => {
               return (

@@ -2,10 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import List from '../List';
 import features from './data/features';
+import { MemoryRouter } from 'react-router';
+
 
 it('renders without crashing', () => {
   const div = document.createElement('div');
-  ReactDOM.render( <List features={features} currentLocation={[-111, 40]} />, div);
+  ReactDOM.render(<MemoryRouter><List features={features} currentLocation={[-111, 40]} /></MemoryRouter>, div);
 });
 
 it('groups features according to type', () => {

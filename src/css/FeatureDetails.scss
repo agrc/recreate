@@ -1,11 +1,22 @@
-.feature-details.scroller {
-  position: absolute;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding-left: 10px;
-  padding-right: 10px;
+.feature-details {
+  &.scroller {
+    position: absolute;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 5px;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    .btn {
+      padding: 0;
+    }
+    margin-bottom: 10px;
+  }
 }

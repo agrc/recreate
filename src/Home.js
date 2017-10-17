@@ -43,6 +43,8 @@ class Home extends Component {
       } else {
         this.setState({ searchError: true });
       }
+    } else {
+      this.setState({ searchError: true });
     }
   }
   getMapboxCentroid(esriGeometry) {
