@@ -12,7 +12,7 @@ import './css/MapView.css';
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
 const LAYERS = { POINTS_OF_INTEREST: 'points-of-interest' };
-const POI_DATA = '/PointsOfInterest.json';
+const POI_DATA = `${process.env.PUBLIC_URL}/PointsOfInterest.json`;
 
 class MapView extends Component {
   constructor(props) {

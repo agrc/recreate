@@ -8,7 +8,7 @@ import './css/Home.css';
 import outdoorLogo from './css/images/outdoorlogo.png';
 
 
-const searchUrl = 'http://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope'
+const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
 
 class Home extends Component {
   constructor(props) {
