@@ -10,6 +10,15 @@ class DetailsBase extends Component {
     this.fetchData();
   }
 
+  componentDidMount() {
+    this.mounted = true;
+  }
+
+  componentWillUnmount() {
+    // in the future, cancel any fetch requests: https://developers.google.com/web/updates/2017/09/abortable-fetch
+    this.mounted = false;
+  }
+
   async fetchData() {
     const params = {
       where: `${config.fieldnames.ids[this.props[config.fieldnames.Type]]} = '${this.props[config.fieldnames.ID]}'`,
@@ -20,7 +29,7 @@ class DetailsBase extends Component {
     };
 
     const response = await fetch(`${config.urls[this.props[config.fieldnames.Type]]}?${queryString.stringify(params)}`);
-    if (response.ok) {
+    if (response.ok && this.mounted) {
       const responseJson = await response.json();
       if (responseJson.features.length > 0) {
         const feature = responseJson.features[0];
