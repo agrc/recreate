@@ -25,6 +25,7 @@ class MapView extends Component {
       currentLocation: null
     };
   }
+
   loadPointsOfInterest() {
     this.map.addLayer({
       id: LAYERS.POINTS_OF_INTEREST,
@@ -59,7 +60,10 @@ class MapView extends Component {
 
     this.map.on('sourcedata', onDataLoad);
   }
+
   componentDidMount() {
+    this.mount = true;
+
     // location is [Lng,Lat,Zoom]
     if (this.props.match.params.location) {
       this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
@@ -80,6 +84,11 @@ class MapView extends Component {
       this.setState({ currentView: VIEWS.LIST });
     }
   }
+
+  componentWillUnmount() {
+    this.mount = false;
+  }
+
   initMap(long, lat, zoom) {
     this.setState({ currentLocation: [long, lat] });
     this.map = new mapboxgl.Map({
@@ -97,12 +106,17 @@ class MapView extends Component {
       trackUserLocation: true
     });
     geolocateControl.on('geolocate', position => {
-      this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
+      if (this.mounted) {
+        console.log('position updated (mounted)');
+        this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
+      }
+      console.log('position not updated (unmounted)');
     });
     this.map.addControl(geolocateControl);
     this.map.on('load', this.loadPointsOfInterest.bind(this));
     this.map.on('moveend', this.onMapExtentChange.bind(this));
   }
+
   onMapExtentChange() {
     const keys = {};
     const features = this.map.queryRenderedFeatures({layers:[LAYERS.POINTS_OF_INTEREST]}).filter((f) => {
