@@ -13,6 +13,7 @@ export default {
     w: aGOLServiceBase.replace(layerToken, 'Boat_Ramps')
   },
   fieldnames: {
+    Name: 'Name',
     ID: 'ID',
     Type: 'Type',
     ids: {

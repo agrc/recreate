@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import { Route } from 'react-router';
 import mapboxgl from 'mapbox-gl';
 import { Button, ButtonGroup } from 'reactstrap';
 import List from './List';
+import Popup from './Popup';
 import round from 'lodash.round';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -115,6 +117,17 @@ class MapView extends Component {
     this.map.addControl(geolocateControl);
     this.map.on('load', this.loadPointsOfInterest.bind(this));
     this.map.on('moveend', this.onMapExtentChange.bind(this));
+
+    this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
+    this.map.on('mouseleave', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = '');
+    this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
+      const feature = evt.features[0];
+      ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
+      new mapboxgl.Popup()
+        .setLngLat(feature.geometry.coordinates)
+        .setDOMContent(this.popupContainer)
+        .addTo(this.map);
+    });
   }
 
   onMapExtentChange() {
@@ -155,8 +168,9 @@ class MapView extends Component {
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.LIST)} active={this.state.currentView === VIEWS.LIST}>View List</Button>
         </ButtonGroup>
         { this.state.findingCurrentLocation && <span className='finding-text'>Finding your current location...</span> }
-        <div ref={(el) => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
+        <div ref={el => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
         <Route path='/map/:location/list' render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
+        <div ref={el => this.popupContainer = el}></div>
       </div>
     );
   }
