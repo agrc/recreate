@@ -6,6 +6,7 @@ import { Button, ButtonGroup } from 'reactstrap';
 import List from './List';
 import Popup from './Popup';
 import round from 'lodash.round';
+import config from './config';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './css/MapView.css';
@@ -95,7 +96,7 @@ class MapView extends Component {
     this.setState({ currentLocation: [long, lat] });
     this.map = new mapboxgl.Map({
       container: this.mapContainer,
-      style: 'mapbox://styles/mapbox/outdoors-v10',
+      style: config.styles.outdoors,
       center: [long, lat],
       zoom: zoom
     });

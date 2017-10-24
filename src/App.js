@@ -3,6 +3,7 @@ import { Route, Link, Switch } from 'react-router-dom';
 import Home from './Home';
 import MapView from './MapView';
 import FeatureDetails from './FeatureDetails';
+import DetailMap from './DetailMap';
 
 import './css/App.css';
 
@@ -17,7 +18,8 @@ class App extends Component {
           <Switch>
             <Route exact={true} path='/' component={Home} />
             <Route path='/map/:location?/:list?' component={MapView} />
-            <Route path='/feature/:id' component={FeatureDetails} />
+            <Route exact={true} path='/feature/:id' component={FeatureDetails} />
+            <Route path='/feature/:id/map' component={DetailMap} />
           </Switch>
         </div>
       </div>

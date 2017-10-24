@@ -8,7 +8,7 @@ export default function ListItem(props) {
   return (
     <tr>
       <td><Link to={{
-          pathname: `/feature/${props.OBJECTID}`,
+          pathname: `/feature/${props[config.fieldnames.ID]}`,
           state: { listItemProperties: props }
         }}>{props[config.fieldnames.Name]}</Link></td>
       <td className='align-right'>{props.miles} mi</td>

@@ -1,0 +1,12 @@
+.detail.hiking {
+  .stats {
+    padding: 10px;
+  }
+  .detail-links, .stats {
+    display: flex;
+    justify-content: space-between;
+  }
+  .detail-links {
+    margin-bottom: 10px;
+  }
+}

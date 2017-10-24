@@ -13,7 +13,7 @@ export default function Popup(props) {
     <div>
       <h6 style={{marginTop: '10px'}}>{properties[config.fieldnames.Name]}</h6>
       <Link style={{float: 'right'}} to={{
-        pathname: `/feature/${properties.OBJECTID}`,
+        pathname: `/feature/${properties[config.fieldnames.ID]}`,
         state: { listItemProperties: {...properties, miles}}
       }}>details</Link>
     </div>
