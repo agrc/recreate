@@ -24,5 +24,8 @@ export default {
     }
   },
   metersPerMile: 1609.34,
-  elevationProfileResampleFactor: 50
+  elevationProfileResampleFactor: 50,
+  styles: {
+    outdoors: 'mapbox://styles/mapbox/outdoors-v10'
+  }
 };

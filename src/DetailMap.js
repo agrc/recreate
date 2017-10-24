@@ -1,6 +1,11 @@
 import React, { Component } from 'react';
 import polyline from '@mapbox/polyline';
 import config from './config';
+import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
+import mapboxgl from 'mapbox-gl';
+import { Button } from 'reactstrap';
+
+import './css/DetailMap.css';
 
 
 const getResampleDistance = function(length) {
@@ -14,7 +19,13 @@ class DetailMap extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { chartData: [] };
+
     this.getElevationProfile();
+  }
+
+  componentDidMount() {
+    this.initMap();
   }
 
   async getElevationProfile() {
@@ -27,15 +38,62 @@ class DetailMap extends Component {
     const response = await fetch(`${config.urls.elevation}?json=${JSON.stringify(params)}&api_key=${process.env.REACT_APP_MAPZEN_API_KEY}`);
     if (response.ok) {
       const result = await response.json();
-      console.log(result.encoded_polyline);
-      console.log(result.height);
+      this.setState({ chartData: result.height.map(value => {return {value}}) });
     }
+  }
+
+  initMap() {
+    this.map = new mapboxgl.Map({
+      container: this.mapContainer,
+      style: config.styles.outdoors
+    });
+    const coords = JSON.parse(this.props.location.state.geojson).geometry.coordinates;
+    const bounds = coords.reduce((bounds, coord) => {
+      return bounds.extend(coord);
+    }, new mapboxgl.LngLatBounds(coords[0], coords[0]));
+
+    this.map.fitBounds(bounds, {
+      padding: { top: 40, left: 40, right: 40, bottom: 85 },
+      duration: 0
+    });
+    this.map.addControl(new mapboxgl.NavigationControl());
+    this.map.on('load', () => {
+      this.map.addLayer({
+        id: 'trail',
+        type: 'line',
+        source: {
+          type: 'geojson',
+          data: JSON.parse(this.props.location.state.geojson)
+        },
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round'
+        },
+        paint: {
+          'line-color': '#3182bd',
+          'line-width': 6
+        }
+      });
+    });
   }
 
   render() {
     return (
-      <div>
+      <div className='detail-map'>
         <div ref={el => this.mapContainer = el}></div>
+        <div className='chart-container'>
+          <ResponsiveContainer width='100%' height='100%'>
+            <AreaChart data={this.state.chartData}>
+              <Area type='monotone' dataKey='value'></Area>
+              <YAxis
+                type='number'
+                domain={['dataMin', 'dataMax']}
+                mirror={true}
+                stroke='white'/>
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+        <Button size='sm' color='primary' onClick={() => this.props.history.goBack()}>Back</Button>
       </div>
     );
   }

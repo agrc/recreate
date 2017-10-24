@@ -9,7 +9,6 @@ import elevationResponse from './data/elevationResponse';
 it('renders without crashing', () => {
   fetch.mockResponse(JSON.stringify(elevationResponse));
   const div = document.createElement('div');
-  console.log(JSON.stringify(lineQuery.features[0]));
   ReactDOM.render(<MemoryRouter><DetailMap
     location={{
       state: {
