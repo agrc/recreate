@@ -10,7 +10,8 @@ export default {
   urls: {
     l: aGOLServiceBase.replace(layerToken, 'UrbanParks'),
     h: aGOLServiceBase.replace(layerToken, 'Trails'),
-    w: aGOLServiceBase.replace(layerToken, 'Boat_Ramps')
+    w: aGOLServiceBase.replace(layerToken, 'Boat_Ramps'),
+    elevation: 'https://elevation.mapzen.com/height'
   },
   fieldnames: {
     Name: 'Name',
@@ -22,5 +23,6 @@ export default {
       w: 'BRID'
     }
   },
-  metersPerMile: 1609.34
+  metersPerMile: 1609.34,
+  elevationProfileResampleFactor: 50
 };
