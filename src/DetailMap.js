@@ -53,7 +53,7 @@ class DetailMap extends Component {
     }, new mapboxgl.LngLatBounds(coords[0], coords[0]));
 
     this.map.fitBounds(bounds, {
-      padding: { top: 40, left: 40, right: 40, bottom: 85 },
+      padding: { top: 40, left: 40, right: 40, bottom: 95 },
       duration: 0
     });
     this.map.addControl(new mapboxgl.NavigationControl());
