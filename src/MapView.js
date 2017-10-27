@@ -15,7 +15,6 @@ import './css/MapView.css';
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
 const LAYERS = { POINTS_OF_INTEREST: 'points-of-interest' };
-const POI_DATA = `${process.env.PUBLIC_URL}/PointsOfInterest.json`;
 
 class MapView extends Component {
   constructor(props) {
@@ -35,7 +34,7 @@ class MapView extends Component {
       type: 'circle',
       source: {
         type: 'geojson',
-        data: POI_DATA
+        data: config.urls.POI_DATA
       },
       paint: {
         'circle-radius': 8,
@@ -54,7 +53,7 @@ class MapView extends Component {
 
     const onDataLoad = (mapDataEvent) => {
       if (mapDataEvent.isSourceLoaded &&
-          mapDataEvent.source.data === POI_DATA &&
+          mapDataEvent.source.data === config.urls.POI_DATA &&
           mapDataEvent.sourceDataType !== 'metadata') {
         this.onMapExtentChange();
         this.map.off('data', onDataLoad);

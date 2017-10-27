@@ -11,7 +11,8 @@ export default {
     l: aGOLServiceBase.replace(layerToken, 'UrbanParks'),
     h: aGOLServiceBase.replace(layerToken, 'Trails'),
     w: aGOLServiceBase.replace(layerToken, 'Boat_Ramps'),
-    elevation: 'https://elevation.mapzen.com/height'
+    elevation: 'https://elevation.mapzen.com/height',
+    POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`
   },
   fieldnames: {
     Name: 'Name',
