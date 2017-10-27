@@ -10,10 +10,8 @@ it('renders without crashing', () => {
   const div = document.createElement('div');
   ReactDOM.render(<MemoryRouter><FeatureDetails location={{
     state: {
-      listItemProperties: {
-        Type: 'h',
-        ID: '1'
-      }
+      Type: 'h',
+      ID: '1'
     }
   }}/></MemoryRouter>, div);
 });

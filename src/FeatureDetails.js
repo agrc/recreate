@@ -5,6 +5,7 @@ import HikingDetail from './HikingDetail';
 import BoatRampsDetail from './BoatRampsDetail';
 import config from './config';
 import get from 'lodash.get';
+import distance from '@turf/distance';
 
 import './css/FeatureDetails.css';
 
@@ -12,14 +13,20 @@ class FeatureDetails extends Component {
   constructor(props) {
     super(props);
 
-    let itemProps;
-    if (get(props, 'location.state.listItemProperties')) {
-      itemProps = props.location.state.listItemProperties
+    if (get(props, 'location.state')) {
+      this.state = { ...props.location.state };
     } else {
       this.fetchItemProps();
     }
+  }
 
-    this.state = { itemProps };
+  getCurrentLocation(itemCoords) {
+    navigator.geolocation.getCurrentPosition(position => {
+      const diviser = 10;
+      const miles = Math.round(distance([position.coords.longitude, position.coords.latitude], itemCoords) * diviser)/diviser;
+      this.setState({ miles });
+    });
+    // don't worry about errors because we'll just hide the distance text
   }
 
   async fetchItemProps() {
@@ -32,7 +39,8 @@ class FeatureDetails extends Component {
       const feature = poiJson.features.find(f => f.properties[config.fieldnames.ID] === id);
 
       if (feature) {
-        this.setState({ itemProps: feature.properties });
+        this.setState({ ...feature.properties });
+        this.getCurrentLocation(feature.geometry.coordinates);
       } else {
         // TODO: handle feature not found
         console.error(`${id} not found!`);
@@ -42,8 +50,8 @@ class FeatureDetails extends Component {
 
   render() {
     let Details;
-    if (this.state.itemProps) {
-      switch (config.poi_type_lookup[this.state.itemProps.Type]) {
+    if (this.state) {
+      switch (config.poi_type_lookup[this.state.Type]) {
         case config.poi_type_lookup.l:
           Details = ParksDetail;
           break;
@@ -54,7 +62,7 @@ class FeatureDetails extends Component {
           Details = BoatRampsDetail;
           break;
         default:
-          throw new Error(`Unhandled POI type: ${this.state.itemProps.Type}!`);
+          throw new Error(`Unhandled POI type: ${this.state.Type}!`);
       }
     }
 
@@ -64,13 +72,14 @@ class FeatureDetails extends Component {
           <div>
             <div className='header padder'>
               <Button color='link' onClick={() => this.props.history.goBack()}>Back</Button>
-              <span>Distance From You: {this.state.itemProps.miles} miles</span>
+              {this.state.miles &&
+                <span>Distance From You: {this.state.miles} miles</span>}
             </div>
             <div className='padder'>
-              <h4>{config.poi_type_lookup[this.state.itemProps.Type]}</h4>
-              <h5>{this.state.itemProps[config.fieldnames.Name]}</h5>
+              <h4>{config.poi_type_lookup[this.state.Type]}</h4>
+              <h5>{this.state[config.fieldnames.Name]}</h5>
             </div>
-            <Details { ...this.state.itemProps } />
+            <Details { ...this.state } />
           </div>
         ) : <span>loading data...</span>}
       </div>
