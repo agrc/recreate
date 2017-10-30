@@ -28,5 +28,8 @@ export default {
   elevationProfileResampleFactor: 50,
   styles: {
     outdoors: 'mapbox://styles/mapbox/outdoors-v10'
+  },
+  colors: {
+    elevationProfile: '#358EA6' // matches blue in index.scss
   }
 };

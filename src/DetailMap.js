@@ -70,7 +70,7 @@ class DetailMap extends Component {
           'line-cap': 'round'
         },
         paint: {
-          'line-color': '#3182bd',
+          'line-color': config.colors.elevationProfile,
           'line-width': 6
         }
       });
@@ -84,7 +84,7 @@ class DetailMap extends Component {
         <div className='chart-container'>
           <ResponsiveContainer width='100%' height='100%'>
             <AreaChart data={this.state.chartData}>
-              <Area type='monotone' dataKey='value'></Area>
+              <Area type='monotone' dataKey='value' fill={config.colors.elevationProfile}></Area>
               <YAxis
                 type='number'
                 domain={['dataMin', 'dataMax']}
