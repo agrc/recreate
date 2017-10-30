@@ -9,7 +9,10 @@ import elevationResponse from './data/elevationResponse';
 it('renders without crashing', () => {
   fetch.mockResponse(JSON.stringify(elevationResponse));
   const div = document.createElement('div');
+  div.style.width = '100px;';
+  div.style.height = '100px;';
   ReactDOM.render(<MemoryRouter><DetailMap
+    containerWidth={10}
     location={{
       state: {
         geojson: JSON.stringify(lineQuery.features[0])

@@ -82,7 +82,7 @@ class DetailMap extends Component {
       <div className='detail-map'>
         <div ref={el => this.mapContainer = el}></div>
         <div className='chart-container'>
-          <ResponsiveContainer width='100%' height='100%'>
+          <ResponsiveContainer width={this.props.containerWidth || '100%'} height='100%'>
             <AreaChart data={this.state.chartData}>
               <Area type='monotone' dataKey='value' fill={config.colors.elevationProfile}></Area>
               <YAxis
