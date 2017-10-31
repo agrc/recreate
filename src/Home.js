@@ -3,6 +3,7 @@ import { Button, Collapse, Input, Alert } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import queryString from 'query-string';
 import mapboxgl from 'mapbox-gl';
+import { version } from '../package.json';
 
 import './css/Home.css';
 import outdoorLogo from './css/images/outdoorlogo.png';
@@ -89,6 +90,7 @@ class Home extends Component {
           </Collapse>
         </div>
         <img src={outdoorLogo} alt='goed logo'/>
+        <span className='version'>v{version}</span>
       </div>
     );
   }

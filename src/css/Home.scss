@@ -55,4 +55,11 @@ $button-padding: 10px;
             }
         }
     }
+    .version {
+      position: absolute;
+      bottom: 0;
+      right: 4px;
+      font-size: .7em;
+      color: #bfbebe;
+    }
 }
