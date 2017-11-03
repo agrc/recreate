@@ -46,23 +46,9 @@ const searchHandler = function(response) {
 };
 
 const getSearch = function(result) {
-  const token = result.access_token;
-
   fetch(`${URLS.search}?${queryString.stringify(queryStringParameters)}`, {
-    headers: {'Authorization': `Bearer ${token}`}
+    headers: {'Authorization': `Bearer ${process.env.YELP_TOKEN}`}
   }).then(searchHandler);
-};
-
-const getTokenHandler = function (callback) {
-  return function(response) {
-    if (!response.ok) {
-      response.text().then(globalCallback, errorFactory('error reading unsuccessful token request'));
-
-      return;
-    }
-
-    response.json().then(callback, errorFactory('error reading successful token request'));
-  }
 };
 
 const errorFactory = function (message) {
@@ -77,23 +63,10 @@ const errorFactory = function (message) {
   }
 }
 
-const getToken = function (callback) {
-  // TODO: cache this in a db or something?
-  fetch(URLS.token, {
-    method: 'POST',
-    body: queryString.stringify({
-      grant_type: 'client_credentials',
-      client_id: process.env.YELP_CLIENT_ID,
-      client_secret: process.env.YELP_CLIENT_SECRET
-    }),
-    headers: {'Content-Type': 'application/x-www-form-urlencoded'}
-  }).then(getTokenHandler(callback), errorFactory('token request failed!'));
-}
-
 
 module.exports.search = (event, context, callback) => {
   globalCallback = callback;
   queryStringParameters = event.queryStringParameters;
 
-  getToken(getSearch);
+  getSearch({ access_token: queryStringParameters.token });
 };

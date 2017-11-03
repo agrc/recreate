@@ -13,8 +13,7 @@ provider:
   runtime: nodejs6.10
   timeout: 10
   environment:
-    YELP_CLIENT_ID: ${file(./secrets.yml):YELP_CLIENT_ID}
-    YELP_CLIENT_SECRET: ${file(./secrets.yml):YELP_CLIENT_SECRET}
+    YELP_TOKEN: ${file(./secrets.yml):YELP_TOKEN}
 
 # The `functions` block defines what code to deploy
 functions:
