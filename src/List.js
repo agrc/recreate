@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import config from './config';
 import ListItem from './ListItem';
+import YelpListItem from './YelpListItem';
 import distance from '@turf/distance';
 
 import './css/List.css';
@@ -39,7 +40,11 @@ class List extends Component {
                   </tr>
                   { grouped_features[group]
                       .sort((a, b) => a.properties.miles - b.properties.miles)
-                      .map(f => <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} />)
+                      .map(f => {
+                        return (f.properties.Type !== 'y') ?
+                          <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} /> :
+                          <YelpListItem {...f.properties} key={f.properties.id} />
+                      })
                   }
                 </tbody>
               );

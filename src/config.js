@@ -5,7 +5,8 @@ export default {
   poi_type_lookup: {
     l: 'Parks',
     h: 'Hiking',
-    w: 'Boat Ramps'
+    w: 'Boat Ramps',
+    y: 'Local Amenities (via Yelp)'
   },
   urls: {
     l: aGOLServiceBase.replace(layerToken, 'UrbanParks'),

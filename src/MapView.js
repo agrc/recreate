@@ -58,12 +58,20 @@ class MapView extends Component {
       if (mapDataEvent.isSourceLoaded &&
           mapDataEvent.source.data === config.urls.POI_DATA &&
           mapDataEvent.sourceDataType !== 'metadata') {
-        this.onMapExtentChange();
+        this.poiDataLoaded = true;
+
+        this.loadList();
         this.map.off('data', onDataLoad);
       }
     };
 
     this.map.on('sourcedata', onDataLoad);
+  }
+
+  loadList() {
+    if (this.poiDataLoaded && this.yelpDataLoaded) {
+      this.onMapExtentChange();
+    }
   }
 
   async loadYelpData() {
@@ -100,6 +108,7 @@ class MapView extends Component {
       const center = this.map.getCenter();
       const bounds = this.map.getBounds();
 
+      // TODO: radius must be less than 4000 or yelp returns an error
       const radius = Math.round(distance(bounds.getSouthWest().toArray(), bounds.getNorthEast().toArray(), 'meters'));
 
       const params = {
@@ -120,6 +129,13 @@ class MapView extends Component {
       // query api
       const yelpSource = this.map.getSource(yelpID);
       yelpSource.setData(await response.json());
+
+      if (!this.yelpDataLoaded) {
+        this.yelpDataLoaded = true;
+
+        // TODO: gross!!!
+        window.setTimeout(this.loadList.bind(this), 200);
+      }
     };
 
     updateYelpData();
@@ -209,11 +225,12 @@ class MapView extends Component {
 
   onMapExtentChange() {
     const keys = {};
-    const features = this.map.queryRenderedFeatures({layers:[LAYERS.POINTS_OF_INTEREST]}).filter((f) => {
-      if (keys[f.id]) {
+    const features = this.map.queryRenderedFeatures({layers:[LAYERS.POINTS_OF_INTEREST, LAYERS.YELP]}).filter((f) => {
+      const id = f.id || f.properties.id;
+      if (keys[id]) {
         return false
       }
-      keys[f.id] = true;
+      keys[id] = true;
       return true;
     });
 
