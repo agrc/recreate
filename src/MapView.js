@@ -5,8 +5,11 @@ import mapboxgl from 'mapbox-gl';
 import { Button, ButtonGroup } from 'reactstrap';
 import List from './List';
 import Popup from './Popup';
+import YelpPopup from './YelpPopup';
 import round from 'lodash.round';
 import config from './config';
+import distance from '@turf/distance';
+import queryString from 'query-string';
 
 import 'mapbox-gl/dist/mapbox-gl.css';
 import './css/MapView.css';
@@ -14,7 +17,7 @@ import './css/MapView.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
-const LAYERS = { POINTS_OF_INTEREST: 'points-of-interest' };
+const LAYERS = { POINTS_OF_INTEREST: 'points-of-interest', YELP: 'yelp' };
 
 class MapView extends Component {
   constructor(props) {
@@ -61,6 +64,67 @@ class MapView extends Component {
     };
 
     this.map.on('sourcedata', onDataLoad);
+  }
+
+  async loadYelpData() {
+    const yelpID = 'yelp-source';
+    const yelpIconImageName = 'yelp-icon'
+
+    this.map.addSource(yelpID, {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features: []
+      }
+    });
+
+    this.map.loadImage(config.urls.yelpIcon, (error, image) => {
+      if (error) {
+        throw error;
+      }
+
+      this.map.addImage(yelpIconImageName, image);
+
+      this.map.addLayer({
+        id: LAYERS.YELP,
+        type: 'symbol',
+        source: yelpID,
+        layout: {
+          'icon-image': yelpIconImageName,
+          'icon-size': 0.5
+        }
+      });
+    });
+
+    const updateYelpData = async () => {
+      const center = this.map.getCenter();
+      const bounds = this.map.getBounds();
+
+      const radius = Math.round(distance(bounds.getSouthWest().toArray(), bounds.getNorthEast().toArray(), 'meters'));
+
+      const params = {
+        longitude: center.lng,
+        latitude: center.lat,
+        radius,
+        term: 'gas',
+        limit: '50'
+      };
+      const response = await fetch(`${config.urls.yelp}?${queryString.stringify(params)}`);
+
+      if (!response.ok) {
+        console.error('error in yelp request', response);
+
+        return;
+      }
+
+      // query api
+      const yelpSource = this.map.getSource(yelpID);
+      yelpSource.setData(await response.json());
+    };
+
+    updateYelpData();
+
+    this.map.on('moveend', updateYelpData);
   }
 
   componentDidMount() {
@@ -115,7 +179,10 @@ class MapView extends Component {
       console.log('position not updated (unmounted)');
     });
     this.map.addControl(geolocateControl);
-    this.map.on('load', this.loadPointsOfInterest.bind(this));
+    this.map.on('load', () => {
+      this.loadPointsOfInterest();
+      this.loadYelpData();
+    });
     this.map.on('moveend', this.onMapExtentChange.bind(this));
 
     this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
@@ -126,6 +193,16 @@ class MapView extends Component {
       new mapboxgl.Popup()
         .setLngLat(feature.geometry.coordinates)
         .setDOMContent(this.popupContainer)
+        .addTo(this.map);
+      evt.originalEvent.stopPropagation();
+      evt.originalEvent.preventDefault();
+    });
+    this.map.on('click', LAYERS.YELP, evt => {
+      const feature = evt.features[0];
+      ReactDOM.unstable_renderSubtreeIntoContainer(this, <YelpPopup {...feature.properties} />, this.yelpPopupContainer);
+      new mapboxgl.Popup()
+        .setLngLat(feature.geometry.coordinates)
+        .setDOMContent(this.yelpPopupContainer)
         .addTo(this.map);
     });
   }
@@ -152,6 +229,7 @@ class MapView extends Component {
     }
     this.props.history.replace(route);
   }
+
   onRadioButtonClick(newView) {
     this.setState({ currentView: newView });
     if (newView === VIEWS.LIST) {
@@ -160,6 +238,7 @@ class MapView extends Component {
       this.props.history.push(`${this.props.history.location.pathname.replace('/list', '')}`);
     }
   }
+
   render() {
     return (
       <div className='map-view'>
@@ -171,6 +250,7 @@ class MapView extends Component {
         <div ref={el => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
         <Route path='/map/:location/list' render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
         <div ref={el => this.popupContainer = el}></div>
+        <div ref={el => this.yelpPopupContainer = el} className='yelp-popup-container'></div>
       </div>
     );
   }

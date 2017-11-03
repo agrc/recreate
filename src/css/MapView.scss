@@ -4,6 +4,7 @@ $padding: 9px;
   height: 100%;
   .btn-group {
     position: absolute;
+    top: 0;
     z-index: 1;
     width: 100%;
     padding: $padding;
@@ -24,6 +25,6 @@ $padding: 9px;
     }
   }
   .list-group {
-      padding: $padding;
+    padding: $padding;
   }
 }

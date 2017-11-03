@@ -1,0 +1,9 @@
+{
+  "queryStringParameters": {
+    "longitude": "-111.79",
+    "latitude": "40.6",
+    "radius": "1000",
+    "term": "gas",
+    "limit": "50"
+  }
+}

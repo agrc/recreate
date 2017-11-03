@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+api/node_modules
 
 # testing
 /coverage
@@ -24,5 +25,9 @@ yarn-error.log*
 # compiled files
 *.css
 
+# serverless
+api/.serverless
+api/secrets.yml
+
 # secrets
-.env
+/.env

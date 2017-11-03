@@ -12,7 +12,9 @@ export default {
     h: aGOLServiceBase.replace(layerToken, 'Trails'),
     w: aGOLServiceBase.replace(layerToken, 'Boat_Ramps'),
     elevation: 'https://elevation.mapzen.com/height',
-    POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`
+    POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`,
+    yelp: 'https://f0inm0pv3a.execute-api.us-east-1.amazonaws.com/dev/search',
+    yelpIcon: `${process.env.PUBLIC_URL}/Yelp_burst_positive_RGB.png`
   },
   fieldnames: {
     Name: 'Name',
