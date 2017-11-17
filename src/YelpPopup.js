@@ -15,7 +15,7 @@ export default function YelpPopup(props) {
         <h6>{props.name}</h6>
         <div className='rating-logo-container'>
           <div className={`star-rating stars_${props.rating.toString().replace('.', '_')}`}></div>
-          <a href={props.url} target='_blank'><img src={logo} className='logo' alt='yelp logo'/></a>
+          <a href={props.url}><img src={logo} className='logo' alt='yelp logo'/></a>
         </div>
         <span className='review-count'>Based on {props.review_count} Reviews</span>
       </div>
