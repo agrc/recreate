@@ -7,7 +7,7 @@ class CustomizeBtn extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { isOpen: true };
+    this.state = { isOpen: false };
   }
 
   onClick() {
