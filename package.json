@@ -28,8 +28,14 @@
     "test": "react-scripts test --env=jsdom",
     "test-debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
     "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
+    "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive",
+    "storybook": "start-storybook -p 9009 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "devDependencies": {
+    "@storybook/addon-actions": "^3.2.16",
+    "@storybook/addon-links": "^3.2.16",
+    "@storybook/react": "^3.2.16",
     "dotenv": "^4.0.0",
     "eslint-config-react-app": "^2.0.1",
     "jest-fetch-mock": "^1.2.1",
