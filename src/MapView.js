@@ -6,10 +6,12 @@ import { Button, ButtonGroup } from 'reactstrap';
 import List from './List';
 import Popup from './Popup';
 import YelpPopup from './YelpPopup';
+import CustomizeBtn from './CustomizeBtn';
 import round from 'lodash.round';
 import config from './config';
 import distance from '@turf/distance';
 import queryString from 'query-string';
+import isEqual from 'lodash.isequal';
 
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
@@ -24,8 +26,16 @@ class MapView extends Component {
       currentView: VIEWS.MAP,
       findingCurrentLocation: false,
       featuresInCurrentExtent: [],
-      currentLocation: null
+      currentLocation: null,
+      filter: this.getClearFilter()
     };
+  }
+
+  getClearFilter() {
+    const filter = {};
+    Object.keys(config.poi_type_lookup).forEach(key => filter[key] = false);
+
+    return filter;
   }
 
   loadPointsOfInterest() {
@@ -253,6 +263,41 @@ class MapView extends Component {
     }
   }
 
+  onCustomize(value) {
+    const newFilter = {};
+    newFilter[value] = !this.state.filter[value];
+    this.setState((previousState) => ({
+      filter: { ...previousState.filter, ...newFilter }
+    }));
+  }
+
+  onClearCustomize() {
+    this.setState({ filter: this.getClearFilter() });
+  }
+
+  componentWillUpdate(nextProps, nextState) {
+    const nextFilter = nextState.filter;
+    if (isEqual(nextFilter, this.state.filter)) {
+      return;
+    }
+
+    if (isEqual(nextFilter, this.getClearFilter())) {
+      this.map.setLayoutProperty(LAYERS.YELP)
+      this.map.setFilter(LAYERS.POINTS_OF_INTEREST, null);
+      return;
+    }
+
+    const yelpVisibility = (nextFilter.y) ? 'visible' : 'none';
+    this.map.setLayoutProperty(LAYERS.YELP, 'visibility', yelpVisibility);
+
+    const expressions = Object.keys(nextFilter)
+      .filter(key => (nextFilter[key] && key !== 'y'))
+      .map(key => ['==', config.fieldnames.Type, key]);
+    this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
+
+    this.onMapExtentChange();
+  }
+
   render() {
     return (
       <div className='map-view'>
@@ -260,9 +305,14 @@ class MapView extends Component {
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.MAP)} active={this.state.currentView === VIEWS.MAP}>View Map</Button>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.LIST)} active={this.state.currentView === VIEWS.LIST}>View List</Button>
         </ButtonGroup>
+        <Route path='/map/:location' exact={true} render={() => {
+            return (<CustomizeBtn onCustomize={this.onCustomize.bind(this)}
+              filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />);
+          } }/>
         { this.state.findingCurrentLocation && <span className='finding-text'>Finding your current location...</span> }
         <div ref={el => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
-        <Route path='/map/:location/list' render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
+        <Route path='/map/:location/list'
+          render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
         <div ref={el => this.popupContainer = el}></div>
         <div ref={el => this.yelpPopupContainer = el} className='yelp-popup-container'></div>
       </div>

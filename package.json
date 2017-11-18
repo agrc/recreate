@@ -8,6 +8,7 @@
     "@turf/distance": "^5.0.0",
     "bootstrap": "^4.0.0-beta",
     "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
     "lodash.round": "^4.0.4",
     "mapbox-gl": "^0.42.0",
     "query-string": "^5.0.0",
