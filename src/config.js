@@ -33,6 +33,8 @@ export default {
     outdoors: 'mapbox://styles/mapbox/outdoors-v10'
   },
   colors: {
-    elevationProfile: '#358EA6' // matches blue in index.scss
+    // these match values in index.scss
+    blue: '#358EA6',
+    green: '#35a669'
   }
 };

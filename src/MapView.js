@@ -43,8 +43,8 @@ class MapView extends Component {
           type: 'categorical',
           stops: [
             ['h', '#e7eb3f'],
-            ['l', '#3feb9e'],
-            ['w', '#3f6feb']
+            ['l', config.colors.green],
+            ['w', config.colors.blue]
           ]
         },
         'circle-stroke-width': 1
