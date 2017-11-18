@@ -7,7 +7,6 @@ import config from './config';
 import get from 'lodash.get';
 import distance from '@turf/distance';
 
-import './css/FeatureDetails.css';
 
 class FeatureDetails extends Component {
   constructor(props) {

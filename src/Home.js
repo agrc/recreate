@@ -5,7 +5,6 @@ import queryString from 'query-string';
 import mapboxgl from 'mapbox-gl';
 import { version } from '../package.json';
 
-import './css/Home.css';
 import outdoorLogo from './css/images/outdoorlogo.png';
 
 

@@ -1,6 +1,5 @@
 import React from 'react';
 
-import './css/YelpPopup.css';
 import logo from './css/images/Yelp_trademark_RGB_outline.png';
 
 

@@ -1,7 +1,5 @@
 import React from 'react';
 
-import './css/StaticMap.css';
-
 
 export default function StaticMap(props) {
   const width = document.body.clientWidth;

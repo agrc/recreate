@@ -4,8 +4,6 @@ import ListItem from './ListItem';
 import YelpListItem from './YelpListItem';
 import distance from '@turf/distance';
 
-import './css/List.css';
-
 
 class List extends Component {
   groupFeatures(features) {

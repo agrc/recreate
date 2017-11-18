@@ -1,6 +1,6 @@
 $image-size: 90px;
 $border-radius: 3px;
-$padding: 5px;
+$yelp-padding: 5px;
 
 .yelp-popup-container {
   border-radius: $border-radius;
@@ -22,7 +22,7 @@ $padding: 5px;
       top: 0;
       bottom: 0;
       left: $image-size;
-      padding: $padding;
+      padding: $yelp-padding;
 
       .rating-logo-container {
         position: absolute;
@@ -35,7 +35,7 @@ $padding: 5px;
         align-items: center;
 
         .star-rating {
-          margin-left: $padding;
+          margin-left: $yelp-padding;
           width: 84px;
           height: 14px;
           background-size: 84px 14px;

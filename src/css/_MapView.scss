@@ -1,13 +1,8 @@
-$padding: 9px;
-
 .map-view {
   height: 100%;
   .btn-group {
-    position: absolute;
-    top: 0;
-    z-index: 1;
-    width: 100%;
-    padding: $padding;
+    @extend .button-overlay;
+    top: $padding;
     .btn {
       width: 50%;
     }
@@ -21,10 +16,10 @@ $padding: 9px;
   .mapboxgl-map {
     height: 100%;
     .mapboxgl-ctrl-top-right {
-      top: 48px;
+      top: 46px;
     }
-  }
-  .list-group {
-    padding: $padding;
+    .mapboxgl-ctrl-bottom-right, .mapboxgl-ctrl-bottom-left {
+      bottom: 38px + $padding;
+    }
   }
 }

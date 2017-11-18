@@ -6,8 +6,6 @@ import round from 'lodash.round';
 import StaticMap from './StaticMap';
 import { Link } from 'react-router-dom';
 
-import './css/HikingDetail.css';
-
 
 class HikingDetails extends DetailsBase {
   constructor(props) {

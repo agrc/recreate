@@ -5,7 +5,6 @@ import MapView from './MapView';
 import FeatureDetails from './FeatureDetails';
 import DetailMap from './DetailMap';
 
-import './css/App.css';
 
 class App extends Component {
   render() {

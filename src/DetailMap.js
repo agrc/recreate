@@ -5,8 +5,6 @@ import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import mapboxgl from 'mapbox-gl';
 import { Button } from 'reactstrap';
 
-import './css/DetailMap.css';
-
 
 const getResampleDistance = function(length) {
   const distance = length / config.elevationProfileResampleFactor;

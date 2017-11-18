@@ -11,9 +11,6 @@ import config from './config';
 import distance from '@turf/distance';
 import queryString from 'query-string';
 
-import 'mapbox-gl/dist/mapbox-gl.css';
-import './css/MapView.css';
-
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };

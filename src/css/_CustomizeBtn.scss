@@ -1,0 +1,36 @@
+.customize-btn {
+  >.btn {
+    @extend .button-overlay;
+    width: calc(100% - #{$padding * 2});
+    bottom: $padding;
+  }
+  .collapse, .collapsing {
+    position: absolute;
+    z-index: 3;
+    bottom: 40px + $padding;
+    left: $padding;
+    right: $padding;
+    border-radius: 0.25rem;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    .card {
+      border: none;
+      background-color: rgba(255, 255, 255, 0.85);
+      .card-body {
+        padding: $padding / 2;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        .btn {
+          // flex-grow: 1;
+          margin: $padding / 2;
+          &.btn-outline-success {
+            &, &:active {
+              background-color: #FFF;
+              color: $green;
+            }
+          }
+        }
+      }
+    }
+  }
+}
