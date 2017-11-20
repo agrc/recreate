@@ -282,7 +282,7 @@ class MapView extends Component {
     }
 
     if (isEqual(nextFilter, this.getClearFilter())) {
-      this.map.setLayoutProperty(LAYERS.YELP)
+      this.map.setLayoutProperty(LAYERS.YELP, 'visibility', 'visible');
       this.map.setFilter(LAYERS.POINTS_OF_INTEREST, null);
       return;
     }
