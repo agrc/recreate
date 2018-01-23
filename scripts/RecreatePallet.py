@@ -101,11 +101,11 @@ class RecreatePallet(Pallet):
                     if routeID in names:
                         poi_cursor.insertRow((TRAILS_POI_TYPE, names[routeID], heads[thid][0], heads[thid][1]))
 
-            #: export to geojson
-            if arcpy.Exists(self.poi_json):
-                self.log.info('removing old poi geojson file')
-                arcpy.management.Delete(self.poi_json)
-            arcpy.conversion.FeaturesToJSON(self.poi, self.poi_json, geoJSON='GEOJSON')
+        #: export to geojson
+        if arcpy.Exists(self.poi_json):
+            self.log.info('removing old poi geojson file')
+            arcpy.management.Delete(self.poi_json)
+        arcpy.conversion.FeaturesToJSON(self.poi, self.poi_json, geoJSON='GEOJSON')
 
     def remove_previous_poi_data(self, poi_type):
         with arcpy.da.UpdateCursor(self.poi, ['OID@'], '{} = \'{}\''.format(fldType, poi_type)) as delete_cursor:
