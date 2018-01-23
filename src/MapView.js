@@ -53,7 +53,7 @@ class MapView extends Component {
           type: 'categorical',
           stops: [
             ['h', '#e7eb3f'],
-            ['l', config.colors.green],
+            ['p', config.colors.green],
             ['w', config.colors.blue]
           ]
         },

@@ -1,17 +1,17 @@
 const layerToken = '{layer}';
-const aGOLServiceBase = `https://services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/rest/services/${layerToken}/FeatureServer/0/query`;
+const recreateServiceBase = `http://localhost/arcgis/rest/services/Recreate/MapServer/{layer}/query`;
 
 export default {
   poi_type_lookup: {
-    l: 'Parks',
-    y: 'Local Amenities (via Yelp)',
+    p: 'Parks',
+    l: 'Local Amenities (via Yelp)',
     h: 'Hiking',
     w: 'Boat Ramps'
   },
   urls: {
-    l: aGOLServiceBase.replace(layerToken, 'UrbanParks'),
-    h: aGOLServiceBase.replace(layerToken, 'Trails'),
-    w: aGOLServiceBase.replace(layerToken, 'Boat_Ramps'),
+    p: recreateServiceBase.replace(layerToken, '2'),
+    h: recreateServiceBase.replace(layerToken, '1'),
+    w: recreateServiceBase.replace(layerToken, '0'),
     elevation: 'https://elevation.mapzen.com/height',
     POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`,
     yelp: 'https://f0inm0pv3a.execute-api.us-east-1.amazonaws.com/dev/search',
@@ -22,12 +22,20 @@ export default {
     ID: 'ID',
     Type: 'Type',
     ids: {
-      l: 'ID',
-      h: 'TrailID',
-      w: 'BRID'
+      p: 'FeatureID',
+      h: 'RouteID',
+      w: 'FeatureID'
+    },
+    trails: {
+      LENGTH: 'LENGTH',
+      URL: 'URL',
+      RouteType: 'RouteType'
+    },
+    parks: {
+      TYPE: 'TYPE'
     }
   },
-  metersPerMile: 1609.34,
+  outAndBack: 'Out & Back',
   elevationProfileResampleFactor: 50,
   styles: {
     outdoors: 'mapbox://styles/mapbox/outdoors-v10'

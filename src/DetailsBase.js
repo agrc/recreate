@@ -33,7 +33,14 @@ class DetailsBase extends Component {
       const responseJson = await response.json();
       if (responseJson.features.length > 0) {
         const feature = responseJson.features[0];
-        this.setState({...feature.properties, geojson: JSON.stringify(feature)});
+
+        // tear out properties from geojson object
+        // mapbox static map api doesn't like them.
+        // perhaps it's the URL field?
+        let geojson = Object.assign({}, feature);
+        geojson.properties = {};
+
+        this.setState({...feature.properties, geojson: JSON.stringify(geojson)});
       } else {
         // TODO: handle no features found
       }

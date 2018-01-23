@@ -51,7 +51,7 @@ class FeatureDetails extends Component {
     let Details;
     if (this.state) {
       switch (config.poi_type_lookup[this.state.Type]) {
-        case config.poi_type_lookup.l:
+        case config.poi_type_lookup.p:
           Details = ParksDetail;
           break;
         case config.poi_type_lookup.h:

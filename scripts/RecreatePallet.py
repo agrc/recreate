@@ -13,7 +13,7 @@ from forklift.models import Crate, Pallet
 Trailheads = 'Trailheads'
 RouteLines = 'RouteLines'
 RouteToTrailheads = 'RouteToTrailheads'
-ParksLocal = 'ParksLocal'
+UtahParksAndMonuments = 'UtahParksAndMonuments'
 BoatRamps = 'BoatRamps'
 POI = 'POI'
 
@@ -26,10 +26,10 @@ fldRouteID = 'RouteID'
 fldUSNG_TH = 'USNG_TH'
 fldRouteName = 'RouteName'
 
-#: type, name field, definition query
+#: type, name field, id field, definition query
 POI_LAYER_INFOS = {
-    ParksLocal: ('p', 'NAME', None),
-    BoatRamps: ('w', 'Name', None)
+    UtahParksAndMonuments: ('p', 'NAME', 'FeatureID', None),
+    BoatRamps: ('w', 'Name', 'FeatureID', None)
 }
 WGS = arcpy.SpatialReference(4326)
 TRAILS_DATA = [Trailheads, RouteLines, RouteToTrailheads]
@@ -45,7 +45,8 @@ class RecreatePallet(Pallet):
         self.geographic_transformation = 'WGS_1984_(ITRF00)_To_NAD_1983'
 
         self.add_crates(TRAILS_DATA, {'source_workspace': trails, 'destination_workspace': self.recreate})
-        self.add_crates([ParksLocal, BoatRamps], {'source_workspace': sgid, 'destination_workspace': self.recreate})
+        self.add_crates([BoatRamps], {'source_workspace': sgid, 'destination_workspace': self.recreate})
+        self.add_crates([UtahParksAndMonuments], {'source_workspace': secrets.KDRIVE, 'destination_workspace': self.recreate})
 
         if config == 'Production':
             output_folder = r'\\{}\c$\recreate-web'.format(secrets.PROD_SERVER_IP)
@@ -55,10 +56,15 @@ class RecreatePallet(Pallet):
             output_folder = r'X:\recreate-web\public'
 
         self.poi_json = join(output_folder, 'PointsOfInterest.json')
-
-    def process(self):
         self.poi = join(self.recreate, POI)
 
+        self.copy_data = [self.recreate]
+        self.arcgis_services = [('Recreate', 'MapServer')]
+
+    def requires_processing(self):
+        return not arcpy.Exists(self.poi) or super(RecreatePallet, self).requires_processing()
+
+    def process(self):
         poi_was_newly_created = False
 
         #: build poi layer
@@ -84,9 +90,9 @@ class RecreatePallet(Pallet):
 
             #: build trailhead shape look up
             heads = {}
-            with arcpy.da.SearchCursor(join(self.recreate, Trailheads), [fldUSNG_TH, 'OBJECTID', 'Shape@']) as heads_cursor:
-                for thid, oid, shape in heads_cursor:
-                    heads[thid] = (oid, shape)
+            with arcpy.da.SearchCursor(join(self.recreate, Trailheads), [fldUSNG_TH, 'Shape@']) as heads_cursor:
+                for thid, shape in heads_cursor:
+                    heads[thid] = shape
 
             #: build route name look up
             names = {}
@@ -99,7 +105,7 @@ class RecreatePallet(Pallet):
                 for routeID, thid in route_heads_cursor:
                     #: make sure that this route is in RouteLines
                     if routeID in names:
-                        poi_cursor.insertRow((TRAILS_POI_TYPE, names[routeID], heads[thid][0], heads[thid][1]))
+                        poi_cursor.insertRow((TRAILS_POI_TYPE, names[routeID], routeID, heads[thid]))
 
         #: export to geojson
         if arcpy.Exists(self.poi_json):
@@ -108,14 +114,14 @@ class RecreatePallet(Pallet):
         arcpy.conversion.FeaturesToJSON(self.poi, self.poi_json, geoJSON='GEOJSON')
 
     def remove_previous_poi_data(self, poi_type):
-        with arcpy.da.UpdateCursor(self.poi, ['OID@'], '{} = \'{}\''.format(fldType, poi_type)) as delete_cursor:
+        with arcpy.da.UpdateCursor(self.poi, [fldID], '{} = \'{}\''.format(fldType, poi_type)) as delete_cursor:
             for row in delete_cursor:
                 delete_cursor.deleteRow()
 
     def data_was_changed(self, crate):
         return crate.result[0] in [Crate.CREATED, Crate.UPDATED, Crate.WARNING]
 
-    def import_data(self, feature_class, poi_type, name_field, query):
+    def import_data(self, feature_class, poi_type, name_field, id_field, query):
         self.log.info('updating {} poi data'.format(basename(feature_class)))
         described = arcpy.Describe(feature_class)
 
@@ -126,7 +132,7 @@ class RecreatePallet(Pallet):
         self.remove_previous_poi_data(poi_type)
 
         #: load new data
-        with arcpy.da.SearchCursor(feature_class, [name_field, fldOBJECTID, 'Shape@'], query) as search_cursor, \
+        with arcpy.da.SearchCursor(feature_class, [name_field, id_field, 'Shape@'], query) as search_cursor, \
                 arcpy.da.InsertCursor(self.poi, [fldType, fldName, fldID, 'Shape@']) as insert_cursor:
             for name, feature_id, shape in search_cursor:
                 insert_cursor.insertRow((poi_type, name, feature_id, shape))

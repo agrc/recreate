@@ -20,7 +20,7 @@ class BoatRampsDetail extends DetailsBase {
           <p>{this.state.Water_body}</p>
           <p>Allowed Vessels: {this.state.Vessels}</p>
         </div>
-        <StaticMap geojson={this.state.geojson} />
+        <StaticMap geojson={this.state.geojson} poitype='w'/>
       </div>
     );
   }
