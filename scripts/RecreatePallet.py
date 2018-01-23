@@ -6,7 +6,7 @@ A module that contains a pallet definition for data to support the recreate app.
 from os.path import basename, join
 
 import arcpy
-import recreate_secrets as secrets
+import RecreateSecrets as secrets
 from forklift.models import Crate, Pallet
 
 #: feature class names
