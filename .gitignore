@@ -36,5 +36,5 @@ api/secrets.yml
 .storybook/
 *.pyc
 RecreateSecrets.py
-maps/Recreate/Index/
-maps/Recreate/ImportLog/
+maps/Index/
+maps/ImportLog/
