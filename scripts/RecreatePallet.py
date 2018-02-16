@@ -80,11 +80,11 @@ class RecreatePallet(Pallet):
 
         #: process non-trails layers
         for crate in self.get_crates():
-            if crate.destination_name in POI_LAYER_INFOS and (self.data_was_changed(crate) or poi_was_newly_created):
+            if crate.destination_name in POI_LAYER_INFOS and (crate.was_updated() or poi_was_newly_created):
                 self.import_data(crate.destination, *POI_LAYER_INFOS[crate.destination_name])
 
         #: process trails data
-        if any([self.data_was_changed(crate) or poi_was_newly_created for crate in self.get_crates() if crate.destination_name in TRAILS_DATA]):
+        if any([crate.was_updated() or poi_was_newly_created for crate in self.get_crates() if crate.destination_name in TRAILS_DATA]):
             self.log.info('updating trails poi data')
             self.remove_previous_poi_data(TRAILS_POI_TYPE)
 
@@ -117,9 +117,6 @@ class RecreatePallet(Pallet):
         with arcpy.da.UpdateCursor(self.poi, [fldID], '{} = \'{}\''.format(fldType, poi_type)) as delete_cursor:
             for row in delete_cursor:
                 delete_cursor.deleteRow()
-
-    def data_was_changed(self, crate):
-        return crate.result[0] in [Crate.CREATED, Crate.UPDATED, Crate.WARNING]
 
     def import_data(self, feature_class, poi_type, name_field, id_field, query):
         self.log.info('updating {} poi data'.format(basename(feature_class)))
