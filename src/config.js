@@ -1,5 +1,5 @@
 const layerToken = '{layer}';
-const recreateServiceBase = `http://localhost/arcgis/rest/services/Recreate/MapServer/{layer}/query`;
+const aGOLServiceBase = `https://services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/rest/services/${layerToken}/FeatureServer/0/query`;
 
 export default {
   poi_type_lookup: {
@@ -9,9 +9,9 @@ export default {
     w: 'Boat Ramps'
   },
   urls: {
-    p: recreateServiceBase.replace(layerToken, '2'),
-    h: recreateServiceBase.replace(layerToken, '1'),
-    w: recreateServiceBase.replace(layerToken, '0'),
+    p: aGOLServiceBase.replace(layerToken, 'UtahParksAndMonuments'),
+    h: aGOLServiceBase.replace(layerToken, 'RouteLines'),
+    w: aGOLServiceBase.replace(layerToken, 'BoatRamps'),
     elevation: 'https://elevation.mapzen.com/height',
     POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`,
     yelp: 'https://f0inm0pv3a.execute-api.us-east-1.amazonaws.com/dev/search',
