@@ -3,6 +3,16 @@ import config from './config';
 import queryString from 'query-string';
 
 
+const buildOutAndBack = function (geojson) {
+  const coordsCopy = geojson.geometry.coordinates.slice();
+  coordsCopy.reverse();
+
+  geojson.geometry.coordinates = geojson.geometry.coordinates.concat(coordsCopy.slice(1));
+
+  return geojson;
+};
+
+
 class DetailsBase extends Component {
   constructor(props) {
     super(props);
@@ -40,6 +50,11 @@ class DetailsBase extends Component {
         let geojson = Object.assign({}, feature);
         geojson.properties = {};
 
+        if (feature.properties[config.fieldnames.trails.RouteType] === config.outAndBack) {
+          geojson = buildOutAndBack(geojson);
+          feature.properties[config.fieldnames.trails.LENGTH] += feature.properties[config.fieldnames.trails.LENGTH];
+        }
+
         this.setState({...feature.properties, geojson: JSON.stringify(geojson)});
       } else {
         // TODO: handle no features found
@@ -50,4 +65,4 @@ class DetailsBase extends Component {
   }
 }
 
-export default DetailsBase;
+export { DetailsBase as default, buildOutAndBack };
