@@ -29,26 +29,26 @@ class List extends Component {
 
     return (
       <div className='list scroller'>
-        <table className='list-table'>
-          { Object.keys(grouped_features).map(group => {
-              return (
-                <tbody key={group}>
-                  <tr>
-                    <th colSpan='2'>{ config.poi_type_lookup[group] }</th>
-                  </tr>
-                  { grouped_features[group]
-                      .sort((a, b) => a.properties.miles - b.properties.miles)
-                      .map(f => {
-                        return (f.properties.Type !== 'y') ?
-                          <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} /> :
-                          <YelpListItem {...f.properties} key={f.properties.id} />
-                      })
-                  }
-                </tbody>
-              );
-            })
-          }
-        </table>
+        { Object.keys(grouped_features).map(group => {
+            return (
+              <div>
+                <h5>{ config.poi_type_lookup[group] }</h5>
+                <table className='table table-striped table-sm list-table'>
+                  <tbody key={group}>
+                    { grouped_features[group]
+                        .sort((a, b) => a.properties.miles - b.properties.miles)
+                        .map(f => {
+                          return (f.properties.Type !== 'y') ?
+                            <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} /> :
+                            <YelpListItem {...f.properties} key={f.properties.id} />
+                        })
+                    }
+                  </tbody>
+                </table>
+              </div>
+            );
+          })
+        }
       </div>
     );
   }

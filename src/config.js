@@ -4,7 +4,7 @@ const aGOLServiceBase = `https://services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/re
 export default {
   poi_type_lookup: {
     p: 'Parks',
-    l: 'Local Amenities (via Yelp)',
+    y: 'Local Amenities (via Yelp)',
     h: 'Hiking',
     w: 'Boat Ramps'
   },

@@ -3,9 +3,12 @@
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   top: 54px;
-  bottom: 10px;
-  left: 10px;
-  right: 10px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  h5 {
+    padding-left: 0.3rem;
+  }
   .list-table {
     width: 100%;
   }
