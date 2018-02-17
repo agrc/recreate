@@ -89,7 +89,7 @@ class Home extends Component {
           </Collapse>
         </div>
         <img src={outdoorLogo} alt='goed logo'/>
-        <span className='version'>v{version}</span>
+        <Link to='changelog' className='version'>{version}</Link>
       </div>
     );
   }

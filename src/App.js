@@ -4,6 +4,7 @@ import Home from './Home';
 import MapView from './MapView';
 import FeatureDetails from './FeatureDetails';
 import DetailMap from './DetailMap';
+import ChangeLog from './ChangeLog';
 
 
 class App extends Component {
@@ -19,6 +20,7 @@ class App extends Component {
             <Route path='/map/:location?/:list?' component={MapView} />
             <Route exact={true} path='/feature/:id' component={FeatureDetails} />
             <Route path='/feature/:id/map' component={DetailMap} />
+            <Route path='/changelog' component={ChangeLog} />
           </Switch>
         </div>
       </div>
