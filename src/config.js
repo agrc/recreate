@@ -36,6 +36,7 @@ export default {
     }
   },
   outAndBack: 'Out & Back',
+  enterKey: 'Enter',
   elevationProfileResampleFactor: 50,
   styles: {
     outdoors: 'mapbox://styles/mapbox/outdoors-v10'

@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import queryString from 'query-string';
 import mapboxgl from 'mapbox-gl';
 import { version } from '../package.json';
+import config from './config';
 
 import outdoorLogo from './css/images/outdoorlogo.png';
 
@@ -23,6 +24,7 @@ class Home extends Component {
     this.toggleSearchForm = this.toggleSearchForm.bind(this);
     this.search = this.search.bind(this);
     this.handleCityPlaceChange = this.handleCityPlaceChange.bind(this);
+    this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this);
   }
   toggleSearchForm() {
     this.setState({searchFormOpen: !this.state.searchFormOpen});
@@ -67,6 +69,13 @@ class Home extends Component {
   handleCityPlaceChange(event) {
     this.setState({cityPlace: event.target.value});
   }
+  handleSearchKeyDown(event) {
+    this.setState({searchError: false});
+
+    if (event.key === config.enterKey) {
+      this.search();
+    }
+  }
   render() {
     return (
       <div className='home' alt='delicate arch'>
@@ -80,7 +89,7 @@ class Home extends Component {
           <Collapse isOpen={this.state.searchFormOpen} className='search-form'>
             <Input type='text' placeholder='Enter City or Place' value={this.state.cityPlace}
               onChange={this.handleCityPlaceChange}
-              onKeyDown={() => this.setState({searchError: false})}/>
+              onKeyDown={this.handleSearchKeyDown}/>
             <div className='button-group'>
               <Button color='primary' onClick={this.search}>Search</Button>
               <Button color='warning' onClick={() => this.setState({searchFormOpen: false})}>Cancel</Button>
