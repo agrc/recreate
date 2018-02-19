@@ -31,10 +31,10 @@ class List extends Component {
       <div className='list scroller'>
         { Object.keys(grouped_features).map(group => {
             return (
-              <div>
+              <div key={group}>
                 <h5>{ config.poi_type_lookup[group] }</h5>
                 <table className='table table-striped table-sm list-table'>
-                  <tbody key={group}>
+                  <tbody>
                     { grouped_features[group]
                         .sort((a, b) => a.properties.miles - b.properties.miles)
                         .map(f => {
