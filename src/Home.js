@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Collapse, Input, Alert } from 'reactstrap';
+import { Button, Collapse, Input } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import queryString from 'query-string';
 import mapboxgl from 'mapbox-gl';
@@ -85,7 +85,7 @@ class Home extends Component {
               <Button color='primary' onClick={this.search}>Search</Button>
               <Button color='warning' onClick={() => this.setState({searchFormOpen: false})}>Cancel</Button>
             </div>
-            <Alert color='danger' style={{display: (this.state.searchError) ? 'block': 'none'}}>No results found for {this.state.cityPlace}!</Alert>
+            <span style={{display: (this.state.searchError) ? 'block': 'none'}}>No results found for {this.state.cityPlace}!</span>
           </Collapse>
         </div>
         <img src={outdoorLogo} alt='goed logo'/>
