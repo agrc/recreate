@@ -20,11 +20,13 @@ class HikingDetails extends DetailsBase {
     return (
       <div className='detail hiking'>
         <div className='padder'>
-          <p>{this.state.Description}</p>
-          <p>{this.state.SurfaceType}</p>
           <Alert color='info' className='stats'>
-            <span>Distance <br></br> {round(this.state[config.fieldnames.trails.LENGTH], 2)} miles</span>
-            <span>Type <br></br> {this.state[config.fieldnames.trails.RouteType]}</span>
+            Distance: {round(this.state[config.fieldnames.trails.LENGTH], 2)} miles
+            <br></br>
+            ({this.state[config.fieldnames.trails.RouteType]})
+            <span className='pull-right'>Elevation Gain: {this.state[config.fieldnames.trails.ElevationGain]} feet</span>
+            {
+          }
           </Alert>
         </div>
         <div className='detail-links padder'>

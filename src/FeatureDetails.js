@@ -72,7 +72,7 @@ class FeatureDetails extends Component {
             <div className='header padder'>
               <Button color='link' onClick={() => this.props.history.goBack()}>Back</Button>
               {this.state.miles &&
-                <span>Distance From You: {this.state.miles} miles</span>}
+                <span className='distance'>Distance From You: {this.state.miles} miles</span>}
             </div>
             <div className='padder'>
               <h4>{config.poi_type_lookup[this.state.Type]}</h4>
