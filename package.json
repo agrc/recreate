@@ -1,7 +1,7 @@
 {
   "homepage": "/recreate-web",
   "name": "recreate-web",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "private": true,
   "dependencies": {
     "@turf/distance": "^5.0.0",
