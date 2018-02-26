@@ -4,7 +4,6 @@
   "version": "0.5.0",
   "private": true,
   "dependencies": {
-    "@mapbox/polyline": "^0.2.0",
     "@turf/distance": "^5.0.0",
     "bootstrap": "^4.0.0",
     "lodash.get": "^4.4.2",
@@ -17,7 +16,7 @@
     "react-map-gl": "^3.0.5",
     "react-router-dom": "^4.2.2",
     "reactstrap": "^5.0.0-alpha.3",
-    "recharts": "^1.0.0-beta.0"
+    "recharts": "^1.0.0-beta.7"
   },
   "scripts": {
     "build-css": "node-sass-chokidar src/ -o src/",
@@ -36,14 +35,14 @@
     "@storybook/addon-actions": "^3.2.16",
     "@storybook/addon-links": "^3.2.16",
     "@storybook/react": "^3.2.16",
-    "dotenv": "^4.0.0",
+    "dotenv": "^5.0.0",
     "eslint-config-react-app": "^2.0.1",
     "jest-fetch-mock": "^1.2.1",
     "mapbox-gl-js-mock": "https://github.com/stdavis/mapbox-gl-js-mock",
     "mock-geolocation": "^1.0.11",
     "node-sass-chokidar": "^0.0.3",
     "npm-run-all": "^4.1.1",
-    "react-scripts": "1.0.17",
+    "react-scripts": "1.1.1",
     "scp2": "^0.5.0"
   }
 }

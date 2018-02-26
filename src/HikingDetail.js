@@ -30,7 +30,7 @@ class HikingDetails extends DetailsBase {
         <div className='detail-links padder'>
           <Link to={{
               pathname: `${this.props[config.fieldnames.ID]}/map`,
-              state: { geojson: this.state.geojson }
+              state: { geojson: this.state.geojson, profile: this.state[config.fieldnames.trails.ElevationProfile] }
             }}>View Full Map</Link>
           {url && (<a href={url}>Trail Details</a>)}
         </div>

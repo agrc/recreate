@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import polyline from '@mapbox/polyline';
 import config from './config';
 import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
 import mapboxgl from 'mapbox-gl';
@@ -17,27 +16,26 @@ class DetailMap extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { chartData: [] };
-
-    this.getElevationProfile();
+    this.state = { chartData: []};
   }
 
   componentDidMount() {
     this.initMap();
+    this.buildElevationProfile();
   }
 
-  async getElevationProfile() {
-    const encoded_polyline = polyline.fromGeoJSON(JSON.parse(this.props.location.state.geojson), 6);
-    const params = {
-      range: false,
-      encoded_polyline,
-      resample_distance: getResampleDistance(JSON.parse(this.props.location.state.geojson).properties.SHAPE__Length)
-    };
-    const response = await fetch(`${config.urls.elevation}?json=${JSON.stringify(params)}&api_key=${process.env.REACT_APP_MAPZEN_API_KEY}`);
-    if (response.ok) {
-      const result = await response.json();
-      this.setState({ chartData: result.height.map(value => {return {value}}) });
-    }
+  buildElevationProfile() {
+    const profile = this.props.location.state.profile.split(',').map(s => parseInt(s, 10));
+    const min = profile[0];
+    const max = profile[1];
+    const range = max - min;
+
+    // convert percentages to feet
+    const chartData = profile.slice(2).map(percent => {
+      return { value: (range * (percent/100)) + min };
+    });
+
+    this.setState({ chartData });
   }
 
   initMap() {
@@ -87,7 +85,7 @@ class DetailMap extends Component {
                 type='number'
                 domain={['dataMin', 'dataMax']}
                 mirror={true}
-                stroke='white'/>
+                stroke='#4a4a4a'/>
             </AreaChart>
           </ResponsiveContainer>
         </div>

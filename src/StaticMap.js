@@ -10,8 +10,6 @@ export default function StaticMap(props) {
 
   // mapbox static api also doesn't like out and back lines
   if (props.outAndBack) {
-    console.log('truncating string...');
-
     const parsedGeoJSON = JSON.parse(geojson);
 
     parsedGeoJSON.geometry.coordinates = parsedGeoJSON.geometry.coordinates.slice(0, parsedGeoJSON.geometry.coordinates.length / 2);
