@@ -15,7 +15,8 @@ it('renders without crashing', () => {
     containerWidth={10}
     location={{
       state: {
-        geojson: JSON.stringify(lineQuery.features[0])
+        geojson: JSON.stringify(lineQuery.features[0]),
+        profile: '100,200,0,1,2,3'
       }
     }}
   /></MemoryRouter>, div);
