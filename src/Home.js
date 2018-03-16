@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import { Button, Collapse, Input } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Button } from 'react-native';
+import { Link } from 'react-router-native';
 import queryString from 'query-string';
-import mapboxgl from 'mapbox-gl';
+// import mapboxgl from 'mapbox-gl';
 import { version } from '../package.json';
 import config from './config';
 

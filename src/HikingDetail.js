@@ -4,7 +4,7 @@ import { Alert } from 'reactstrap';
 import config from './config';
 import round from 'lodash.round';
 import StaticMap from './StaticMap';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router-native';
 
 
 class HikingDetails extends DetailsBase {
