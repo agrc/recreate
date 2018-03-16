@@ -7,7 +7,7 @@ from os.path import basename, join
 
 import arcpy
 import RecreateSecrets as secrets
-from forklift.models import Crate, Pallet
+from forklift.models import Pallet
 
 #: feature class names
 Trailheads = 'Trailheads'
@@ -16,6 +16,9 @@ RouteToTrailheads = 'RouteToTrailheads'
 UtahParksAndMonuments = 'UtahParksAndMonuments'
 BoatRamps = 'BoatRamps'
 POI = 'POI'
+interpolated = join(arcpy.env.scratchGDB, 'interpolatedRouteLines')
+profile_points_max_num = 100
+meters_to_feet = 3.28084
 
 #: field names
 fldType = 'Type'
@@ -25,6 +28,8 @@ fldOBJECTID = 'OBJECTID'
 fldRouteID = 'RouteID'
 fldUSNG_TH = 'USNG_TH'
 fldRouteName = 'RouteName'
+fldElevationGain = 'ElevationGain'
+fldElevationProfile = 'ElevationProfile'
 
 #: type, name field, id field, definition query
 POI_LAYER_INFOS = {
@@ -38,14 +43,14 @@ TRAILS_POI_TYPE = 'h'
 
 class RecreatePallet(Pallet):
     def build(self, config):
-        sgid = join(self.garage, 'SGID10.sde')
-        trails = join(self.garage, 'UtahTrails as TrailsViewer.sde')
+        self.sgid = join(self.garage, 'SGID10.sde')
+        self.trails = join(self.garage, 'UtahTrails as TrailsViewer.sde')
         self.recreate = join(self.staging_rack, 'recreate.gdb')
         self.destination_coordinate_system = WGS
         self.geographic_transformation = 'WGS_1984_(ITRF00)_To_NAD_1983'
 
-        self.add_crates(TRAILS_DATA, {'source_workspace': trails, 'destination_workspace': self.recreate})
-        self.add_crates([BoatRamps], {'source_workspace': sgid, 'destination_workspace': self.recreate})
+        self.add_crates(TRAILS_DATA, {'source_workspace': self.trails, 'destination_workspace': self.recreate})
+        self.add_crates([BoatRamps], {'source_workspace': self.sgid, 'destination_workspace': self.recreate})
         self.add_crates([UtahParksAndMonuments], {'source_workspace': secrets.KDRIVE, 'destination_workspace': self.recreate})
 
         if config == 'Production':
@@ -60,6 +65,8 @@ class RecreatePallet(Pallet):
 
         self.copy_data = [self.recreate]
         self.arcgis_services = [('Recreate', 'MapServer')]
+
+        self.update_route_lines_elevation_data()
 
     def requires_processing(self):
         return not arcpy.Exists(self.poi) or super(RecreatePallet, self).requires_processing()
@@ -133,3 +140,67 @@ class RecreatePallet(Pallet):
                 arcpy.da.InsertCursor(self.poi, [fldType, fldName, fldID, 'Shape@']) as insert_cursor:
             for name, feature_id, shape in search_cursor:
                 insert_cursor.insertRow((poi_type, name, feature_id, shape))
+
+    def update_route_lines_elevation_data(self):
+        #: check to see if there is new data that needs to be calculated
+        route_lines = join(self.trails, 'UtahTrails.TRAILSADMIN.' + RouteLines)
+        dem = join(self.sgid, 'SGID10.RASTER.USGS_DEM_10Meter')
+
+        route_lines_layer = arcpy.management.MakeFeatureLayer(route_lines, ['OID@'], '{} IS NULL'.format(fldElevationProfile))
+        if int(arcpy.management.GetCount(route_lines_layer)[0]) > 0:
+            if arcpy.Exists(interpolated):
+                self.log.info('cleaning up old interpolated output')
+                arcpy.management.Delete(interpolated)
+
+            self.log.info('interpolating shapes')
+            arcpy.ddd.InterpolateShape(dem, route_lines_layer, interpolated, method='BILINEAR')
+            interpolated_lookup = {}
+            with arcpy.da.SearchCursor(interpolated, [fldRouteID, 'Shape@']) as cursor:
+                for routeID, shape in cursor:
+                    interpolated_lookup[routeID] = shape
+
+            self.log.info('updating elevation gains and profiles')
+            with arcpy.da.UpdateCursor(route_lines_layer, [fldRouteID, fldElevationGain, fldElevationProfile]) as cursor:
+                for routeID, gain, profile in cursor:
+                    interp_line = interpolated_lookup[routeID]
+                    gain = self.calculate_elevation_gain(interp_line)
+                    profile = self.generate_elevation_profile(interp_line)
+
+                    cursor.updateRow((routeID, gain, profile))
+
+    def calculate_elevation_gain(self, line):
+        if line.partCount > 1:
+            self.log.error('MULTI-PART LINE Detected!!')
+
+        gain = 0
+        previous_elevation = None
+        for point in line.getPart(0):
+            if previous_elevation is not None and previous_elevation < point.Z:
+                gain += point.Z - previous_elevation
+
+            previous_elevation = point.Z
+
+        return round(gain * meters_to_feet)
+
+    def generate_elevation_profile(self, line):
+        elevations = [point.Z * meters_to_feet for point in line.getPart(0)]
+
+        #: generalize elevations if there are more than the max num
+        num_points = len(elevations)
+        if num_points > profile_points_max_num:
+            factor = round(num_points/profile_points_max_num)
+            generalized_elevations = []
+            for index in range(0, num_points - 1, factor):
+                generalized_elevations.append(elevations[index])
+
+            elevations = generalized_elevations
+
+        #: convert elevations to percentages (of max - min) to save on space
+        max_elevation = max(elevations)
+        min_elevation = min(elevations)
+
+        percent_elevations = []
+        for elev in elevations:
+            percent_elevations.append(str(round(((elev - min_elevation) / (max_elevation - min_elevation)) * 100)))
+
+        return ','.join([str(round(min_elevation)), str(round(max_elevation))] + percent_elevations)
