@@ -1,43 +1,23 @@
 {
-  "homepage": "/recreate-web",
-  "name": "recreate-web",
+  "name": "recreate",
   "version": "0.6.0",
   "private": true,
-  "dependencies": {
-    "@turf/distance": "^5.0.0",
-    "bootstrap": "^4.0.0",
-    "lodash.get": "^4.4.2",
-    "lodash.isequal": "^4.5.0",
-    "lodash.round": "^4.0.4",
-    "mapbox-gl": "^0.42.0",
-    "query-string": "^5.0.0",
-    "react": "^16.0.0",
-    "react-dom": "^16.0.0",
-    "react-map-gl": "^3.0.5",
-    "react-router-dom": "^4.2.2",
-    "reactstrap": "^5.0.0-alpha.3",
-    "recharts": "^1.0.0-beta.7"
-  },
   "scripts": {
-    "build-css": "node-sass-chokidar src/ -o src/",
-    "build": "yarn run build-css && react-scripts build",
-    "deploy": "node scripts/deploy.js",
-    "eject": "react-scripts eject",
-    "start-js": "react-scripts start",
-    "start": "npm-run-all -p watch-css start-js",
-    "test": "react-scripts test --env=jsdom",
-    "test-debug": "react-scripts --inspect-brk test --runInBand --env=jsdom",
-    "watch-css": "yarn run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@mapbox/react-native-mapbox-gl": "^6.1.0",
+    "react": "^16.3.0-alpha.1",
+    "react-native": "0.54.1"
   },
   "devDependencies": {
-    "dotenv": "^5.0.0",
-    "eslint-config-react-app": "^2.0.1",
-    "jest-fetch-mock": "^1.2.1",
-    "mapbox-gl-js-mock": "https://github.com/stdavis/mapbox-gl-js-mock",
-    "mock-geolocation": "^1.0.11",
-    "node-sass-chokidar": "^0.0.3",
-    "npm-run-all": "^4.1.1",
-    "react-scripts": "1.1.1",
-    "scp2": "^0.5.0"
+    "babel-jest": "22.4.1",
+    "babel-preset-react-native": "4.0.0",
+    "jest": "22.4.2",
+    "react-test-renderer": "^16.3.0-alpha.1"
+  },
+  "jest": {
+    "preset": "react-native"
   }
 }
