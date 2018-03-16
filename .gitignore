@@ -32,8 +32,6 @@ api/secrets.yml
 # secrets
 /.env
 
-# storybook
-.storybook/
 *.pyc
 RecreateSecrets.py
 maps/Index/
