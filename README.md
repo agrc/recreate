@@ -1,4 +1,4 @@
-# recreate-web [![Build Status](https://travis-ci.org/agrc/recreate-web.svg?branch=master)](https://travis-ci.org/agrc/recreate-web)
+# recreate [![Build Status](https://travis-ci.org/agrc/recreate.svg?branch=master)](https://travis-ci.org/agrc/recreate)
 Web app for recreation locations
 
 ## Development
