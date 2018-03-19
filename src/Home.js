@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import { Button } from 'react-native';
+import { Body, Button, Card, CardItem, Container, Content } from 'native-base';
+import { ImageBackground, StyleSheet, Image, View } from 'react-native';
 import { Link } from 'react-router-native';
 import queryString from 'query-string';
 // import mapboxgl from 'mapbox-gl';
 import { version } from '../package.json';
 import config from './config';
-
-import outdoorLogo from './css/images/outdoorlogo.png';
+import DefaultText from './DefaultText';
 
 
 const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
 
-class Home extends Component {
+export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -49,23 +49,23 @@ class Home extends Component {
       this.setState({ searchError: true });
     }
   }
-  getMapboxCentroid(esriGeometry) {
-    // returns a LngLat array that is the centroid of `esriGeometry`
-    let southwest;
-    let northeast;
-
-    esriGeometry.rings[0].forEach((point) => {
-      const diviser = 1000;
-      point = point.map((coord) => Math.round(coord * diviser)/diviser)
-      if (!southwest || (point[0] < southwest[0] && point[1] < southwest[1])) {
-        southwest = point;
-      } else if (!northeast || (point[0] > northeast[0] && point[1] > northeast[1])) {
-        northeast = point;
-      }
-    });
-
-    return new mapboxgl.LngLatBounds(southwest, northeast).getCenter().toArray();
-  }
+  // getMapboxCentroid(esriGeometry) {
+  //   // returns a LngLat array that is the centroid of `esriGeometry`
+  //   let southwest;
+  //   let northeast;
+  //
+  //   esriGeometry.rings[0].forEach((point) => {
+  //     const diviser = 1000;
+  //     point = point.map((coord) => Math.round(coord * diviser)/diviser)
+  //     if (!southwest || (point[0] < southwest[0] && point[1] < southwest[1])) {
+  //       southwest = point;
+  //     } else if (!northeast || (point[0] > northeast[0] && point[1] > northeast[1])) {
+  //       northeast = point;
+  //     }
+  //   });
+  //
+  //   return new mapboxgl.LngLatBounds(southwest, northeast).getCenter().toArray();
+  // }
   handleCityPlaceChange(event) {
     this.setState({cityPlace: event.target.value});
   }
@@ -78,30 +78,74 @@ class Home extends Component {
   }
   render() {
     return (
-      <div className='home' alt='delicate arch'>
-        <div className='tagline'>
-          <h1 className='firstline'>RECREATION,</h1>
-          <h1 className='secondline'>Your Way</h1>
-        </div>
-        <div className='buttons'>
-          <Button color='primary' tag={Link} to='/map'>Explore Current Location</Button>
-          <Button color='primary' onClick={this.toggleSearchForm}>Search by City or Place</Button>
-          <Collapse isOpen={this.state.searchFormOpen} className='search-form'>
-            <Input type='text' placeholder='Enter City or Place' value={this.state.cityPlace}
-              onChange={this.handleCityPlaceChange}
-              onKeyDown={this.handleSearchKeyDown}/>
-            <div className='button-group'>
-              <Button color='primary' onClick={this.search}>Search</Button>
-              <Button color='warning' onClick={() => this.setState({searchFormOpen: false})}>Cancel</Button>
-            </div>
-            <span style={{display: (this.state.searchError) ? 'block': 'none'}}>No results found for {this.state.cityPlace}!</span>
-          </Collapse>
-        </div>
-        <img src={outdoorLogo} alt='goed logo'/>
-        <Link to='changelog' className='version'>{version}</Link>
-      </div>
+      <Container>
+        <ImageBackground source={require('./images/arches.jpg')} style={styles.backgroundImage}>
+          <View style={styles.content}>
+            <View style={styles.tagLineContainer}>
+              <DefaultText style={styles.tagLineFont}>RECREATION,</DefaultText>
+              <DefaultText style={styles.tagLineFont}>Your Way</DefaultText>
+            </View>
+            <View style={styles.buttons}>
+              <Button color='primary' tag={Link} to='/map'><DefaultText>Explore Current Location</DefaultText></Button>
+              <Button color='primary' onClick={this.toggleSearchForm}><DefaultText>Search by City or Place</DefaultText></Button>
+              {/*
+              <Collapse isOpen={this.state.searchFormOpen} className='search-form'>
+                <Input type='text' placeholder='Enter City or Place' value={this.state.cityPlace}
+                  onChange={this.handleCityPlaceChange}
+                  onKeyDown={this.handleSearchKeyDown}/>
+                <div className='button-group'>
+                  <Button color='primary' onClick={this.search}>Search</Button>
+                  <Button color='warning' onClick={() => this.setState({searchFormOpen: false})}>Cancel</Button>
+                </div>
+                <span style={{display: (this.state.searchError) ? 'block': 'none'}}>No results found for {this.state.cityPlace}!</span>
+              </Collapse>
+              */}
+            </View>
+            <Image source={require('./images/outdoorlogo.png')} style={styles.goedLogo}/>
+            <Link to='changelog' style={styles.version}>
+              <DefaultText style={styles.versionText}>{version}</DefaultText>
+            </Link>
+          </View>
+        </ImageBackground>
+      </Container>
     );
   }
 };
 
-export default Home;
+const styles = StyleSheet.create({
+  backgroundImage: {
+    height: '100%',
+    width: '100%'
+  },
+  buttons: {
+    backgroundColor: 'rgba(0, 0, 0, 0.35)'
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding: 10
+  },
+  goedLogo: {
+    alignSelf: 'center'
+  },
+  tagLineContainer: {
+    alignSelf: 'center'
+  },
+  tagLineFont: {
+    textShadowColor: '#4b4b4b',
+    textShadowOffset: { width: 1, height: 1 },
+    shadowColor: '#4b4b4b',
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 1,
+    fontSize: 40,
+    textAlign: 'center'
+  },
+  version: {
+    position: 'absolute',
+    bottom: 3,
+    right: 3
+  },
+  versionText: {
+    fontSize: 10
+  }
+});

@@ -10,6 +10,7 @@
     "@mapbox/react-native-mapbox-gl": "^6.1.0",
     "native-base": "^2.3.10",
     "prop-types": "^15.6.1",
+    "query-string": "^6.0.0",
     "react": "^16.3.0-alpha.1",
     "react-native": "0.54.2",
     "react-router-native": "^4.2.0"
