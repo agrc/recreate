@@ -8,6 +8,10 @@
   },
   "dependencies": {
     "@mapbox/react-native-mapbox-gl": "^6.1.0",
+    "@turf/distance": "^6.0.0",
+    "lodash.get": "^4.4.2",
+    "lodash.isequal": "^4.5.0",
+    "lodash.round": "^4.0.4",
     "native-base": "^2.3.10",
     "prop-types": "^15.6.1",
     "query-string": "^6.0.0",

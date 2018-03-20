@@ -1,24 +1,23 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
-import { Route } from 'react-router';
-import mapboxgl from 'mapbox-gl';
-import { Button, ButtonGroup } from 'reactstrap';
+import { StyleSheet, View } from 'react-native';
+import { Route } from 'react-router-native';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import List from './List';
-import Popup from './Popup';
-import YelpPopup from './YelpPopup';
-import CustomizeBtn from './CustomizeBtn';
+// import Popup from './Popup';
+// import YelpPopup from './YelpPopup';
+// import CustomizeBtn from './CustomizeBtn';
 import round from 'lodash.round';
 import config from './config';
 import distance from '@turf/distance';
 import queryString from 'query-string';
 import isEqual from 'lodash.isequal';
+import { Button } from 'native-base';
 
 
-mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_TOKEN;
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
 const LAYERS = { POINTS_OF_INTEREST: 'points-of-interest', YELP: 'yelp' };
 
-class MapView extends Component {
+export default class MapView extends Component {
   constructor(props) {
     super(props);
 
@@ -155,12 +154,13 @@ class MapView extends Component {
 
     // location is [Lng,Lat,Zoom]
     if (this.props.match.params.location) {
-      this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
+      // this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
     } else {
       this.setState({ findingCurrentLocation: true });
 
       navigator.geolocation.getCurrentPosition((position) => {
-        this.initMap(position.coords.longitude, position.coords.latitude, 10);
+        // this.initMap(position.coords.longitude, position.coords.latitude, 10);
+        console.log('current location: ', position);
         this.setState({ findingCurrentLocation: false });
       }, (error) => {
         console.error(error);
@@ -178,57 +178,57 @@ class MapView extends Component {
     this.mount = false;
   }
 
-  initMap(long, lat, zoom) {
-    this.setState({ currentLocation: [long, lat] });
-    this.map = new mapboxgl.Map({
-      container: this.mapContainer,
-      style: config.styles.outdoors,
-      center: [long, lat],
-      zoom: zoom
-    });
-    this.map.addControl(new mapboxgl.NavigationControl());
-
-    const geolocateControl = new mapboxgl.GeolocateControl({
-      positionOptions: {
-        enableHighAccuracy: true
-      },
-      trackUserLocation: true
-    });
-    geolocateControl.on('geolocate', position => {
-      if (this.mounted) {
-        console.log('position updated (mounted)');
-        this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
-      }
-      console.log('position not updated (unmounted)');
-    });
-    this.map.addControl(geolocateControl);
-    this.map.on('load', () => {
-      this.loadPointsOfInterest();
-      this.loadYelpData();
-    });
-    this.map.on('moveend', this.onMapExtentChange.bind(this));
-
-    this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
-    this.map.on('mouseleave', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = '');
-    this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
-      const feature = evt.features[0];
-      ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
-      new mapboxgl.Popup()
-        .setLngLat(feature.geometry.coordinates)
-        .setDOMContent(this.popupContainer)
-        .addTo(this.map);
-      evt.originalEvent.stopPropagation();
-      evt.originalEvent.preventDefault();
-    });
-    this.map.on('click', LAYERS.YELP, evt => {
-      const feature = evt.features[0];
-      ReactDOM.unstable_renderSubtreeIntoContainer(this, <YelpPopup {...feature.properties} />, this.yelpPopupContainer);
-      new mapboxgl.Popup()
-        .setLngLat(feature.geometry.coordinates)
-        .setDOMContent(this.yelpPopupContainer)
-        .addTo(this.map);
-    });
-  }
+  // initMap(long, lat, zoom) {
+  //   this.setState({ currentLocation: [long, lat] });
+  //   this.map = new mapboxgl.Map({
+  //     container: this.mapContainer,
+  //     style: config.styles.outdoors,
+  //     center: [long, lat],
+  //     zoom: zoom
+  //   });
+  //   this.map.addControl(new mapboxgl.NavigationControl());
+  //
+  //   const geolocateControl = new mapboxgl.GeolocateControl({
+  //     positionOptions: {
+  //       enableHighAccuracy: true
+  //     },
+  //     trackUserLocation: true
+  //   });
+  //   geolocateControl.on('geolocate', position => {
+  //     if (this.mounted) {
+  //       console.log('position updated (mounted)');
+  //       this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
+  //     }
+  //     console.log('position not updated (unmounted)');
+  //   });
+  //   this.map.addControl(geolocateControl);
+  //   this.map.on('load', () => {
+  //     this.loadPointsOfInterest();
+  //     this.loadYelpData();
+  //   });
+  //   this.map.on('moveend', this.onMapExtentChange.bind(this));
+  //
+  //   this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
+  //   this.map.on('mouseleave', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = '');
+  //   this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
+  //     const feature = evt.features[0];
+  //     ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
+  //     new mapboxgl.Popup()
+  //       .setLngLat(feature.geometry.coordinates)
+  //       .setDOMContent(this.popupContainer)
+  //       .addTo(this.map);
+  //     evt.originalEvent.stopPropagation();
+  //     evt.originalEvent.preventDefault();
+  //   });
+  //   this.map.on('click', LAYERS.YELP, evt => {
+  //     const feature = evt.features[0];
+  //     ReactDOM.unstable_renderSubtreeIntoContainer(this, <YelpPopup {...feature.properties} />, this.yelpPopupContainer);
+  //     new mapboxgl.Popup()
+  //       .setLngLat(feature.geometry.coordinates)
+  //       .setDOMContent(this.yelpPopupContainer)
+  //       .addTo(this.map);
+  //   });
+  // }
 
   onMapExtentChange() {
     const keys = {};
@@ -294,17 +294,23 @@ class MapView extends Component {
       .filter(key => (nextFilter[key] && key !== 'y'))
       .map(key => ['==', config.fieldnames.Type, key]);
     this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
-
-    this.onMapExtentChange();
-  }
+this.onMapExtentChange(); }
 
   render() {
     return (
-      <div className='map-view'>
-        <ButtonGroup>
+      <View style={{flex: 1}}>
+        <MapboxGL.MapView
+          styleURL={config.styles.outdoors}
+          zoomLevel={15}
+          centerCoordinate={[11.256, 43.770]}
+          style={styles.mapView}
+          >
+        </MapboxGL.MapView>
+        {/*
+          <View>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.MAP)} active={this.state.currentView === VIEWS.MAP}>View Map</Button>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.LIST)} active={this.state.currentView === VIEWS.LIST}>View List</Button>
-        </ButtonGroup>
+          </View>
         <Route path='/map/:location' exact={true} render={() => {
             return (<CustomizeBtn onCustomize={this.onCustomize.bind(this)}
               filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />);
@@ -315,9 +321,14 @@ class MapView extends Component {
           render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
         <div ref={el => this.popupContainer = el}></div>
         <div ref={el => this.yelpPopupContainer = el} className='yelp-popup-container'></div>
-      </div>
+        */}
+      </View>
     );
   }
 }
 
-export default MapView;
+const styles = StyleSheet.create({
+  mapView: {
+
+  }
+});

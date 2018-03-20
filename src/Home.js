@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Body, Button, Card, CardItem, Container, Content } from 'native-base';
+import { Body, Button, Card, CardItem, Container, Content, Text } from 'native-base';
 import { ImageBackground, StyleSheet, Image, View } from 'react-native';
 import { Link } from 'react-router-native';
 import queryString from 'query-string';
@@ -7,6 +7,7 @@ import queryString from 'query-string';
 import { version } from '../package.json';
 import config from './config';
 import DefaultText from './DefaultText';
+import LinkButton from './LinkButton';
 
 
 const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
@@ -85,9 +86,13 @@ export default class Home extends Component {
               <DefaultText style={styles.tagLineFont}>RECREATION,</DefaultText>
               <DefaultText style={styles.tagLineFont}>Your Way</DefaultText>
             </View>
-            <View style={styles.buttons}>
-              <Button color='primary' tag={Link} to='/map'><DefaultText>Explore Current Location</DefaultText></Button>
-              <Button color='primary' onClick={this.toggleSearchForm}><DefaultText>Search by City or Place</DefaultText></Button>
+            <View style={styles.buttonsContainer}>
+              <LinkButton primary block style={{marginBottom: padding}} to='/map'>
+                <Text>Explore Current Location</Text>
+              </LinkButton>
+              <Button primary block onClick={this.toggleSearchForm}>
+                <Text>Search by City or Place</Text>
+              </Button>
               {/*
               <Collapse isOpen={this.state.searchFormOpen} className='search-form'>
                 <Input type='text' placeholder='Enter City or Place' value={this.state.cityPlace}
@@ -112,18 +117,20 @@ export default class Home extends Component {
   }
 };
 
+const padding = 10;
 const styles = StyleSheet.create({
   backgroundImage: {
     height: '100%',
     width: '100%'
   },
-  buttons: {
-    backgroundColor: 'rgba(0, 0, 0, 0.35)'
+  buttonsContainer: {
+    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    padding
   },
   content: {
     flex: 1,
     justifyContent: 'space-between',
-    padding: 10
+    padding
   },
   goedLogo: {
     alignSelf: 'center'
@@ -137,7 +144,8 @@ const styles = StyleSheet.create({
     shadowColor: '#4b4b4b',
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 1,
-    fontSize: 40,
+    fontSize: 50,
+    fontWeight: 'bold',
     textAlign: 'center'
   },
   version: {
