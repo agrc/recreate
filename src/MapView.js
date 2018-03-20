@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Route } from 'react-router-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import List from './List';
@@ -25,7 +25,8 @@ export default class MapView extends Component {
       currentView: VIEWS.MAP,
       findingCurrentLocation: false,
       featuresInCurrentExtent: [],
-      currentLocation: null,
+      currentLocation: [-111.8, 40.55],
+      zoom: 15,
       filter: this.getClearFilter()
     };
   }
@@ -154,12 +155,12 @@ export default class MapView extends Component {
 
     // location is [Lng,Lat,Zoom]
     if (this.props.match.params.location) {
-      // this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
+      this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
     } else {
       this.setState({ findingCurrentLocation: true });
 
       navigator.geolocation.getCurrentPosition((position) => {
-        // this.initMap(position.coords.longitude, position.coords.latitude, 10);
+        this.initMap(position.coords.longitude, position.coords.latitude, 10);
         console.log('current location: ', position);
         this.setState({ findingCurrentLocation: false });
       }, (error) => {
@@ -178,57 +179,51 @@ export default class MapView extends Component {
     this.mount = false;
   }
 
-  // initMap(long, lat, zoom) {
-  //   this.setState({ currentLocation: [long, lat] });
-  //   this.map = new mapboxgl.Map({
-  //     container: this.mapContainer,
-  //     style: config.styles.outdoors,
-  //     center: [long, lat],
-  //     zoom: zoom
-  //   });
-  //   this.map.addControl(new mapboxgl.NavigationControl());
-  //
-  //   const geolocateControl = new mapboxgl.GeolocateControl({
-  //     positionOptions: {
-  //       enableHighAccuracy: true
-  //     },
-  //     trackUserLocation: true
-  //   });
-  //   geolocateControl.on('geolocate', position => {
-  //     if (this.mounted) {
-  //       console.log('position updated (mounted)');
-  //       this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
-  //     }
-  //     console.log('position not updated (unmounted)');
-  //   });
-  //   this.map.addControl(geolocateControl);
-  //   this.map.on('load', () => {
-  //     this.loadPointsOfInterest();
-  //     this.loadYelpData();
-  //   });
-  //   this.map.on('moveend', this.onMapExtentChange.bind(this));
-  //
-  //   this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
-  //   this.map.on('mouseleave', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = '');
-  //   this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
-  //     const feature = evt.features[0];
-  //     ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
-  //     new mapboxgl.Popup()
-  //       .setLngLat(feature.geometry.coordinates)
-  //       .setDOMContent(this.popupContainer)
-  //       .addTo(this.map);
-  //     evt.originalEvent.stopPropagation();
-  //     evt.originalEvent.preventDefault();
-  //   });
-  //   this.map.on('click', LAYERS.YELP, evt => {
-  //     const feature = evt.features[0];
-  //     ReactDOM.unstable_renderSubtreeIntoContainer(this, <YelpPopup {...feature.properties} />, this.yelpPopupContainer);
-  //     new mapboxgl.Popup()
-  //       .setLngLat(feature.geometry.coordinates)
-  //       .setDOMContent(this.yelpPopupContainer)
-  //       .addTo(this.map);
-  //   });
-  // }
+  initMap(long, lat, zoom) {
+    this.setState({ currentLocation: [long, lat], zoom: zoom });
+    // this.map.addControl(new mapboxgl.NavigationControl());
+    //
+    // const geolocateControl = new mapboxgl.GeolocateControl({
+    //   positionOptions: {
+    //     enableHighAccuracy: true
+    //   },
+    //   trackUserLocation: true
+    // });
+    // geolocateControl.on('geolocate', position => {
+    //   if (this.mounted) {
+    //     console.log('position updated (mounted)');
+    //     this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
+    //   }
+    //   console.log('position not updated (unmounted)');
+    // });
+    // this.map.addControl(geolocateControl);
+    // this.map.on('load', () => {
+    //   this.loadPointsOfInterest();
+    //   this.loadYelpData();
+    // });
+    // this.map.on('moveend', this.onMapExtentChange.bind(this));
+    //
+    // this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
+    // this.map.on('mouseleave', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = '');
+    // this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
+    //   const feature = evt.features[0];
+    //   ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
+    //   new mapboxgl.Popup()
+    //     .setLngLat(feature.geometry.coordinates)
+    //     .setDOMContent(this.popupContainer)
+    //     .addTo(this.map);
+    //   evt.originalEvent.stopPropagation();
+    //   evt.originalEvent.preventDefault();
+    // });
+    // this.map.on('click', LAYERS.YELP, evt => {
+    //   const feature = evt.features[0];
+    //   ReactDOM.unstable_renderSubtreeIntoContainer(this, <YelpPopup {...feature.properties} />, this.yelpPopupContainer);
+    //   new mapboxgl.Popup()
+    //     .setLngLat(feature.geometry.coordinates)
+    //     .setDOMContent(this.yelpPopupContainer)
+    //     .addTo(this.map);
+    // });
+  }
 
   onMapExtentChange() {
     const keys = {};
@@ -294,19 +289,26 @@ export default class MapView extends Component {
       .filter(key => (nextFilter[key] && key !== 'y'))
       .map(key => ['==', config.fieldnames.Type, key]);
     this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
-this.onMapExtentChange(); }
+    this.onMapExtentChange();
+  }
 
   render() {
     return (
-      <View style={{flex: 1}}>
+      <View style={styles.container}>
+        { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
         <MapboxGL.MapView
           styleURL={config.styles.outdoors}
-          zoomLevel={15}
-          centerCoordinate={[11.256, 43.770]}
-          style={styles.mapView}
+          zoomLevel={this.state.zoom}
+          centerCoordinate={this.state.currentLocation}
+          style={[styles.container, {
+            display: (this.state.currentView === VIEWS.MAP && !this.state.findingCurrentLocation) ? 'flex': 'none'
+          }]}
+          showUserLocation={true}
           >
         </MapboxGL.MapView>
         {/*
+        <Route path='/map/:location/list'
+          render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
           <View>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.MAP)} active={this.state.currentView === VIEWS.MAP}>View Map</Button>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.LIST)} active={this.state.currentView === VIEWS.LIST}>View List</Button>
@@ -315,10 +317,8 @@ this.onMapExtentChange(); }
             return (<CustomizeBtn onCustomize={this.onCustomize.bind(this)}
               filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />);
           } }/>
-        { this.state.findingCurrentLocation && <span className='finding-text'>Finding your current location...</span> }
-        <div ref={el => this.mapContainer = el} style={{display: (this.state.currentView === VIEWS.MAP) ? 'block': 'none'}}></div>
-        <Route path='/map/:location/list'
-          render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
+        */}
+        {/*
         <div ref={el => this.popupContainer = el}></div>
         <div ref={el => this.yelpPopupContainer = el} className='yelp-popup-container'></div>
         */}
@@ -327,8 +327,16 @@ this.onMapExtentChange(); }
   }
 }
 
+const padding = 8
 const styles = StyleSheet.create({
-  mapView: {
-
+  container: {
+    flex: 1
+  },
+  hidden: {
+    display: 'none'
+  },
+  findingText: {
+    padding,
+    fontSize: 15
   }
 });

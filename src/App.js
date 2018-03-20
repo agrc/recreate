@@ -8,13 +8,14 @@ import { NativeRouter as Router, Route, Link, Switch } from 'react-router-native
 import Home from './Home';
 import MapView from './MapView';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
+import { REACT_APP_MAPBOX_TOKEN } from 'react-native-dotenv';
 
 // import FeatureDetails from './FeatureDetails';
 // import DetailMap from './DetailMap';
 // import ChangeLog from './ChangeLog';
 
 
-MapboxGL.setAccessToken(process.env.REACT_APP_MAPBOX_TOKEN);
+MapboxGL.setAccessToken(REACT_APP_MAPBOX_TOKEN);
 export default class App extends Component {
   render() {
     return (
