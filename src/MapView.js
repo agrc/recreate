@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { Route } from 'react-router-native';
+// import { Route } from 'react-router-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
-import List from './List';
+// import List from './List';
 // import Popup from './Popup';
 // import YelpPopup from './YelpPopup';
 // import CustomizeBtn from './CustomizeBtn';
@@ -11,7 +11,7 @@ import config from './config';
 import distance from '@turf/distance';
 import queryString from 'query-string';
 import isEqual from 'lodash.isequal';
-import { Button } from 'native-base';
+import { Button, Icon } from 'native-base';
 
 
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
@@ -27,7 +27,8 @@ export default class MapView extends Component {
       featuresInCurrentExtent: [],
       currentLocation: [-111.8, 40.55],
       zoom: 15,
-      filter: this.getClearFilter()
+      filter: this.getClearFilter(),
+      followUser: false
     };
   }
 
@@ -167,7 +168,7 @@ export default class MapView extends Component {
         console.error(error);
         this.initMap(-111.8, 40.55, 12); // east side of salt lake valley
         this.setState({ findingCurrentLocation: false });
-      });
+      }, {enableHighAccuracy: true});
     }
 
     if (this.props.match.params.list) {
@@ -291,6 +292,9 @@ export default class MapView extends Component {
     this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
     this.onMapExtentChange();
   }
+  onGPSButtonPress() {
+    this.setState({ followUser: !this.state.followUser });
+  }
 
   render() {
     return (
@@ -304,8 +308,14 @@ export default class MapView extends Component {
             display: (this.state.currentView === VIEWS.MAP && !this.state.findingCurrentLocation) ? 'flex': 'none'
           }]}
           showUserLocation={true}
+          userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
           >
         </MapboxGL.MapView>
+        <Button success onPress={this.onGPSButtonPress.bind(this)}
+          bordered={!this.state.followUser}
+          style={styles.locateButton}>
+          <Icon name='md-locate' />
+        </Button>
         {/*
         <Route path='/map/:location/list'
           render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
@@ -338,5 +348,10 @@ const styles = StyleSheet.create({
   findingText: {
     padding,
     fontSize: 15
+  },
+  locateButton: {
+    position: 'absolute',
+    top: padding,
+    left: padding
   }
 });
