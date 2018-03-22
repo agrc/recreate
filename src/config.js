@@ -17,9 +17,8 @@ export default {
     p: aGOLServiceBase.replace(layerToken, `UtahParksAndMonuments${devPostfix}`),
     h: aGOLServiceBase.replace(layerToken, `RouteLines${devPostfix}`),
     w: aGOLServiceBase.replace(layerToken, `BoatRamps${devPostfix}`),
-    POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`,
     yelp: 'https://f0inm0pv3a.execute-api.us-east-1.amazonaws.com/dev/search',
-    yelpIcon: `${process.env.PUBLIC_URL}/Yelp_burst_positive_RGB.png`
+    yelpIcon: `Yelp_burst_positive_RGB.png`
   },
   fieldnames: {
     Name: 'Name',
@@ -48,8 +47,8 @@ export default {
     outdoors: 'mapbox://styles/mapbox/outdoors-v10'
   },
   colors: {
-    // these match values in index.scss
     blue: '#358EA6',
-    green: '#35a669'
+    green: '#35a669',
+    yellow: '#e7eb3f'
   }
 };

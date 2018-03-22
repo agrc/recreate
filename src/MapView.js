@@ -12,6 +12,7 @@ import distance from '@turf/distance';
 import queryString from 'query-string';
 import isEqual from 'lodash.isequal';
 import { Button, Icon } from 'native-base';
+import poiJson from './PointsOfInterest.json'
 
 
 const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
@@ -40,27 +41,6 @@ export default class MapView extends Component {
   }
 
   loadPointsOfInterest() {
-    this.map.addLayer({
-      id: LAYERS.POINTS_OF_INTEREST,
-      type: 'circle',
-      source: {
-        type: 'geojson',
-        data: config.urls.POI_DATA
-      },
-      paint: {
-        'circle-radius': 8,
-        'circle-color': {
-          property: 'Type',
-          type: 'categorical',
-          stops: [
-            ['h', '#e7eb3f'],
-            ['p', config.colors.green],
-            ['w', config.colors.blue]
-          ]
-        },
-        'circle-stroke-width': 1
-      }
-    });
 
     const onDataLoad = (mapDataEvent) => {
       if (mapDataEvent.isSourceLoaded &&
@@ -152,8 +132,6 @@ export default class MapView extends Component {
   }
 
   componentDidMount() {
-    this.mount = true;
-
     // location is [Lng,Lat,Zoom]
     if (this.props.match.params.location) {
       this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
@@ -176,28 +154,8 @@ export default class MapView extends Component {
     }
   }
 
-  componentWillUnmount() {
-    this.mount = false;
-  }
-
   initMap(long, lat, zoom) {
     this.setState({ currentLocation: [long, lat], zoom: zoom });
-    // this.map.addControl(new mapboxgl.NavigationControl());
-    //
-    // const geolocateControl = new mapboxgl.GeolocateControl({
-    //   positionOptions: {
-    //     enableHighAccuracy: true
-    //   },
-    //   trackUserLocation: true
-    // });
-    // geolocateControl.on('geolocate', position => {
-    //   if (this.mounted) {
-    //     console.log('position updated (mounted)');
-    //     this.setState({ currentLocation: [position.coords.longitude, position.coords.latitude] });
-    //   }
-    //   console.log('position not updated (unmounted)');
-    // });
-    // this.map.addControl(geolocateControl);
     // this.map.on('load', () => {
     //   this.loadPointsOfInterest();
     //   this.loadYelpData();
@@ -301,6 +259,7 @@ export default class MapView extends Component {
       <View style={styles.container}>
         { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
         <MapboxGL.MapView
+          ref={(ref) => (this.map = ref)}
           styleURL={config.styles.outdoors}
           zoomLevel={this.state.zoom}
           centerCoordinate={this.state.currentLocation}
@@ -310,6 +269,9 @@ export default class MapView extends Component {
           showUserLocation={true}
           userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
           >
+          <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson}>
+            <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
+          </MapboxGL.ShapeSource>
         </MapboxGL.MapView>
         <Button success onPress={this.onGPSButtonPress.bind(this)}
           bordered={!this.state.followUser}
@@ -353,5 +315,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: padding,
     left: padding
+  }
+});
+const layerStyles = MapboxGL.StyleSheet.create({
+  poiLayer: {
+    circleRadius: 8,
+    circleColor: MapboxGL.StyleSheet.source(
+      [
+        ['h', config.colors.yellow],
+        ['p', config.colors.green],
+        ['w', config.colors.blue]
+      ],
+      config.fieldnames.Type,
+      MapboxGL.InterpolationMode.Categorical
+    ),
+    circleStrokeWidth: 1
   }
 });

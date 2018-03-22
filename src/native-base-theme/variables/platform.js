@@ -1,4 +1,5 @@
 import color from "color";
+import config from '../../config';
 
 import { Platform, Dimensions, PixelRatio } from "react-native";
 
@@ -95,9 +96,9 @@ export default {
   checkboxTickColor: "#fff",
 
   // Color
-  brandPrimary: "#358ea6",
+  brandPrimary: config.colors.blue,
   brandInfo: "#62B1F6",
-  brandSuccess: "#5cb85c",
+  brandSuccess: config.colors.green,
   brandDanger: "#d9534f",
   brandWarning: "#f0ad4e",
   brandDark: "#000",
