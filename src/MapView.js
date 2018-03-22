@@ -273,10 +273,11 @@ export default class MapView extends Component {
             <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
           </MapboxGL.ShapeSource>
         </MapboxGL.MapView>
-        <Button success onPress={this.onGPSButtonPress.bind(this)}
-          bordered={!this.state.followUser}
+        <Button onPress={this.onGPSButtonPress.bind(this)}
+          light={!this.state.followUser}
+          primary={this.state.followUser}
           style={styles.locateButton}>
-          <Icon name='md-locate' />
+          <Icon name='md-locate' style={styles.mapButtonIcon} />
         </Button>
         {/*
         <Route path='/map/:location/list'
@@ -313,8 +314,16 @@ const styles = StyleSheet.create({
   },
   locateButton: {
     position: 'absolute',
-    top: padding,
-    left: padding
+    bottom: 30 + padding,
+    right: padding,
+    paddingTop: 3,
+    height: 36,
+    borderColor: '#999999',
+    borderWidth: 1
+  },
+  mapButtonIcon: {
+    marginLeft: padding,
+    marginRight: padding
   }
 });
 const layerStyles = MapboxGL.StyleSheet.create({
