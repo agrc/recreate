@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import config from './config';
-import ListItem from './ListItem';
+import PoiListItem from './PoiListItem';
 import YelpListItem from './YelpListItem';
 import distance from '@turf/distance';
+import { Container, Content, List as NBList, ListItem, View, Text } from 'native-base';
 
 
 class List extends Component {
   groupFeatures(features) {
+    console.log('groupFeatures', features);
     const grouped = {};
 
     features.forEach(f => {
@@ -28,28 +30,30 @@ class List extends Component {
     const grouped_features = this.groupFeatures(this.props.features);
 
     return (
-      <div className='list scroller'>
-        { Object.keys(grouped_features).map(group => {
-            return (
-              <div key={group}>
-                <h5>{ config.poi_type_lookup[group] }</h5>
-                <table className='table table-striped table-sm list-table'>
-                  <tbody>
+      <Container>
+        <Content>
+          <NBList>
+            { Object.keys(grouped_features).map(group => {
+                return (
+                  <View key={group}>
+                    <ListItem itemHeader>
+                      <Text>{ config.poi_type_lookup[group] }</Text>
+                    </ListItem>
                     { grouped_features[group]
                         .sort((a, b) => a.properties.miles - b.properties.miles)
                         .map(f => {
                           return (f.properties.Type !== 'y') ?
-                            <ListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} /> :
+                            <PoiListItem {...f.properties} coords={f.geometry.coordinates} key={f.id} /> :
                             <YelpListItem {...f.properties} key={f.properties.id} />
                         })
                     }
-                  </tbody>
-                </table>
-              </div>
-            );
-          })
-        }
-      </div>
+                  </View>
+                );
+              })
+            }
+          </NBList>
+        </Content>
+      </Container>
     );
   }
 }

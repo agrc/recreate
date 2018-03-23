@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-// import { Route } from 'react-router-native';
+import { StyleSheet, Text } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
-// import List from './List';
+import List from './List';
 // import Popup from './Popup';
 // import YelpPopup from './YelpPopup';
 // import CustomizeBtn from './CustomizeBtn';
@@ -11,26 +10,27 @@ import config from './config';
 import distance from '@turf/distance';
 import queryString from 'query-string';
 import isEqual from 'lodash.isequal';
-import { Button, Icon } from 'native-base';
+import { Button, Container, Icon, Tabs, Tab } from 'native-base';
 import poiJson from './PointsOfInterest.json'
 
 
-const VIEWS = { MAP: 'MAP', LIST: 'LIST' };
-const LAYERS = { POINTS_OF_INTEREST: 'points-of-interest', YELP: 'yelp' };
+const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
 
 export default class MapView extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      currentView: VIEWS.MAP,
       findingCurrentLocation: false,
       featuresInCurrentExtent: [],
       currentLocation: [-111.8, 40.55],
       zoom: 15,
       filter: this.getClearFilter(),
-      followUser: false
+      followUser: false,
+      mapLoaded: false
     };
+
+    this.yelpDataLoaded = true;
   }
 
   getClearFilter() {
@@ -40,98 +40,84 @@ export default class MapView extends Component {
     return filter;
   }
 
-  loadPointsOfInterest() {
-
-    const onDataLoad = (mapDataEvent) => {
-      if (mapDataEvent.isSourceLoaded &&
-          mapDataEvent.source.data === config.urls.POI_DATA &&
-          mapDataEvent.sourceDataType !== 'metadata') {
-        this.poiDataLoaded = true;
-
-        this.loadList();
-        this.map.off('data', onDataLoad);
-      }
-    };
-
-    this.map.on('sourcedata', onDataLoad);
-  }
-
   loadList() {
-    if (this.poiDataLoaded && this.yelpDataLoaded) {
+    if (this.yelpDataLoaded) {
       this.onMapExtentChange();
     }
   }
 
-  async loadYelpData() {
-    const yelpID = 'yelp-source';
-    const yelpIconImageName = 'yelp-icon'
-
-    this.map.addSource(yelpID, {
-      type: 'geojson',
-      data: {
-        type: 'FeatureCollection',
-        features: []
-      }
-    });
-
-    this.map.loadImage(config.urls.yelpIcon, (error, image) => {
-      if (error) {
-        throw error;
-      }
-
-      this.map.addImage(yelpIconImageName, image);
-
-      this.map.addLayer({
-        id: LAYERS.YELP,
-        type: 'symbol',
-        source: yelpID,
-        layout: {
-          'icon-image': yelpIconImageName,
-          'icon-size': 0.5
-        }
-      });
-    });
-
-    const updateYelpData = async () => {
-      const center = this.map.getCenter();
-      const bounds = this.map.getBounds();
-
-      // TODO: radius must be less than 4000 or yelp returns an error
-      const radius = Math.round(distance(bounds.getSouthWest().toArray(), bounds.getNorthEast().toArray(), 'meters'));
-
-      const params = {
-        longitude: center.lng,
-        latitude: center.lat,
-        radius,
-        term: 'gas',
-        limit: '50'
-      };
-      const response = await fetch(`${config.urls.yelp}?${queryString.stringify(params)}`);
-
-      if (!response.ok) {
-        console.error('error in yelp request', response);
-
-        return;
-      }
-
-      // query api
-      const yelpSource = this.map.getSource(yelpID);
-      yelpSource.setData(await response.json());
-
-      if (!this.yelpDataLoaded) {
-        this.yelpDataLoaded = true;
-
-        // TODO: gross!!!
-        window.setTimeout(this.loadList.bind(this), 200);
-      }
-    };
-
-    updateYelpData();
-
-    this.map.on('moveend', updateYelpData);
-  }
+  // async loadYelpData() {
+  //   const yelpID = 'yelp-source';
+  //   const yelpIconImageName = 'yelp-icon'
+  //
+  //   this.map.addSource(yelpID, {
+  //     type: 'geojson',
+  //     data: {
+  //       type: 'FeatureCollection',
+  //       features: []
+  //     }
+  //   });
+  //
+  //   this.map.loadImage(config.urls.yelpIcon, (error, image) => {
+  //     if (error) {
+  //       throw error;
+  //     }
+  //
+  //     this.map.addImage(yelpIconImageName, image);
+  //
+  //     this.map.addLayer({
+  //       id: LAYERS.YELP,
+  //       type: 'symbol',
+  //       source: yelpID,
+  //       layout: {
+  //         'icon-image': yelpIconImageName,
+  //         'icon-size': 0.5
+  //       }
+  //     });
+  //   });
+  //
+  //   const updateYelpData = async () => {
+  //     const center = this.map.getCenter();
+  //     const bounds = this.map.getBounds();
+  //
+  //     // TODO: radius must be less than 4000 or yelp returns an error
+  //     const radius = Math.round(distance(bounds.getSouthWest().toArray(), bounds.getNorthEast().toArray(), 'meters'));
+  //
+  //     const params = {
+  //       longitude: center.lng,
+  //       latitude: center.lat,
+  //       radius,
+  //       term: 'gas',
+  //       limit: '50'
+  //     };
+  //     const response = await fetch(`${config.urls.yelp}?${queryString.stringify(params)}`);
+  //
+  //     if (!response.ok) {
+  //       console.error('error in yelp request', response);
+  //
+  //       return;
+  //     }
+  //
+  //     // query api
+  //     const yelpSource = this.map.getSource(yelpID);
+  //     yelpSource.setData(await response.json());
+  //
+  //     if (!this.yelpDataLoaded) {
+  //       this.yelpDataLoaded = true;
+  //
+  //       // TODO: gross!!!
+  //       window.setTimeout(this.loadList.bind(this), 200);
+  //     }
+  //   };
+  //
+  //   updateYelpData();
+  //
+  //   this.map.on('moveend', updateYelpData);
+  // }
 
   componentDidMount() {
+    console.log('componentDidMount');
+
     // location is [Lng,Lat,Zoom]
     if (this.props.match.params.location) {
       this.initMap(...this.props.match.params.location.split(',').map(parseFloat));
@@ -148,22 +134,12 @@ export default class MapView extends Component {
         this.setState({ findingCurrentLocation: false });
       }, {enableHighAccuracy: true});
     }
-
-    if (this.props.match.params.list) {
-      this.setState({ currentView: VIEWS.LIST });
-    }
   }
 
   initMap(long, lat, zoom) {
     this.setState({ currentLocation: [long, lat], zoom: zoom });
-    // this.map.on('load', () => {
-    //   this.loadPointsOfInterest();
-    //   this.loadYelpData();
-    // });
-    // this.map.on('moveend', this.onMapExtentChange.bind(this));
-    //
-    // this.map.on('mouseenter', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = 'pointer');
-    // this.map.on('mouseleave', LAYERS.POINTS_OF_INTEREST, () => this.map.getCanvas().style.cursor = '');
+    this.loadList();
+    // this.loadYelpData();
     // this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
     //   const feature = evt.features[0];
     //   ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
@@ -184,9 +160,24 @@ export default class MapView extends Component {
     // });
   }
 
-  onMapExtentChange() {
+  async onMapExtentChange(event) {
+    console.log('onMapExtentChange', event);
+
+    if (!event) {
+      return;
+    }
+
+    const layerIds = [LAYERS.POINTS_OF_INTEREST];
+    const bbox = [0, this.mapWidth, this.mapHeight, 0];
+
+    console.log('bbox', bbox);
+
+    let features = await this.map.queryRenderedFeaturesInRect(bbox, null, layerIds);
+
+    console.log(features);
+
     const keys = {};
-    const features = this.map.queryRenderedFeatures({layers:[LAYERS.POINTS_OF_INTEREST, LAYERS.YELP]}).filter((f) => {
+    features = features.features.filter((f) => {
       const id = f.id || f.properties.id;
       if (keys[id]) {
         return false
@@ -199,89 +190,106 @@ export default class MapView extends Component {
       featuresInCurrentExtent: features
     });
 
-    const mapLocation = this.map.getCenter().toArray().map(num => round(num, 2));
-    mapLocation.push(round(this.map.getZoom(), 1));
+    const mapLocation = event.geometry.coordinates.map(num => round(num, 2));
+    mapLocation.push(round(event.properties.zoomLevel, 1));
     let route = `/map/${mapLocation.join(',')}`;
-    if (this.state.currentView === VIEWS.LIST) {
-      route += '/list';
-    }
     this.props.history.replace(route);
   }
 
-  onRadioButtonClick(newView) {
-    this.setState({ currentView: newView });
-    if (newView === VIEWS.LIST) {
-      this.props.history.push(`${this.props.history.location.pathname}/list`);
-    } else {
-      this.props.history.push(`${this.props.history.location.pathname.replace('/list', '')}`);
-    }
-  }
+  // onCustomize(value) {
+  //   const newFilter = {};
+  //   newFilter[value] = !this.state.filter[value];
+  //   this.setState((previousState) => ({
+  //     filter: { ...previousState.filter, ...newFilter }
+  //   }));
+  // }
+  //
+  // onClearCustomize() {
+  //   this.setState({ filter: this.getClearFilter() });
+  // }
 
-  onCustomize(value) {
-    const newFilter = {};
-    newFilter[value] = !this.state.filter[value];
-    this.setState((previousState) => ({
-      filter: { ...previousState.filter, ...newFilter }
-    }));
-  }
+  // componentWillUpdate(nextProps, nextState) {
+  //   console.log('componentWillUpdate');
+  //
+  //   const nextFilter = nextState.filter;
+  //   if (isEqual(nextFilter, this.state.filter)) {
+  //     return;
+  //   }
+  //
+  //   if (isEqual(nextFilter, this.getClearFilter())) {
+  //     this.map.setLayoutProperty(LAYERS.YELP, 'visibility', 'visible');
+  //     this.map.setFilter(LAYERS.POINTS_OF_INTEREST, null);
+  //     return;
+  //   }
+  //
+  //   const yelpVisibility = (nextFilter.y) ? 'visible' : 'none';
+  //   this.map.setLayoutProperty(LAYERS.YELP, 'visibility', yelpVisibility);
+  //
+  //   const expressions = Object.keys(nextFilter)
+  //     .filter(key => (nextFilter[key] && key !== 'y'))
+  //     .map(key => ['==', config.fieldnames.Type, key]);
+  //   this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
+  // }
 
-  onClearCustomize() {
-    this.setState({ filter: this.getClearFilter() });
-  }
-
-  componentWillUpdate(nextProps, nextState) {
-    const nextFilter = nextState.filter;
-    if (isEqual(nextFilter, this.state.filter)) {
-      return;
-    }
-
-    if (isEqual(nextFilter, this.getClearFilter())) {
-      this.map.setLayoutProperty(LAYERS.YELP, 'visibility', 'visible');
-      this.map.setFilter(LAYERS.POINTS_OF_INTEREST, null);
-      return;
-    }
-
-    const yelpVisibility = (nextFilter.y) ? 'visible' : 'none';
-    this.map.setLayoutProperty(LAYERS.YELP, 'visibility', yelpVisibility);
-
-    const expressions = Object.keys(nextFilter)
-      .filter(key => (nextFilter[key] && key !== 'y'))
-      .map(key => ['==', config.fieldnames.Type, key]);
-    this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
-    this.onMapExtentChange();
-  }
   onGPSButtonPress() {
     this.setState({ followUser: !this.state.followUser });
   }
 
+  onMapViewLayout(event) {
+    console.log('onMapViewLayout');
+
+    this.mapWidth = event.nativeEvent.layout.width;
+    this.mapHeight = event.nativeEvent.layout.height;
+  }
+
+  async onMapLoad() {
+    console.log('onMapLoad');
+
+    this.setState({ mapLoaded: true });
+
+    // manually trigger onmapExtentChange event to get features on load
+    const coordinates = await this.map.getCenter();
+    const zoomLevel = await this.map.getZoom();
+    this.onMapExtentChange({
+      geometry: { coordinates },
+      properties: { zoomLevel }
+    });
+  }
+
   render() {
     return (
-      <View style={styles.container}>
-        { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
-        <MapboxGL.MapView
-          ref={(ref) => (this.map = ref)}
-          styleURL={config.styles.outdoors}
-          zoomLevel={this.state.zoom}
-          centerCoordinate={this.state.currentLocation}
-          style={[styles.container, {
-            display: (this.state.currentView === VIEWS.MAP && !this.state.findingCurrentLocation) ? 'flex': 'none'
-          }]}
-          showUserLocation={true}
-          userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
-          >
-          <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson}>
-            <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
-          </MapboxGL.ShapeSource>
-        </MapboxGL.MapView>
-        <Button onPress={this.onGPSButtonPress.bind(this)}
-          light={!this.state.followUser}
-          primary={this.state.followUser}
-          style={styles.locateButton}>
-          <Icon name='md-locate' style={styles.mapButtonIcon} />
-        </Button>
+      <Container style={styles.container}>
+        <Tabs>
+          <Tab heading='Map'>
+            { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
+            <MapboxGL.MapView
+              onDidFinishRenderingMapFully={this.onMapLoad.bind(this)}
+              onLayout={this.onMapViewLayout.bind(this)}
+              ref={(ref) => (this.map = ref)}
+              styleURL={config.styles.outdoors}
+              zoomLevel={this.state.zoom}
+              centerCoordinate={this.state.currentLocation}
+              style={styles.container}
+              showUserLocation={this.state.followUser}
+              userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
+              onRegionDidChange={(this.state.mapLoaded) ? this.onMapExtentChange.bind(this) : null }
+              >
+              <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson}>
+                <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
+              </MapboxGL.ShapeSource>
+            </MapboxGL.MapView>
+            <Button onPress={this.onGPSButtonPress.bind(this)}
+              light={!this.state.followUser}
+              primary={this.state.followUser}
+              style={styles.locateButton}>
+              <Icon name='md-locate' style={styles.mapButtonIcon} />
+            </Button>
+          </Tab>
+          <Tab heading='List'>
+            <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} />
+          </Tab>
+        </Tabs>
         {/*
-        <Route path='/map/:location/list'
-          render={() => <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} /> } />
           <View>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.MAP)} active={this.state.currentView === VIEWS.MAP}>View Map</Button>
           <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.LIST)} active={this.state.currentView === VIEWS.LIST}>View List</Button>
@@ -295,7 +303,7 @@ export default class MapView extends Component {
         <div ref={el => this.popupContainer = el}></div>
         <div ref={el => this.yelpPopupContainer = el} className='yelp-popup-container'></div>
         */}
-      </View>
+      </Container>
     );
   }
 }
