@@ -3,7 +3,7 @@ import { Button } from 'native-base';
 import { withRouter } from 'react-router-native';
 
 
-class DefaultText extends Component {
+class LinkButton extends Component {
   onPress() {
     this.props.history.push(this.props.to);
   }
@@ -14,4 +14,4 @@ class DefaultText extends Component {
   }
 }
 
-export default withRouter(DefaultText);
+export default withRouter(LinkButton);

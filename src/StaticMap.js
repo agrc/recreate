@@ -1,4 +1,6 @@
 import React from 'react';
+import { Dimensions, Image } from 'react-native';
+import { REACT_APP_MAPBOX_TOKEN } from 'react-native-dotenv';
 
 
 export default function StaticMap(props) {
@@ -26,16 +28,26 @@ export default function StaticMap(props) {
     zoom = 'auto';
   }
 
-  const width = document.body.clientWidth;
-  const staticMapUrl = [
+  const width = Math.round(Dimensions.get('window').width);
+  const height = Math.round(width*0.62);
+  const margin = -8;
+  const uri = [
     'https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/static/',
     `geojson(${geojson})/`,
     `${zoom}/`,
-    `${width}x${Math.round(width*0.62)}@2x`,
-    `?access_token=${process.env.REACT_APP_MAPBOX_TOKEN}`
+    `${width}x${height}@2x`,
+    `?access_token=${REACT_APP_MAPBOX_TOKEN}`
   ].join('');
 
+  const style = {
+    width,
+    height,
+    marginLeft: margin,
+    marginRight: margin,
+    marginTop: 10
+  };
+
   return (
-    <img className='static-map' src={staticMapUrl} alt='detail map'></img>
+    <Image source={{ uri }} style={style} />
   );
 };

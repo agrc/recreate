@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Body, Button, Card, CardItem, Container, Content, Text } from 'native-base';
+import { Button, Container, Text } from 'native-base';
 import { ImageBackground, StyleSheet, Image, View } from 'react-native';
 import { Link } from 'react-router-native';
 import queryString from 'query-string';
 // import mapboxgl from 'mapbox-gl';
 import { version } from '../package.json';
 import config from './config';
-import DefaultText from './DefaultText';
+import { WhiteText } from './AppText';
 import LinkButton from './LinkButton';
 
 
@@ -83,8 +83,8 @@ export default class Home extends Component {
         <ImageBackground source={require('./images/arches.jpg')} style={styles.backgroundImage}>
           <View style={styles.content}>
             <View style={styles.tagLineContainer}>
-              <DefaultText style={styles.tagLineFont}>RECREATION,</DefaultText>
-              <DefaultText style={styles.tagLineFont}>Your Way</DefaultText>
+              <WhiteText style={styles.tagLineFont}>RECREATION,</WhiteText>
+              <WhiteText style={styles.tagLineFont}>Your Way</WhiteText>
             </View>
             <View style={styles.buttonsContainer}>
               <LinkButton primary block style={{marginBottom: padding}} to='/map'>
@@ -108,7 +108,7 @@ export default class Home extends Component {
             </View>
             <Image source={require('./images/outdoorlogo.png')} style={styles.goedLogo}/>
             <Link to='changelog' style={styles.version}>
-              <DefaultText style={styles.versionText}>{version}</DefaultText>
+              <WhiteText style={styles.versionText}>{version}</WhiteText>
             </Link>
           </View>
         </ImageBackground>
