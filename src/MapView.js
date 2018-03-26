@@ -130,7 +130,7 @@ export default class MapView extends Component {
         this.setState({ findingCurrentLocation: false });
       }, (error) => {
         console.error(error);
-        this.initMap(-111.8, 40.55, 12); // east side of salt lake valley
+        this.initMap(...config.defaultExtent);
         this.setState({ findingCurrentLocation: false });
       }, {enableHighAccuracy: true});
     }

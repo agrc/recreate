@@ -7,6 +7,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default {
+  mapExtent: [-111.8, 40.55, 10],  // long, lat, zoom
   poi_type_lookup: {
     p: 'Parks',
     y: 'Local Amenities (via Yelp)',
