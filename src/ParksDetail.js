@@ -2,6 +2,7 @@ import React from 'react';
 import DetailsBase from './DetailsBase';
 import StaticMap from './StaticMap';
 import config from './config';
+import { View, Text } from 'native-base';
 
 
 class ParksDetails extends DetailsBase {
@@ -13,12 +14,10 @@ class ParksDetails extends DetailsBase {
 
   render() {
     return (
-      <div className='detail'>
-        <div className='padder'>
-          <p>{this.state[config.fieldnames.parks.TYPE]}</p>
-        </div>
+      <View className='detail'>
+        <Text>{this.state[config.fieldnames.parks.TYPE]}</Text>
         <StaticMap geojson={this.state.geojson} />
-      </div>
+      </View>
     );
   }
 };

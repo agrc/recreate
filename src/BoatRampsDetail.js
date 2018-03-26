@@ -1,6 +1,7 @@
 import React from 'react';
 import DetailsBase from './DetailsBase';
 import StaticMap from './StaticMap';
+import { View, Text } from 'native-base';
 
 
 class BoatRampsDetail extends DetailsBase {
@@ -15,13 +16,11 @@ class BoatRampsDetail extends DetailsBase {
 
   render() {
     return (
-      <div className='detail'>
-        <div className='padder'>
-          <p>{this.state.Water_body}</p>
-          <p>Allowed Vessels: {this.state.Vessels}</p>
-        </div>
+      <View>
+        <Text>{this.state.Water_body}</Text>
+        <Text>Allowed Vessels: {this.state.Vessels}</Text>
         <StaticMap geojson={this.state.geojson} poitype='w'/>
-      </div>
+      </View>
     );
   }
 }
