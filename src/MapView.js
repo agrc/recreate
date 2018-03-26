@@ -27,7 +27,8 @@ export default class MapView extends Component {
       zoom: 15,
       filter: this.getClearFilter(),
       followUser: false,
-      mapLoaded: false
+      mapLoaded: false,
+      clickedFeatureSet: {}
     };
 
     this.yelpDataLoaded = true;
@@ -139,7 +140,9 @@ export default class MapView extends Component {
   initMap(long, lat, zoom) {
     this.setState({ currentLocation: [long, lat], zoom: zoom });
     this.loadList();
+
     // this.loadYelpData();
+
     // this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
     //   const feature = evt.features[0];
     //   ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
@@ -170,11 +173,7 @@ export default class MapView extends Component {
     const layerIds = [LAYERS.POINTS_OF_INTEREST];
     const bbox = [0, this.mapWidth, this.mapHeight, 0];
 
-    console.log('bbox', bbox);
-
     let features = await this.map.queryRenderedFeaturesInRect(bbox, null, layerIds);
-
-    console.log(features);
 
     const keys = {};
     features = features.features.filter((f) => {
@@ -256,6 +255,14 @@ export default class MapView extends Component {
     });
   }
 
+  onPOIPress(event) {
+    const clickedFeature = event.nativeEvent.payload;
+
+    this.setState({ clickedFeatureSet: MapboxGL.geoUtils.makeFeatureCollection([clickedFeature]) });
+
+    console.log(clickedFeature);
+  }
+
   render() {
     return (
       <Container style={styles.container}>
@@ -274,8 +281,11 @@ export default class MapView extends Component {
               userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
               onRegionDidChange={(this.state.mapLoaded) ? this.onMapExtentChange.bind(this) : null }
               >
-              <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson}>
+              <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson} onPress={this.onPOIPress.bind(this)}>
                 <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
+              </MapboxGL.ShapeSource>
+              <MapboxGL.ShapeSource id='CALLOUT_SOURCE' shape={this.state.clickedFeatureSet}>
+                <MapboxGL.SymbolLayer id='CALLOUT_SYMBOL_LAYER' style={layerStyles.callout} />
               </MapboxGL.ShapeSource>
             </MapboxGL.MapView>
             <Button onPress={this.onGPSButtonPress.bind(this)}
@@ -347,5 +357,9 @@ const layerStyles = MapboxGL.StyleSheet.create({
       MapboxGL.InterpolationMode.Categorical
     ),
     circleStrokeWidth: 1
+  },
+  callout: {
+    textField: `{${config.fieldnames.Name}}`,
+    textOffset: [0, -2]
   }
 });
