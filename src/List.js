@@ -8,7 +8,7 @@ import { Container, Content, List as NBList, ListItem, View, Text } from 'native
 
 class List extends Component {
   groupFeatures(features) {
-    console.log('groupFeatures', features);
+    console.log('groupFeatures');
     const grouped = {};
 
     features.forEach(f => {

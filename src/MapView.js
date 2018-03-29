@@ -15,7 +15,6 @@ import poiJson from './PointsOfInterest.json'
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
-const MAP_HEADING = 'Map';
 
 export default class MapView extends Component {
   constructor(props) {
@@ -30,7 +29,7 @@ export default class MapView extends Component {
       followUser: false,
       mapLoaded: false,
       clickedFeatureSet: {},
-      initialTabPage: 0
+      currentTabPage: 0
     };
 
     this.yelpDataLoaded = true;
@@ -121,15 +120,19 @@ export default class MapView extends Component {
   componentWillMount() {
     console.log('componentWillMount');
 
-    if (this.props.history.location.pathname.match(/list/)) {
-      this.setState({ initialTabPage: 1 });
-    } else {
-      this.setState({ initialTabPage: 0 });
-    }
   }
 
   componentDidMount() {
     console.log('componentDidMount');
+    const history = this.props.history;
+
+    if (history.location.state && history.location.state.currentTabPage) {
+      this.tabs.goToPage(history.location.state.currentTabPage);
+    }
+
+    if (history.location.state && history.location.state.featuresInCurrentExtent) {
+      this.setState({ featuresInCurrentExtent: history.location.state.featuresInCurrentExtent });
+    }
 
     // location is [Lng,Lat,Zoom]
     if (this.props.match.params.location) {
@@ -207,7 +210,10 @@ export default class MapView extends Component {
     mapLocation.push(round(event.properties.zoomLevel, 1));
     let route = `/map/${mapLocation.join(',')}`;
 
-    this.props.history.replace(route);
+    this.props.history.replace(route, {
+      featuresInCurrentExtent: this.state.featuresInCurrentExtent,
+      currentTabPage: this.state.currentTabPage
+    });
   }
 
   // onCustomize(value) {
@@ -281,22 +287,19 @@ export default class MapView extends Component {
   onChangeTab(event) {
     console.log('onChangeTab', event);
 
-    if (event.i === 0) {
-      // to map tab
-      if (this.props.history.location.pathname.match(/list/)) {
-        this.props.history.push(`${this.props.history.location.pathname.replace('/list', '')}`);
-      }
-    } else if (!this.props.history.location.pathname.match(/list/)) {
-      // to list tab
-      this.props.history.push(`${this.props.history.location.pathname}/list`);
-    }
+    // const state = { featuresInCurrentExtent: this.state.featuresInCurrentExtent };
+    // state.currentTabPage = (event.i === 0) ? 0 : 1;
+    //
+    // this.props.history.replace(`${this.props.history.location.pathname}`, state);
+    //
+    // this.setState({ currentTabPage: state.currentTabPage });
   }
 
   render() {
     return (
       <Container style={styles.container}>
-        <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} initialPage={this.state.initialTabPage}>
-          <Tab heading={MAP_HEADING}>
+        <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el}>
+          <Tab heading='Map'>
             { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
             <MapboxGL.MapView
               onDidFinishRenderingMapFully={this.onMapLoad.bind(this)}
