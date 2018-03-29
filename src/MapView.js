@@ -285,7 +285,6 @@ export default class MapView extends Component {
   }
 
   onChangeTab(event) {
-    console.log('onChangeTab', event);
 
     // const state = { featuresInCurrentExtent: this.state.featuresInCurrentExtent };
     // state.currentTabPage = (event.i === 0) ? 0 : 1;
@@ -293,6 +292,7 @@ export default class MapView extends Component {
     // this.props.history.replace(`${this.props.history.location.pathname}`, state);
     //
     // this.setState({ currentTabPage: state.currentTabPage });
+    console.log('onChangeTab');
   }
 
   render() {
