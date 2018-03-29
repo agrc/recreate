@@ -285,14 +285,14 @@ export default class MapView extends Component {
   }
 
   onChangeTab(event) {
-
-    // const state = { featuresInCurrentExtent: this.state.featuresInCurrentExtent };
-    // state.currentTabPage = (event.i === 0) ? 0 : 1;
-    //
-    // this.props.history.replace(`${this.props.history.location.pathname}`, state);
-    //
-    // this.setState({ currentTabPage: state.currentTabPage });
     console.log('onChangeTab');
+
+    const state = { featuresInCurrentExtent: this.state.featuresInCurrentExtent };
+    state.currentTabPage = (event.i === 0) ? 0 : 1;
+
+    this.props.history.replace(`${this.props.history.location.pathname}`, state);
+
+    this.setState({ currentTabPage: state.currentTabPage });
   }
 
   render() {
