@@ -15,6 +15,7 @@ import poiJson from './PointsOfInterest.json'
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
+const MAP_HEADING = 'Map';
 
 export default class MapView extends Component {
   constructor(props) {
@@ -28,7 +29,8 @@ export default class MapView extends Component {
       filter: this.getClearFilter(),
       followUser: false,
       mapLoaded: false,
-      clickedFeatureSet: {}
+      clickedFeatureSet: {},
+      initialTabPage: 0
     };
 
     this.yelpDataLoaded = true;
@@ -116,6 +118,16 @@ export default class MapView extends Component {
   //   this.map.on('moveend', updateYelpData);
   // }
 
+  componentWillMount() {
+    console.log('componentWillMount');
+
+    if (this.props.history.location.pathname.match(/list/)) {
+      this.setState({ initialTabPage: 1 });
+    } else {
+      this.setState({ initialTabPage: 0 });
+    }
+  }
+
   componentDidMount() {
     console.log('componentDidMount');
 
@@ -138,6 +150,8 @@ export default class MapView extends Component {
   }
 
   initMap(long, lat, zoom) {
+    console.log('initMap', arguments);
+
     this.setState({ currentLocation: [long, lat], zoom: zoom });
     this.loadList();
 
@@ -192,6 +206,7 @@ export default class MapView extends Component {
     const mapLocation = event.geometry.coordinates.map(num => round(num, 2));
     mapLocation.push(round(event.properties.zoomLevel, 1));
     let route = `/map/${mapLocation.join(',')}`;
+
     this.props.history.replace(route);
   }
 
@@ -263,11 +278,25 @@ export default class MapView extends Component {
     console.log(clickedFeature);
   }
 
+  onChangeTab(event) {
+    console.log('onChangeTab', event);
+
+    if (event.i === 0) {
+      // to map tab
+      if (this.props.history.location.pathname.match(/list/)) {
+        this.props.history.push(`${this.props.history.location.pathname.replace('/list', '')}`);
+      }
+    } else if (!this.props.history.location.pathname.match(/list/)) {
+      // to list tab
+      this.props.history.push(`${this.props.history.location.pathname}/list`);
+    }
+  }
+
   render() {
     return (
       <Container style={styles.container}>
-        <Tabs>
-          <Tab heading='Map'>
+        <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} initialPage={this.state.initialTabPage}>
+          <Tab heading={MAP_HEADING}>
             { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
             <MapboxGL.MapView
               onDidFinishRenderingMapFully={this.onMapLoad.bind(this)}

@@ -18,8 +18,6 @@ import FeatureDetails from './FeatureDetails';
 MapboxGL.setAccessToken(REACT_APP_MAPBOX_TOKEN);
 class App extends Component {
   goBack() {
-    console.log(this.props.history);
-
     this.props.history.goBack();
   }
 
