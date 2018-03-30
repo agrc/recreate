@@ -7,6 +7,7 @@ import round from 'lodash.round';
 import StaticMap from './StaticMap';
 import { Link } from 'react-router-native';
 import { SmallText } from './AppText';
+import { Linking } from 'react-native';
 
 
 export default class HikingDetails extends DetailsBase {
@@ -40,10 +41,10 @@ export default class HikingDetails extends DetailsBase {
             }}><Text>View Full Map</Text></Link>
           </Button>
 
-          <Button transparent>
-            {/* TODO: https://stackoverflow.com/questions/43804032/react-native-open-url-in-default-web-browser */}
-            {url && (<Text href={url}>Trail Details</Text>)}
-          </Button>
+          { url &&
+            (<Button transparent onPress={() => { Linking.openURL(url) }}>
+              <Text href={url}>Trail Details</Text>
+            </Button>) }
         </View>
         <StaticMap geojson={this.state.geojson} outAndBack={this.state[config.fieldnames.trails.RouteType] === config.outAndBack} />
       </View>
