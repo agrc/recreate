@@ -9,6 +9,13 @@ Run project in simulators:
 
 Note: Android emulator needs to be started manually.
 
+Run project in production:  
+`react-native run-ios --configuration Release`
+
+Run project on connected device:  
+`react-native run-ios --device`  
+**Note:** Running this command requires [this change](https://github.com/facebook/react-native/pull/17983/files) in the react-native package. This needs to be done manually in `node_modules` until `v0.55` is cut.
+
 ## Useful Tools
 [`react-devtools`](https://facebook.github.io/react-native/docs/debugging.html#react-developer-tools)
 
