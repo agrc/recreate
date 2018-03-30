@@ -1,98 +1,119 @@
 import React, { Component } from 'react';
 import config from './config';
-import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
-import mapboxgl from 'mapbox-gl';
-import { Button } from 'reactstrap';
+// import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
+import { Container } from 'native-base';
+import { Dimensions, StyleSheet } from 'react-native';
+import geoViewport from '@mapbox/geo-viewport';
 
 
-const getResampleDistance = function(length) {
-  const distance = length / config.elevationProfileResampleFactor;
-
-  return (distance >= 10) ? distance: 10;
-}
-
-
-class DetailMap extends Component {
+export default class DetailMap extends Component {
   constructor(props) {
     super(props);
 
     this.state = { chartData: []};
   }
 
-  componentDidMount() {
-    this.initMap();
-    this.buildElevationProfile();
-  }
-
-  buildElevationProfile() {
-    const profile = this.props.location.state.profile.split(',').map(s => parseInt(s, 10));
-    const min = profile[0];
-    const max = profile[1];
-    const range = max - min;
-
-    // convert percentages to feet
-    const chartData = profile.slice(2).map(percent => {
-      return { value: (range * (percent/100)) + min };
-    });
-
-    this.setState({ chartData });
-  }
-
-  initMap() {
-    this.map = new mapboxgl.Map({
-      container: this.mapContainer,
-      style: config.styles.outdoors
-    });
+  componentWillMount() {
+    // TODO: https://github.com/agrc/recreate/issues/32
     const coords = JSON.parse(this.props.location.state.geojson).geometry.coordinates;
-    const bounds = coords.reduce((bounds, coord) => {
-      return bounds.extend(coord);
-    }, new mapboxgl.LngLatBounds(coords[0], coords[0]));
 
-    this.map.fitBounds(bounds, {
-      padding: { top: 40, left: 40, right: 40, bottom: 95 },
-      duration: 0
+    let maxLat, maxLng, minLat, minLng;
+    coords.forEach(([lng, lat]) => {
+      if (!maxLat) {
+        maxLat = lat;
+        minLat = lat;
+        maxLng = lng;
+        minLng = lng;
+
+        return;
+      }
+
+      if (lat > maxLat) {
+        maxLat = lat
+      } else if (lat < minLat) {
+        minLat = lat;
+      }
+
+      if (lng > maxLng) {
+        maxLng = lng;
+      } else if (lng < minLng) {
+        minLng = lng;
+      }
     });
-    this.map.addControl(new mapboxgl.NavigationControl());
-    this.map.on('load', () => {
-      this.map.addLayer({
-        id: 'trail',
-        type: 'line',
-        source: {
-          type: 'geojson',
-          data: JSON.parse(this.props.location.state.geojson)
-        },
-        layout: {
-          'line-join': 'round',
-          'line-cap': 'round'
-        },
-        paint: {
-          'line-color': config.colors.blue,
-          'line-width': 6
-        }
-      });
-    });
+
+    const {height, width} = Dimensions.get('window');
+    const extent = [minLng, minLat, maxLng, maxLat]; // WSEN
+
+    const {center, zoom} = geoViewport.viewport(extent, [height, width], undefined, undefined, 512);
+
+    this.center = center;
+    this.zoom = zoom;
   }
+
+  componentDidMount() {
+    // this.buildElevationProfile();
+  }
+
+  // buildElevationProfile() {
+  //   const profile = this.props.location.state.profile.split(',').map(s => parseInt(s, 10));
+  //   const min = profile[0];
+  //   const max = profile[1];
+  //   const range = max - min;
+  //
+  //   // convert percentages to feet
+  //   const chartData = profile.slice(2).map(percent => {
+  //     return { value: (range * (percent/100)) + min };
+  //   });
+  //
+  //   this.setState({ chartData });
+  // }
+  //
+
+  // <div className='chart-container'>
+  //   <ResponsiveContainer width={this.props.containerWidth || '100%'} height='100%'>
+  //     <AreaChart data={this.state.chartData}>
+  //       <Area type='monotone' dataKey='value' fill={config.colors.blue}></Area>
+  //       <YAxis
+  //         type='number'
+  //         domain={['dataMin', 'dataMax']}
+  //         mirror={true}
+  //         stroke='#4a4a4a'/>
+  //     </AreaChart>
+  //   </ResponsiveContainer>
+  // </div>
+  // <Button size='sm' color='primary' onClick={() => this.props.history.goBack()}>Back</Button>
 
   render() {
     return (
-      <div className='detail-map'>
-        <div ref={el => this.mapContainer = el}></div>
-        <div className='chart-container'>
-          <ResponsiveContainer width={this.props.containerWidth || '100%'} height='100%'>
-            <AreaChart data={this.state.chartData}>
-              <Area type='monotone' dataKey='value' fill={config.colors.blue}></Area>
-              <YAxis
-                type='number'
-                domain={['dataMin', 'dataMax']}
-                mirror={true}
-                stroke='#4a4a4a'/>
-            </AreaChart>
-          </ResponsiveContainer>
-        </div>
-        <Button size='sm' color='primary' onClick={() => this.props.history.goBack()}>Back</Button>
-      </div>
+      <Container style={styles.container}>
+        <MapboxGL.MapView
+          style={styles.container}
+          styleURL={config.styles.outdoors}
+          ref={(map) => this.map = map}
+          centerCoordinate={this.center}
+          zoomLevel={this.zoom}
+          >
+          <MapboxGL.ShapeSource id='TRAIL_SOURCE' shape={JSON.parse(this.props.location.state.geojson)}>
+            <MapboxGL.LineLayer id='TRAIL_LAYER' style={layerStyles.trail} />
+          </MapboxGL.ShapeSource>
+        </MapboxGL.MapView>
+      </Container>
     );
   }
 }
 
-export { DetailMap as default, getResampleDistance };
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  }
+});
+
+const layerStyles = MapboxGL.StyleSheet.create({
+  trail: {
+    lineColor: config.colors.blue,
+    lineWidth: 6,
+    lineJoin: MapboxGL.LineJoin.Round,
+    lineCap: MapboxGL.LineCap.Round
+  }
+});

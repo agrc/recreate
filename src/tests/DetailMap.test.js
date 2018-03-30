@@ -21,8 +21,3 @@ it('renders without crashing', () => {
     }}
   /></MemoryRouter>, div);
 });
-
-it('getResampleDistance doesn\'t return a number below 10', () => {
-  expect(getResampleDistance(1000)).toBe(20);
-  expect(getResampleDistance(50)).toBe(10);
-})

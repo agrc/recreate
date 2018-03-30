@@ -376,6 +376,7 @@ const styles = StyleSheet.create({
     marginRight: padding
   }
 });
+
 const layerStyles = MapboxGL.StyleSheet.create({
   poiLayer: {
     circleRadius: 8,
