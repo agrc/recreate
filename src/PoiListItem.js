@@ -1,25 +1,31 @@
-import React from 'react';
-import { Link } from 'react-router-native';
+import React, { Component } from 'react';
 import config from './config';
 import { Icon, Body, ListItem, Right, Text } from 'native-base';
 import { StyleSheet } from 'react-native';
+import { withRouter } from 'react-router-native';
 
 
-export default function PoiListItem(props) {
-  return (
-    <ListItem style={styles.listItem}>
-      <Body>
-        <Link to={{
-            pathname: `/feature/${props[config.fieldnames.ID]}`,
-            state: { ...props }
-          }}><Text>{props[config.fieldnames.Name]}</Text></Link>
-      </Body>
-      <Right style={styles.right}>
-        <Text note style={styles.miles}>{props.miles} mi</Text>
-        <Icon name='arrow-forward' />
-      </Right>
-    </ListItem>
-  );
+class PoiListItem extends Component {
+  onPress() {
+    this.props.history.push({
+      pathname: `/feature/${this.props[config.fieldnames.ID]}`,
+      state: { ...this.props }
+    });
+  }
+
+  render() {
+    return (
+      <ListItem style={styles.listItem} onPress={this.onPress.bind(this)}>
+        <Body>
+          <Text>{this.props[config.fieldnames.Name]}</Text>
+        </Body>
+        <Right style={styles.right}>
+          <Text note style={styles.miles}>{this.props.miles} mi</Text>
+          <Icon name='arrow-forward' />
+        </Right>
+      </ListItem>
+    );
+  }
 };
 
 const styles = StyleSheet.create({
@@ -35,3 +41,5 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   }
 });
+
+export default withRouter(PoiListItem);
