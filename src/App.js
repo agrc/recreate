@@ -12,7 +12,7 @@ import { REACT_APP_MAPBOX_TOKEN } from 'react-native-dotenv';
 
 import FeatureDetails from './FeatureDetails';
 import DetailMap from './DetailMap';
-// import ChangeLog from './ChangeLog';
+import ChangeLog from './ChangeLog';
 
 
 MapboxGL.setAccessToken(REACT_APP_MAPBOX_TOKEN);
@@ -43,9 +43,7 @@ class App extends Component {
             <Route path='/map/:location?/:list?' component={MapView} />
             <Route exact={true} path='/feature/:id' component={FeatureDetails} />
             <Route path='/feature/:id/map' component={DetailMap} />
-            {/*
             <Route path='/changelog' component={ChangeLog} />
-            */}
           </Switch>
         </Container>
       </StyleProvider>

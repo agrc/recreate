@@ -1,5 +1,6 @@
 import React from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Linking, StyleSheet, Text } from 'react-native';
+import config from './config';
 
 
 const WhiteText = function (props) {
@@ -26,6 +27,24 @@ const SmallText = function (props) {
   );
 };
 
+const LinkText = function (props) {
+  return (
+    <Text style={[props.style, styles.linkText]} onPress={() => Linking.openURL(props.href)}>{props.children}</Text>
+  );
+};
+
+const BoldText = function (props) {
+  return (
+    <Text style={[props.style, styles.boldText]}>{props.children}</Text>
+  );
+};
+
+const BulletText = function (props) {
+  return (
+    <Text style={props.style}>- {props.children}</Text>
+  );
+};
+
 const styles = StyleSheet.create({
   whiteText: {
     color: 'white'
@@ -39,7 +58,13 @@ const styles = StyleSheet.create({
   },
   smallText: {
     fontSize: 14
+  },
+  linkText: {
+    color: config.colors.blue
+  },
+  boldText: {
+    fontWeight: 'bold'
   }
 });
 
-export { WhiteText, HeadingText, NameText, SmallText };
+export { WhiteText, HeadingText, NameText, SmallText, LinkText, BoldText, BulletText };
