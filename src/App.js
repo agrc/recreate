@@ -29,7 +29,7 @@ class App extends Component {
             <Left>
               { this.props.history.index > 0 &&
                 <Button transparent onPress={this.goBack.bind(this)}>
-                  <Icon name='arrow-back' style={{color: 'white'}} />
+                  <Icon name='arrow-back' style={{color: config.colors.white}} />
                 </Button>
               }
             </Left>

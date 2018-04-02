@@ -47,7 +47,7 @@ const BulletText = function (props) {
 
 const styles = StyleSheet.create({
   whiteText: {
-    color: 'white'
+    color: config.colors.white
   },
   headingText: {
     fontSize: 30,

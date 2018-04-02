@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     width: '100%'
   },
   buttonsContainer: {
-    backgroundColor: 'rgba(0, 0, 0, 0.35)',
+    backgroundColor: config.colors.transparent,
     padding
   },
   content: {
@@ -139,9 +139,9 @@ const styles = StyleSheet.create({
     alignSelf: 'center'
   },
   tagLineFont: {
-    textShadowColor: '#4b4b4b',
+    textShadowColor: config.colors.textShadow,
     textShadowOffset: { width: 1, height: 1 },
-    shadowColor: '#4b4b4b',
+    shadowColor: config.colors.textShadow,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 1,
     fontSize: 50,

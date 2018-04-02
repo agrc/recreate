@@ -355,9 +355,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  hidden: {
-    display: 'none'
-  },
   findingText: {
     padding,
     fontSize: 15
@@ -368,7 +365,7 @@ const styles = StyleSheet.create({
     right: padding,
     paddingTop: 3,
     height: 36,
-    borderColor: '#999999',
+    borderColor: config.colors.borderColor,
     borderWidth: 1
   },
   mapButtonIcon: {

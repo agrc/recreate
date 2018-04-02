@@ -50,6 +50,10 @@ export default {
   colors: {
     blue: '#358EA6',
     green: '#35a669',
-    yellow: '#e7eb3f'
+    yellow: '#e7eb3f',
+    white: 'white',
+    transparent: 'rgba(0, 0, 0, 0.35)',
+    textShadow: '#4b4b4b',
+    borderColor: '#999999'
   }
 };
