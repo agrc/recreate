@@ -45,7 +45,7 @@ export default class DetailMap extends Component {
     const {height, width} = Dimensions.get('window');
     const extent = [minLng, minLat, maxLng, maxLat]; // WSEN
 
-    const {center, zoom} = geoViewport.viewport(extent, [height, width], undefined, undefined, 512);
+    const {center, zoom} = geoViewport.viewport(extent, [width, height], undefined, undefined, 512);
 
     this.center = center;
     this.zoom = zoom;
