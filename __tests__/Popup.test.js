@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import 'react-native';
+import renderer from 'react-test-renderer';
 import Popup from '../Popup';
 import { MemoryRouter } from 'react-router';
 
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
   const feature = {
     geometry: {
       coordinates: [-111, 40]
@@ -14,5 +14,5 @@ it('renders without crashing', () => {
       Name: 'test'
     }
   }
-  ReactDOM.render(<MemoryRouter><Popup feature={feature} currentLocation={[-112, 41]}/></MemoryRouter>, div);
+  renderer.create(<MemoryRouter><Popup feature={feature} currentLocation={[-112, 41]}/></MemoryRouter>);
 });

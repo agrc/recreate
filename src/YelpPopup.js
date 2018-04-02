@@ -20,4 +20,4 @@ export default function YelpPopup(props) {
       </div>
     </div>
   );
-};
+}

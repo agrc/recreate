@@ -26,7 +26,7 @@ class PoiListItem extends Component {
       </ListItem>
     );
   }
-};
+}
 
 const styles = StyleSheet.create({
   listItem: {

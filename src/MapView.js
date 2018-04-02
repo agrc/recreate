@@ -7,9 +7,9 @@ import List from './List';
 // import CustomizeBtn from './CustomizeBtn';
 import round from 'lodash.round';
 import config from './config';
-import distance from '@turf/distance';
-import queryString from 'query-string';
-import isEqual from 'lodash.isequal';
+// import distance from '@turf/distance';
+// import queryString from 'query-string';
+// import isEqual from 'lodash.isequal';
 import { Button, Container, Icon, Tabs, Tab } from 'native-base';
 import poiJson from './PointsOfInterest.json'
 

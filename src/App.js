@@ -13,6 +13,7 @@ import { REACT_APP_MAPBOX_TOKEN } from 'react-native-dotenv';
 import FeatureDetails from './FeatureDetails';
 import DetailMap from './DetailMap';
 import ChangeLog from './ChangeLog';
+import config from './config';
 
 
 MapboxGL.setAccessToken(REACT_APP_MAPBOX_TOKEN);

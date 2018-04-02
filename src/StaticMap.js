@@ -50,4 +50,4 @@ export default function StaticMap(props) {
   return (
     <Image source={{ uri }} style={style} />
   );
-};
+}

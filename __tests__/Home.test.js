@@ -1,11 +1,11 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import 'react-native';
+import renderer from 'react-test-renderer';
 import Home from '../Home';
 import { MemoryRouter } from 'react-router';
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<MemoryRouter><Home /></MemoryRouter>, div);
+  renderer.create(<MemoryRouter><Home /></MemoryRouter>);
 });
 
 test('getMapboxCentroid formats extent properly', () => {

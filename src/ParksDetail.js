@@ -20,6 +20,6 @@ class ParksDetails extends DetailsBase {
       </View>
     );
   }
-};
+}
 
 export default ParksDetails;

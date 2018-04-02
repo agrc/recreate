@@ -45,7 +45,7 @@ const searchHandler = function(response) {
   response.json().then(searchResultHandler, errorFactory('error reading successful search request'));
 };
 
-const getSearch = function(result) {
+const getSearch = function() {
   fetch(`${URLS.search}?${queryString.stringify(queryStringParameters)}`, {
     headers: {'Authorization': `Bearer ${process.env.YELP_TOKEN}`}
   }).then(searchHandler);

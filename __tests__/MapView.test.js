@@ -1,5 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import 'react-native';
+import renderer from 'react-test-renderer';
 import MapView from '../MapView';
 import { MemoryRouter } from 'react-router';
 import geolocate from 'mock-geolocation';
@@ -14,12 +15,11 @@ afterAll(() => {
 });
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
   const match = { params: { extent: '-111,40' } } ;
 
-  ReactDOM.render(
+  renderer.create(
     <MemoryRouter initialEntries={['/map']} initialIndex={0}>
       <MapView match={match}/>
     </MemoryRouter>
-  , div);
+  );
 });

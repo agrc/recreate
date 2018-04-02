@@ -1,13 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import 'react-native';
+import renderer from 'react-test-renderer';
 import List from '../List';
 import features from './data/features';
 import { MemoryRouter } from 'react-router';
 
 
 it('renders without crashing', () => {
-  const div = document.createElement('div');
-  ReactDOM.render(<MemoryRouter><List features={features} currentLocation={[-111, 40]} /></MemoryRouter>, div);
+  renderer.create(<MemoryRouter><List features={features} currentLocation={[-111, 40]} /></MemoryRouter>);
 });
 
 it('groups features according to type', () => {

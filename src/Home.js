@@ -115,7 +115,7 @@ export default class Home extends Component {
       </Container>
     );
   }
-};
+}
 
 const padding = 10;
 const styles = StyleSheet.create({

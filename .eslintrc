@@ -1,17 +1,22 @@
 {
-  plugins: [
+  "plugins": [
     "react",
     "react-native"
   ],
-  parserOptions: {
-    ecmaVersion: 2018,
-    sourceType: "module",
-    ecmaFeatures: {
-      jsx: true
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
     },
   },
-  env: {
-    react-native/react-native: true
+  "env": {
+    "react-native/react-native": true,
+    "jest": true
   },
-  extends: ["plugin:react-native/all"]
+  "extends": ["eslint:recommended", "plugin:react/recommended", "plugin:react-native/all"],
+  "rules": {
+    "react/prop-types": 0,
+    "no-console": 0
+  }
 }

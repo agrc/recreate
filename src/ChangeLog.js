@@ -3,7 +3,7 @@ import { HeadingText, LinkText, BoldText, BulletText } from './AppText';
 import { View, StyleSheet } from 'react-native';
 
 
-export default function (props) {
+export default function ChangeLog() {
   return (
     <View style={styles.padded}>
       <HeadingText>Change Log</HeadingText>
@@ -23,7 +23,7 @@ export default function (props) {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   padded: {
