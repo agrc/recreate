@@ -13,7 +13,7 @@ class List extends Component {
 
     features.forEach(f => {
       const diviser = 10;
-      f.properties.miles = Math.round(distance(this.props.currentLocation, f.geometry.coordinates, 'miles') * diviser)/diviser;
+      f.properties.miles = Math.round(distance(this.props.currentLocation, f.geometry.coordinates, { units: 'miles' }) * diviser)/diviser;
 
       const type = f.properties.Type;
       if (!grouped[type]) {
