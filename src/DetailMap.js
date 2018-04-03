@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import config from './config';
-// import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
+import { AreaChart, YAxis } from 'react-native-svg-charts';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
-import { Container } from 'native-base';
+import { Container, View } from 'native-base';
 import { Dimensions, StyleSheet } from 'react-native';
 import geoViewport from '@mapbox/geo-viewport';
 
@@ -11,7 +11,7 @@ export default class DetailMap extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { chartData: []};
+    this.state = { chartData: null };
   }
 
   componentWillMount() {
@@ -52,39 +52,28 @@ export default class DetailMap extends Component {
   }
 
   componentDidMount() {
-    // this.buildElevationProfile();
+    this.buildElevationProfile();
   }
 
-  // buildElevationProfile() {
-  //   const profile = this.props.location.state.profile.split(',').map(s => parseInt(s, 10));
-  //   const min = profile[0];
-  //   const max = profile[1];
-  //   const range = max - min;
-  //
-  //   // convert percentages to feet
-  //   const chartData = profile.slice(2).map(percent => {
-  //     return { value: (range * (percent/100)) + min };
-  //   });
-  //
-  //   this.setState({ chartData });
-  // }
-  //
+  buildElevationProfile() {
+    console.log('buildElevationProfile');
 
-  // <div className='chart-container'>
-  //   <ResponsiveContainer width={this.props.containerWidth || '100%'} height='100%'>
-  //     <AreaChart data={this.state.chartData}>
-  //       <Area type='monotone' dataKey='value' fill={config.colors.blue}></Area>
-  //       <YAxis
-  //         type='number'
-  //         domain={['dataMin', 'dataMax']}
-  //         mirror={true}
-  //         stroke='#4a4a4a'/>
-  //     </AreaChart>
-  //   </ResponsiveContainer>
-  // </div>
-  // <Button size='sm' color='primary' onClick={() => this.props.history.goBack()}>Back</Button>
+    const profile = this.props.location.state.profile.split(',').map(s => parseInt(s, 10));
+    const min = profile[0];
+    const max = profile[1];
+    const range = max - min;
+
+    // convert percentages to feet
+    let chartData = profile.slice(2).map(percent => {
+      return (range * (percent/100)) + min;
+    });
+
+    this.setState({ chartData });
+  }
 
   render() {
+    const contentInset = { top: 10, bottom: 10 };
+
     return (
       <Container style={styles.container}>
         <MapboxGL.MapView
@@ -98,6 +87,22 @@ export default class DetailMap extends Component {
             <MapboxGL.LineLayer id='TRAIL_LAYER' style={layerStyles.trail} />
           </MapboxGL.ShapeSource>
         </MapboxGL.MapView>
+        { this.state.chartData && (
+          <View style={styles.chartContainer}>
+            <YAxis
+              data={this.state.chartData}
+              numberOfTicks={5}
+              contentInset={contentInset}
+            />
+            <AreaChart
+              style={styles.container}
+              data={this.state.chartData}
+              svg={{ fill: config.colors.blue + '90' }}
+              numberOfTicks={5}
+              contentInset={contentInset}
+            />
+          </View>
+        )}
       </Container>
     );
   }
@@ -106,6 +111,10 @@ export default class DetailMap extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1
+  },
+  chartContainer: {
+    height: 200,
+    flexDirection: 'row'
   }
 });
 

@@ -11,7 +11,7 @@ import config from './config';
 // import queryString from 'query-string';
 // import isEqual from 'lodash.isequal';
 import { Button, Container, Icon, Tabs, Tab } from 'native-base';
-import poiJson from './PointsOfInterest.json'
+import poiJson from './PointsOfInterest.json';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };

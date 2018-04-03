@@ -37,7 +37,11 @@ export default class HikingDetails extends DetailsBase {
           <Button transparent>
             <Link to={{
               pathname: `${this.props[config.fieldnames.ID]}/map`,
-              state: { geojson: this.state.geojson, profile: this.state[config.fieldnames.trails.ElevationProfile] }
+              state: {
+                geojson: this.state.geojson,
+                profile: this.state[config.fieldnames.trails.ElevationProfile],
+                outAndBack: this.state[config.fieldnames.trails.RouteType === config.outAndBack]
+              }
             }}><Text>View Full Map</Text></Link>
           </Button>
 
