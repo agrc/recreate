@@ -5,7 +5,11 @@ import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import { Container, View } from 'native-base';
 import { Dimensions, StyleSheet } from 'react-native';
 import geoViewport from '@mapbox/geo-viewport';
+import platform from './native-base-theme/variables/platform';
 
+
+const LINE_STRING = 'LineString';
+const CHART_HEIGHT = 200;
 
 export default class DetailMap extends Component {
   constructor(props) {
@@ -16,7 +20,12 @@ export default class DetailMap extends Component {
 
   componentWillMount() {
     // TODO: https://github.com/agrc/recreate/issues/32
-    const coords = JSON.parse(this.props.location.state.geojson).geometry.coordinates;
+    const geometry = JSON.parse(this.props.location.state.geojson).geometry;
+
+    let coords = geometry.coordinates;
+    if (geometry.type !== LINE_STRING) {
+      coords = coords.reduce((accumulator, currentValue) => accumulator = accumulator.concat(currentValue), []);
+    }
 
     let maxLat, maxLng, minLat, minLng;
     coords.forEach(([lng, lat]) => {
@@ -45,7 +54,11 @@ export default class DetailMap extends Component {
     const {height, width} = Dimensions.get('window');
     const extent = [minLng, minLat, maxLng, maxLat]; // WSEN
 
-    const {center, zoom} = geoViewport.viewport(extent, [width, height], undefined, undefined, 512);
+    const {center, zoom} = geoViewport.viewport(extent,
+                                                [width, height - CHART_HEIGHT - platform.toolbarHeight],
+                                                undefined,
+                                                undefined,
+                                                512);
 
     this.center = center;
     this.zoom = zoom;
@@ -113,7 +126,7 @@ const styles = StyleSheet.create({
     flex: 1
   },
   chartContainer: {
-    height: 200,
+    height: CHART_HEIGHT,
     flexDirection: 'row'
   }
 });
