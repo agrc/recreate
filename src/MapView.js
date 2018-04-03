@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import List from './List';
-// import Popup from './Popup';
-// import YelpPopup from './YelpPopup';
 // import CustomizeBtn from './CustomizeBtn';
 import round from 'lodash.round';
 import config from './config';
@@ -279,9 +277,7 @@ export default class MapView extends Component {
   onPOIPress(event) {
     const clickedFeature = event.nativeEvent.payload;
 
-    this.setState({ clickedFeatureSet: MapboxGL.geoUtils.makeFeatureCollection([clickedFeature]) });
-
-    console.log(clickedFeature);
+    this.props.history.push(`/feature/${clickedFeature.properties[config.fieldnames.ID]}`);
   }
 
   onChangeTab(event) {
@@ -315,9 +311,6 @@ export default class MapView extends Component {
               >
               <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson} onPress={this.onPOIPress.bind(this)}>
                 <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
-              </MapboxGL.ShapeSource>
-              <MapboxGL.ShapeSource id='CALLOUT_SOURCE' shape={this.state.clickedFeatureSet}>
-                <MapboxGL.SymbolLayer id='CALLOUT_SYMBOL_LAYER' style={layerStyles.callout} />
               </MapboxGL.ShapeSource>
             </MapboxGL.MapView>
             <Button onPress={this.onGPSButtonPress.bind(this)}
@@ -387,9 +380,5 @@ const layerStyles = MapboxGL.StyleSheet.create({
       MapboxGL.InterpolationMode.Categorical
     ),
     circleStrokeWidth: 1
-  },
-  callout: {
-    textField: `{${config.fieldnames.Name}}`,
-    textOffset: [0, -2]
   }
 });
