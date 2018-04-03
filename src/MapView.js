@@ -5,11 +5,12 @@ import List from './List';
 // import CustomizeBtn from './CustomizeBtn';
 import round from 'lodash.round';
 import config from './config';
-// import distance from '@turf/distance';
-// import queryString from 'query-string';
-// import isEqual from 'lodash.isequal';
+import * as turf from '@turf/turf';
+import queryString from 'query-string';
 import { Button, Container, Icon, Tabs, Tab } from 'native-base';
 import poiJson from './PointsOfInterest.json';
+import yelpIcon from './images/Yelp_burst_positive_RGB.png';
+import geoViewport from '@mapbox/geo-viewport';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -27,10 +28,9 @@ export default class MapView extends Component {
       followUser: false,
       mapLoaded: false,
       clickedFeatureSet: {},
-      currentTabPage: 0
+      currentTabPage: 0,
+      yelpFeatureSet: null
     };
-
-    this.yelpDataLoaded = true;
   }
 
   getClearFilter() {
@@ -41,79 +41,38 @@ export default class MapView extends Component {
   }
 
   loadList() {
-    if (this.yelpDataLoaded) {
-      this.onMapExtentChange();
-    }
+    this.onMapExtentChange();
   }
 
-  // async loadYelpData() {
-  //   const yelpID = 'yelp-source';
-  //   const yelpIconImageName = 'yelp-icon'
-  //
-  //   this.map.addSource(yelpID, {
-  //     type: 'geojson',
-  //     data: {
-  //       type: 'FeatureCollection',
-  //       features: []
-  //     }
-  //   });
-  //
-  //   this.map.loadImage(config.urls.yelpIcon, (error, image) => {
-  //     if (error) {
-  //       throw error;
-  //     }
-  //
-  //     this.map.addImage(yelpIconImageName, image);
-  //
-  //     this.map.addLayer({
-  //       id: LAYERS.YELP,
-  //       type: 'symbol',
-  //       source: yelpID,
-  //       layout: {
-  //         'icon-image': yelpIconImageName,
-  //         'icon-size': 0.5
-  //       }
-  //     });
-  //   });
-  //
-  //   const updateYelpData = async () => {
-  //     const center = this.map.getCenter();
-  //     const bounds = this.map.getBounds();
-  //
-  //     // TODO: radius must be less than 4000 or yelp returns an error
-  //     const radius = Math.round(distance(bounds.getSouthWest().toArray(), bounds.getNorthEast().toArray(), 'meters'));
-  //
-  //     const params = {
-  //       longitude: center.lng,
-  //       latitude: center.lat,
-  //       radius,
-  //       term: 'gas',
-  //       limit: '50'
-  //     };
-  //     const response = await fetch(`${config.urls.yelp}?${queryString.stringify(params)}`);
-  //
-  //     if (!response.ok) {
-  //       console.error('error in yelp request', response);
-  //
-  //       return;
-  //     }
-  //
-  //     // query api
-  //     const yelpSource = this.map.getSource(yelpID);
-  //     yelpSource.setData(await response.json());
-  //
-  //     if (!this.yelpDataLoaded) {
-  //       this.yelpDataLoaded = true;
-  //
-  //       // TODO: gross!!!
-  //       window.setTimeout(this.loadList.bind(this), 200);
-  //     }
-  //   };
-  //
-  //   updateYelpData();
-  //
-  //   this.map.on('moveend', updateYelpData);
-  // }
+  async updateYelpData() {
+    const [longitude, latitude] = await this.map.getCenter();
+    const zoom = await this.map.getZoom();
+    const bounds = geoViewport.bounds([longitude, latitude], Math.round(zoom), [this.mapWidth, this.mapHeight], config.tileSize); // WSEN
+
+    // TODO: radius must be less than 4000 or yelp returns an error
+    const radius = Math.round(turf.distance(turf.point([bounds[0], bounds[1]]),
+                                            turf.point([bounds[2], bounds[3]]),
+                                            { units: 'meters' }));
+
+    const params = {
+      longitude,
+      latitude,
+      radius,
+      term: 'gas',
+      limit: '50'
+    };
+    const response = await fetch(`${config.urls.yelp}?${queryString.stringify(params)}`);
+
+    if (!response.ok) {
+      console.error('error in yelp request', response);
+
+      return;
+    }
+
+    // query api
+    const yelpFeatureSet = await response.json();
+    this.setState({ yelpFeatureSet });
+  }
 
   componentWillMount() {
     console.log('componentWillMount');
@@ -155,31 +114,12 @@ export default class MapView extends Component {
 
     this.setState({ currentLocation: [long, lat], zoom: zoom });
     this.loadList();
-
-    // this.loadYelpData();
-
-    // this.map.on('click', LAYERS.POINTS_OF_INTEREST, evt => {
-    //   const feature = evt.features[0];
-    //   ReactDOM.unstable_renderSubtreeIntoContainer(this, <Popup feature={feature} currentLocation={this.state.currentLocation} />, this.popupContainer);
-    //   new mapboxgl.Popup()
-    //     .setLngLat(feature.geometry.coordinates)
-    //     .setDOMContent(this.popupContainer)
-    //     .addTo(this.map);
-    //   evt.originalEvent.stopPropagation();
-    //   evt.originalEvent.preventDefault();
-    // });
-    // this.map.on('click', LAYERS.YELP, evt => {
-    //   const feature = evt.features[0];
-    //   ReactDOM.unstable_renderSubtreeIntoContainer(this, <YelpPopup {...feature.properties} />, this.yelpPopupContainer);
-    //   new mapboxgl.Popup()
-    //     .setLngLat(feature.geometry.coordinates)
-    //     .setDOMContent(this.yelpPopupContainer)
-    //     .addTo(this.map);
-    // });
   }
 
   async onMapExtentChange(event) {
     console.log('onMapExtentChange', event);
+
+    this.updateYelpData();
 
     if (!event) {
       return;
@@ -280,6 +220,10 @@ export default class MapView extends Component {
     this.props.history.push(`/feature/${clickedFeature.properties[config.fieldnames.ID]}`);
   }
 
+  onYelpPress(event) {
+    console.log(event.nativeEvent.payload);
+  }
+
   onChangeTab(event) {
     console.log('onChangeTab');
 
@@ -312,6 +256,11 @@ export default class MapView extends Component {
               <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson} onPress={this.onPOIPress.bind(this)}>
                 <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
               </MapboxGL.ShapeSource>
+              { this.state.yelpFeatureSet && (
+                <MapboxGL.ShapeSource id='YELP_SOURCE' shape={this.state.yelpFeatureSet} onPress={this.onYelpPress.bind(this)}>
+                  <MapboxGL.SymbolLayer id={LAYERS.YELP} style={layerStyles.yelp} />
+                </MapboxGL.ShapeSource>
+              )}
             </MapboxGL.MapView>
             <Button onPress={this.onGPSButtonPress.bind(this)}
               light={!this.state.followUser}
@@ -325,18 +274,10 @@ export default class MapView extends Component {
           </Tab>
         </Tabs>
         {/*
-          <View>
-          <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.MAP)} active={this.state.currentView === VIEWS.MAP}>View Map</Button>
-          <Button color='primary' onClick={() => this.onRadioButtonClick(VIEWS.LIST)} active={this.state.currentView === VIEWS.LIST}>View List</Button>
-          </View>
         <Route path='/map/:location' exact={true} render={() => {
             return (<CustomizeBtn onCustomize={this.onCustomize.bind(this)}
               filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />);
           } }/>
-        */}
-        {/*
-        <div ref={el => this.popupContainer = el}></div>
-        <div ref={el => this.yelpPopupContainer = el} className='yelp-popup-container'></div>
         */}
       </Container>
     );
@@ -380,5 +321,10 @@ const layerStyles = MapboxGL.StyleSheet.create({
       MapboxGL.InterpolationMode.Categorical
     ),
     circleStrokeWidth: 1
+  },
+  yelp: {
+    iconImage: yelpIcon,
+    iconAllowOverlap: true,
+    iconSize: 0.5
   }
 });

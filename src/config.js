@@ -55,5 +55,6 @@ export default {
     transparent: 'rgba(0, 0, 0, 0.35)',
     textShadow: '#4b4b4b',
     borderColor: '#999999'
-  }
+  },
+  tileSize: 512
 };

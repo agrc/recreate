@@ -58,7 +58,7 @@ export default class DetailMap extends Component {
                                                 [width, height - CHART_HEIGHT - platform.toolbarHeight],
                                                 undefined,
                                                 undefined,
-                                                512);
+                                                config.tileSize);
 
     this.center = center;
     this.zoom = zoom;
