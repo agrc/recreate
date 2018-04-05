@@ -56,5 +56,6 @@ export default {
     textShadow: '#4b4b4b',
     borderColor: '#999999'
   },
-  tileSize: 512
+  tileSize: 512,
+  maxYelpRequestRadius: 15000  // meters
 };

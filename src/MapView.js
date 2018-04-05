@@ -11,6 +11,7 @@ import { Button, Container, Icon, Tabs, Tab } from 'native-base';
 import poiJson from './PointsOfInterest.json';
 import yelpIcon from './images/Yelp_burst_positive_RGB.png';
 import geoViewport from '@mapbox/geo-viewport';
+import YelpPopup from './YelpPopup';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -29,7 +30,8 @@ export default class MapView extends Component {
       mapLoaded: false,
       clickedFeatureSet: {},
       currentTabPage: 0,
-      yelpFeatureSet: null
+      yelpFeatureSet: null,
+      yelpFeature: null
     };
   }
 
@@ -49,10 +51,14 @@ export default class MapView extends Component {
     const zoom = await this.map.getZoom();
     const bounds = geoViewport.bounds([longitude, latitude], Math.round(zoom), [this.mapWidth, this.mapHeight], config.tileSize); // WSEN
 
-    // TODO: radius must be less than 4000 or yelp returns an error
     const radius = Math.round(turf.distance(turf.point([bounds[0], bounds[1]]),
                                             turf.point([bounds[2], bounds[3]]),
                                             { units: 'meters' }));
+
+    // if radius is too big, yelp request fails
+    if (radius > config.maxYelpRequestRadius) {
+      return;
+    }
 
     const params = {
       longitude,
@@ -72,11 +78,6 @@ export default class MapView extends Component {
     // query api
     const yelpFeatureSet = await response.json();
     this.setState({ yelpFeatureSet });
-  }
-
-  componentWillMount() {
-    console.log('componentWillMount');
-
   }
 
   componentDidMount() {
@@ -119,11 +120,11 @@ export default class MapView extends Component {
   async onMapExtentChange(event) {
     console.log('onMapExtentChange', event);
 
-    this.updateYelpData();
-
     if (!event) {
       return;
     }
+
+    this.updateYelpData();
 
     const layerIds = [LAYERS.POINTS_OF_INTEREST];
     const bbox = [0, this.mapWidth, this.mapHeight, 0];
@@ -221,7 +222,7 @@ export default class MapView extends Component {
   }
 
   onYelpPress(event) {
-    console.log(event.nativeEvent.payload);
+    this.setState({ yelpFeature: event.nativeEvent.payload.properties });
   }
 
   onChangeTab(event) {
@@ -233,6 +234,12 @@ export default class MapView extends Component {
     this.props.history.replace(`${this.props.history.location.pathname}`, state);
 
     this.setState({ currentTabPage: state.currentTabPage });
+  }
+
+  closeYelpPopup() {
+    console.log('closeYelpPopup');
+
+    this.setState({ yelpFeature: null });
   }
 
   render() {
@@ -252,6 +259,7 @@ export default class MapView extends Component {
               showUserLocation={this.state.followUser}
               userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
               onRegionDidChange={(this.state.mapLoaded) ? this.onMapExtentChange.bind(this) : null }
+              onPress={this.closeYelpPopup.bind(this)}
               >
               <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson} onPress={this.onPOIPress.bind(this)}>
                 <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
@@ -268,6 +276,7 @@ export default class MapView extends Component {
               style={styles.locateButton}>
               <Icon name='md-locate' style={styles.mapButtonIcon} />
             </Button>
+            { this.state.yelpFeature && <YelpPopup {...this.state.yelpFeature} onClose={this.closeYelpPopup.bind(this)} /> }
           </Tab>
           <Tab heading='List'>
             <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} />
