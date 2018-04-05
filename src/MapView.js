@@ -57,6 +57,8 @@ export default class MapView extends Component {
 
     // if radius is too big, yelp request fails
     if (radius > config.maxYelpRequestRadius) {
+      this.setState({ yelpFeatureSet: null });
+
       return;
     }
 
