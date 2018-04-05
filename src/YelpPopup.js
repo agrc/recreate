@@ -31,15 +31,13 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    backgroundColor: config.colors.white,
-    opacity: 0.85,
+    backgroundColor: config.colors.transparentWhite,
     flex: 1,
     flexDirection: 'row',
     height: popupHeight
   },
   image: {
-    width: popupHeight,
-    opacity: 1
+    width: popupHeight
   },
   details: {
     padding: 5,

@@ -54,7 +54,8 @@ export default {
     white: 'white',
     transparent: 'rgba(0, 0, 0, 0.35)',
     textShadow: '#4b4b4b',
-    borderColor: '#999999'
+    borderColor: '#999999',
+    transparentWhite: 'rgba(255, 255, 255, 0.85)'
   },
   tileSize: 512,
   maxYelpRequestRadius: 15000  // meters
