@@ -55,7 +55,7 @@ export default class MapView extends Component {
     const zoom = await this.map.getZoom();
     const bounds = geoViewport.bounds([longitude, latitude], Math.round(zoom), [this.mapWidth, this.mapHeight], config.tileSize); // WSEN
 
-    const radius = Math.round(distance([bounds[0], bounds[1]], [bounds[2], bounds[3]], { units: 'meters' }));
+    const radius = Math.round(distance([bounds[0], bounds[1]], [bounds[2], bounds[3]], { units: 'meters' }) / 2);
 
     // if radius is too big, yelp request fails
     if (radius > config.maxYelpRequestRadius) {
@@ -81,7 +81,7 @@ export default class MapView extends Component {
 
     // query api
     const yelpFeatureSet = await response.json();
-    this.setState({ yelpFeatureSet });
+    await this.setState({ yelpFeatureSet });
   }
 
   componentDidMount() {
@@ -128,7 +128,7 @@ export default class MapView extends Component {
       return;
     }
 
-    this.updateYelpData();
+    await this.updateYelpData();
 
     await this.updateFeaturesInCurrentExtent();
 
@@ -153,7 +153,7 @@ export default class MapView extends Component {
 
     const keys = {};
     // remove duplicates and apply current filter
-    const features = featureSet.features.filter((f) => {
+    let features = featureSet.features.filter((f) => {
       const id = f.id || f.properties.id;
       let isUnique = (keys[id] === undefined);
       keys[id] = true;
@@ -164,8 +164,14 @@ export default class MapView extends Component {
         return (isUnique && this.state.filter[f.properties[config.fieldnames.Type]]);
       }
     });
+    
+    if (isEqual(this.state.filter, this.getClearFilter()) || this.state.filter.y) {
+      features = features.concat(this.state.yelpFeatureSet.features);
+    }
+    
+    console.log(features);
 
-    this.setState({
+    await this.setState({
       featuresInCurrentExtent: features
     });
   }
@@ -187,6 +193,8 @@ export default class MapView extends Component {
     console.log('updateLayerFilters', newFilter);
 
     let showYelp = true;
+    
+    // can set this variable to null after https://github.com/mapbox/react-native-mapbox-gl/issues/1160 is solved
     let poiFilter = ['has', config.fieldnames.Type];
 
     if (!isEqual(newFilter, this.getClearFilter())) {
@@ -229,6 +237,7 @@ export default class MapView extends Component {
     // manually trigger onmapExtentChange event to get features on load
     const coordinates = await this.map.getCenter();
     const zoomLevel = await this.map.getZoom();
+    
     this.onMapExtentChange({
       geometry: { coordinates },
       properties: { zoomLevel }

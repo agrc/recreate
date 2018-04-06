@@ -28,7 +28,7 @@ class PoiListItem extends Component {
   }
 }
 
-const styles = StyleSheet.create({
+const stylesInput = {
   listItem: {
     paddingRight: 0
   },
@@ -40,6 +40,8 @@ const styles = StyleSheet.create({
     marginRight: 8,
     alignSelf: 'center'
   }
-});
+};
+const styles = StyleSheet.create(stylesInput);
 
-export default withRouter(PoiListItem);
+const exportClass = withRouter(PoiListItem);
+export { exportClass as default, stylesInput }
