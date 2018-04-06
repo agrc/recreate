@@ -23,3 +23,5 @@ Lint (via eslint):
 [`react-devtools`](https://facebook.github.io/react-native/docs/debugging.html#react-developer-tools)
 
 `⌘D` (iOS) & `⌘M` (Android) open the developer menu within the app. This can be used to enable live reload and remote debugging.
+
+List of native-base icons: https://oblador.github.io/react-native-vector-icons/

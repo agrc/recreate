@@ -2,16 +2,18 @@ import React, { Component } from 'react';
 import { StyleSheet, Text } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import List from './List';
-// import CustomizeBtn from './CustomizeBtn';
+import CustomizeBtn from './CustomizeBtn';
 import round from 'lodash.round';
 import config from './config';
-import * as turf from '@turf/turf';
+import distance from '@turf/distance';
 import queryString from 'query-string';
 import { Button, Container, Icon, Tabs, Tab } from 'native-base';
 import poiJson from './PointsOfInterest.json';
 import yelpIcon from './images/Yelp_burst_positive_RGB.png';
 import geoViewport from '@mapbox/geo-viewport';
 import YelpPopup from './YelpPopup';
+import buttonTheme from './native-base-theme/components/Button';
+import isEqual from 'lodash.isequal';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -31,7 +33,9 @@ export default class MapView extends Component {
       clickedFeatureSet: {},
       currentTabPage: 0,
       yelpFeatureSet: null,
-      yelpFeature: null
+      yelpFeature: null,
+      showYelp: true,
+      poiFilter: null
     };
   }
 
@@ -51,9 +55,7 @@ export default class MapView extends Component {
     const zoom = await this.map.getZoom();
     const bounds = geoViewport.bounds([longitude, latitude], Math.round(zoom), [this.mapWidth, this.mapHeight], config.tileSize); // WSEN
 
-    const radius = Math.round(turf.distance(turf.point([bounds[0], bounds[1]]),
-                                            turf.point([bounds[2], bounds[3]]),
-                                            { units: 'meters' }));
+    const radius = Math.round(distance([bounds[0], bounds[1]], [bounds[2], bounds[3]], { units: 'meters' }));
 
     // if radius is too big, yelp request fails
     if (radius > config.maxYelpRequestRadius) {
@@ -128,28 +130,11 @@ export default class MapView extends Component {
 
     this.updateYelpData();
 
-    const layerIds = [LAYERS.POINTS_OF_INTEREST];
-    const bbox = [0, this.mapWidth, this.mapHeight, 0];
-
-    let features = await this.map.queryRenderedFeaturesInRect(bbox, null, layerIds);
-
-    const keys = {};
-    features = features.features.filter((f) => {
-      const id = f.id || f.properties.id;
-      if (keys[id]) {
-        return false
-      }
-      keys[id] = true;
-      return true;
-    });
-
-    this.setState({
-      featuresInCurrentExtent: features
-    });
+    await this.updateFeaturesInCurrentExtent();
 
     const mapLocation = event.geometry.coordinates.map(num => round(num, 2));
     mapLocation.push(round(event.properties.zoomLevel, 1));
-    let route = `/map/${mapLocation.join(',')}`;
+    const route = `/map/${mapLocation.join(',')}`;
 
     this.props.history.replace(route, {
       featuresInCurrentExtent: this.state.featuresInCurrentExtent,
@@ -157,40 +142,73 @@ export default class MapView extends Component {
     });
   }
 
-  // onCustomize(value) {
-  //   const newFilter = {};
-  //   newFilter[value] = !this.state.filter[value];
-  //   this.setState((previousState) => ({
-  //     filter: { ...previousState.filter, ...newFilter }
-  //   }));
-  // }
-  //
-  // onClearCustomize() {
-  //   this.setState({ filter: this.getClearFilter() });
-  // }
+  async updateFeaturesInCurrentExtent() {
+    console.log('updateFeaturesInCurrentExtent', this.state.filter);
 
-  // componentWillUpdate(nextProps, nextState) {
-  //   console.log('componentWillUpdate');
-  //
-  //   const nextFilter = nextState.filter;
-  //   if (isEqual(nextFilter, this.state.filter)) {
-  //     return;
-  //   }
-  //
-  //   if (isEqual(nextFilter, this.getClearFilter())) {
-  //     this.map.setLayoutProperty(LAYERS.YELP, 'visibility', 'visible');
-  //     this.map.setFilter(LAYERS.POINTS_OF_INTEREST, null);
-  //     return;
-  //   }
-  //
-  //   const yelpVisibility = (nextFilter.y) ? 'visible' : 'none';
-  //   this.map.setLayoutProperty(LAYERS.YELP, 'visibility', yelpVisibility);
-  //
-  //   const expressions = Object.keys(nextFilter)
-  //     .filter(key => (nextFilter[key] && key !== 'y'))
-  //     .map(key => ['==', config.fieldnames.Type, key]);
-  //   this.map.setFilter(LAYERS.POINTS_OF_INTEREST, ['any', ...expressions])
-  // }
+    const layerIds = [LAYERS.POINTS_OF_INTEREST];
+    const bbox = [0, this.mapWidth, this.mapHeight, 0];
+
+    // this doesn't always appear to return all features immediately after updateLayerFilters
+    const featureSet = await this.map.queryRenderedFeaturesInRect(bbox, null, layerIds);
+
+    const keys = {};
+    // remove duplicates and apply current filter
+    const features = featureSet.features.filter((f) => {
+      const id = f.id || f.properties.id;
+      let isUnique = (keys[id] === undefined);
+      keys[id] = true;
+
+      if (isEqual(this.state.filter, this.getClearFilter())) {
+        return isUnique;
+      } else {
+        return (isUnique && this.state.filter[f.properties[config.fieldnames.Type]]);
+      }
+    });
+
+    this.setState({
+      featuresInCurrentExtent: features
+    });
+  }
+
+  onCustomize(value) {
+    const filterDelta = {};
+    filterDelta[value] = !this.state.filter[value];
+
+    const newFilter = { ...this.state.filter, ...filterDelta };
+
+    this.updateLayerFilters(newFilter);
+  }
+
+  onClearCustomize() {
+    this.updateLayerFilters(this.getClearFilter());
+  }
+
+  async updateLayerFilters(newFilter) {
+    console.log('updateLayerFilters', newFilter);
+
+    let showYelp = true;
+    let poiFilter = ['has', config.fieldnames.Type];
+
+    if (!isEqual(newFilter, this.getClearFilter())) {
+      if (!newFilter.y) {
+        showYelp = false;
+      }
+
+      const expressions = Object.keys(newFilter)
+        .filter(key => (newFilter[key] && key !== 'y'))
+        .map(key => ['==', config.fieldnames.Type, key]);
+
+      if (expressions.length > 0) {
+        poiFilter = ['any', ...expressions];
+      } else {
+        poiFilter = ['has', 'a-key-that-no-features-have']
+      }
+    }
+
+    await this.setState({ showYelp, poiFilter, filter: newFilter });
+
+    this.updateFeaturesInCurrentExtent();
+  }
 
   onGPSButtonPress() {
     this.setState({ followUser: !this.state.followUser });
@@ -257,16 +275,17 @@ export default class MapView extends Component {
               styleURL={config.styles.outdoors}
               zoomLevel={this.state.zoom}
               centerCoordinate={this.state.currentLocation}
-              style={styles.container}
+              style={[styles.container, styles.mapView]}
               showUserLocation={this.state.followUser}
               userTrackingMode={(this.state.followUser) ? MapboxGL.UserTrackingModes.Follow : MapboxGL.UserTrackingModes.None }
               onRegionDidChange={(this.state.mapLoaded) ? this.onMapExtentChange.bind(this) : null }
               onPress={this.closeYelpPopup.bind(this)}
               >
               <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson} onPress={this.onPOIPress.bind(this)}>
-                <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}/>
+                <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}
+                  filter={this.state.poiFilter} />
               </MapboxGL.ShapeSource>
-              { this.state.yelpFeatureSet && (
+              { this.state.yelpFeatureSet && this.state.showYelp && (
                 <MapboxGL.ShapeSource id='YELP_SOURCE' shape={this.state.yelpFeatureSet} onPress={this.onYelpPress.bind(this)}>
                   <MapboxGL.SymbolLayer id={LAYERS.YELP} style={layerStyles.yelp} />
                 </MapboxGL.ShapeSource>
@@ -279,17 +298,13 @@ export default class MapView extends Component {
               <Icon name='md-locate' style={styles.mapButtonIcon} />
             </Button>
             { this.state.yelpFeature && <YelpPopup {...this.state.yelpFeature} onClose={this.closeYelpPopup.bind(this)} /> }
+            <CustomizeBtn onCustomize={this.onCustomize.bind(this)}
+              filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />
           </Tab>
           <Tab heading='List'>
             <List features={this.state.featuresInCurrentExtent} currentLocation={this.state.currentLocation} />
           </Tab>
         </Tabs>
-        {/*
-        <Route path='/map/:location' exact={true} render={() => {
-            return (<CustomizeBtn onCustomize={this.onCustomize.bind(this)}
-              filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />);
-          } }/>
-        */}
       </Container>
     );
   }
@@ -306,7 +321,7 @@ const styles = StyleSheet.create({
   },
   locateButton: {
     position: 'absolute',
-    bottom: 30 + padding,
+    bottom: 75 + padding,
     right: padding,
     paddingTop: 3,
     height: 36,
@@ -316,6 +331,13 @@ const styles = StyleSheet.create({
   mapButtonIcon: {
     marginLeft: padding,
     marginRight: padding
+  },
+  mapView: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: buttonTheme().height
   }
 });
 
