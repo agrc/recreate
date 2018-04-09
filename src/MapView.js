@@ -277,7 +277,7 @@ export default class MapView extends Component {
   render() {
     return (
       <Container style={styles.container}>
-        <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el}>
+        <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} locked={true}>
           <Tab heading='Map'>
             { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
             <MapboxGL.MapView

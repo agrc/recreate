@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button, Icon, View } from 'native-base';
-import { Image, Linking, TouchableHighlight, TouchableWithoutFeedback, StyleSheet } from 'react-native';
+import { Image, Linking, TouchableHighlight, StyleSheet } from 'react-native';
 import { BoldText } from './AppText';
 import config from './config';
 
