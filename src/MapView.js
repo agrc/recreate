@@ -32,9 +32,9 @@ export default class MapView extends Component {
       clickedFeatureSet: {},
       currentTabPage: 0,
       yelpFeatureSet: null,
-      yelpFeature: null,
       showYelp: true,
-      poiFilter: null
+      poiFilter: null,
+      selectedYelpGeoJSON: null
     };
   }
 
@@ -250,7 +250,11 @@ export default class MapView extends Component {
   }
 
   onYelpPress(event) {
-    this.setState({ yelpFeature: event.nativeEvent.payload.properties });
+    const selectedYelpGeoJSON = {
+      type: 'FeatureCollection',
+      features: [event.nativeEvent.payload]
+    };
+    this.setState({ selectedYelpGeoJSON });
   }
 
   onChangeTab(event) {
@@ -267,7 +271,7 @@ export default class MapView extends Component {
   closeYelpPopup() {
     console.log('closeYelpPopup');
 
-    this.setState({ yelpFeature: null });
+    this.setState({ selectedYelpGeoJSON: null });
   }
 
   render() {
@@ -293,6 +297,12 @@ export default class MapView extends Component {
                 <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}
                   filter={this.state.poiFilter} />
               </MapboxGL.ShapeSource>
+              { this.state.selectedYelpGeoJSON && (
+                <MapboxGL.ShapeSource id='YELP_SOURCE_SELECTED' shape={this.state.selectedYelpGeoJSON}>
+                  <MapboxGL.CircleLayer id={LAYERS.YELP + '_SELECTED'}
+                    style={[layerStyles.yelp, layerStyles.selected]} />
+                </MapboxGL.ShapeSource>
+              )}
               { this.state.yelpFeatureSet && this.state.showYelp && (
                 <MapboxGL.ShapeSource id='YELP_SOURCE' shape={this.state.yelpFeatureSet} onPress={this.onYelpPress.bind(this)}>
                   <MapboxGL.CircleLayer id={LAYERS.YELP} style={layerStyles.yelp} />
@@ -305,7 +315,9 @@ export default class MapView extends Component {
               style={styles.locateButton}>
               <Icon name='md-locate' style={styles.mapButtonIcon} />
             </Button>
-            { this.state.yelpFeature && <YelpPopup {...this.state.yelpFeature} onClose={this.closeYelpPopup.bind(this)} /> }
+            { this.state.selectedYelpGeoJSON && 
+              <YelpPopup {...this.state.selectedYelpGeoJSON.features[0].properties} onClose={this.closeYelpPopup.bind(this)} /> 
+            }
             <CustomizeBtn onCustomize={this.onCustomize.bind(this)}
               filter={this.state.filter} onClearCustomize={this.onClearCustomize.bind(this)} />
           </Tab>
@@ -368,5 +380,8 @@ const layerStyles = MapboxGL.StyleSheet.create({
     circleRadius,
     circleColor: config.colors.yelpRed,
     circleStrokeWidth: 1
+  },
+  selected: {
+    circleRadius: circleRadius + 4
   }
 });
