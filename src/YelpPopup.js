@@ -33,9 +33,6 @@ export default class YelpPopup extends Component {
     
     return (
       <View style={styles.container}>
-        <Button transparent style={styles.closeButton} onPress={this.props.onClose}>
-          <Icon name='close' />
-        </Button>
         { this.props.image_url && (
           <TouchableHighlight onPress={goToYelp} style={styles.image} activeOpacity={0.5}>
             <Image source={{ uri: this.props.image_url }} style={styles.image} />
@@ -47,6 +44,9 @@ export default class YelpPopup extends Component {
           <TouchableHighlight onPress={goToYelp} style={styles.logo} underlayColor={config.colors.transparentWhite}>
             <Image source={logo} />
           </TouchableHighlight>
+          <Button transparent style={styles.closeButton} onPress={this.props.onClose}>
+            <Icon name='close' />
+          </Button>
         </View>
       </View>
     );
