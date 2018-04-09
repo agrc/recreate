@@ -9,7 +9,6 @@ import distance from '@turf/distance';
 import queryString from 'query-string';
 import { Button, Container, Icon, Tabs, Tab } from 'native-base';
 import poiJson from './PointsOfInterest.json';
-import yelpIcon from './images/Yelp_burst_positive_RGB.png';
 import geoViewport from '@mapbox/geo-viewport';
 import YelpPopup from './YelpPopup';
 import buttonTheme from './native-base-theme/components/Button';
@@ -296,7 +295,7 @@ export default class MapView extends Component {
               </MapboxGL.ShapeSource>
               { this.state.yelpFeatureSet && this.state.showYelp && (
                 <MapboxGL.ShapeSource id='YELP_SOURCE' shape={this.state.yelpFeatureSet} onPress={this.onYelpPress.bind(this)}>
-                  <MapboxGL.SymbolLayer id={LAYERS.YELP} style={layerStyles.yelp} />
+                  <MapboxGL.CircleLayer id={LAYERS.YELP} style={layerStyles.yelp} />
                 </MapboxGL.ShapeSource>
               )}
             </MapboxGL.MapView>
@@ -350,9 +349,10 @@ const styles = StyleSheet.create({
   }
 });
 
+const circleRadius = 8;
 const layerStyles = MapboxGL.StyleSheet.create({
   poiLayer: {
-    circleRadius: 8,
+    circleRadius,
     circleColor: MapboxGL.StyleSheet.source(
       [
         ['h', config.colors.yellow],
@@ -365,8 +365,8 @@ const layerStyles = MapboxGL.StyleSheet.create({
     circleStrokeWidth: 1
   },
   yelp: {
-    iconImage: yelpIcon,
-    iconAllowOverlap: true,
-    iconSize: 0.5
+    circleRadius,
+    circleColor: config.colors.yelpRed,
+    circleStrokeWidth: 1
   }
 });
