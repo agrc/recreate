@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, Text } from 'react-native';
+import { Platform, StyleSheet, Text } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import List from './List';
 import CustomizeBtn from './CustomizeBtn';
@@ -319,7 +319,7 @@ export default class MapView extends Component {
   }
 }
 
-const padding = 8
+const padding = 8;
 const styles = StyleSheet.create({
   container: {
     flex: 1
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   },
   locateButton: {
     position: 'absolute',
-    bottom: 75 + padding,
+    bottom: (Platform.OS === 'ios') ? 75 + padding : 45 + padding,
     right: padding,
     paddingTop: 3,
     height: 36,
