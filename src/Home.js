@@ -22,7 +22,8 @@ export default class Home extends Component {
     this.state = {
       searchError: false,
       searchFormOpen: false,
-      searchResults: []
+      searchResults: [],
+      hideTagLine: false
     };
   }
 
@@ -95,15 +96,25 @@ export default class Home extends Component {
     this.props.history.push(`/map/${center},${zoom}`);
   }
 
+  onSearchFocus() {
+    this.setState({ hideTagLine: true });
+  }
+
+  onSearchBlur() {
+    this.setState({ hideTagLine: false });
+  }
+
   render() {
     return (
       <Container>
         <ImageBackground source={require('./images/arches.jpg')} style={styles.backgroundImage}>
           <View style={styles.content}>
-            <View style={styles.tagLineContainer}>
-              <WhiteText style={styles.tagLineFont}>RECREATION,</WhiteText>
-              <WhiteText style={styles.tagLineFont}>Your Way</WhiteText>
-            </View>
+            { !this.state.hideTagLine && (
+              <View style={styles.tagLineContainer}>
+                <WhiteText style={styles.tagLineFont}>RECREATION,</WhiteText>
+                <WhiteText style={styles.tagLineFont}>Your Way</WhiteText>
+              </View>
+            )}
             <View style={styles.buttonsContainer}>
               <LinkButton primary block style={{marginBottom: padding}} to='/map'>
                 <Text>Explore Current Location</Text>
@@ -117,6 +128,8 @@ export default class Home extends Component {
                   containerStyle={styles.autocompleteContainer}
                   placeholder='Enter City or Place'
                   onChangeText={this.search.bind(this)}
+                  onFocus={this.onSearchFocus.bind(this)}
+                  onBlur={this.onSearchBlur.bind(this)}
                   renderItem={(feature) => (
                     <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
                       <Text style={styles.itemText}>{feature.attributes.name}</Text>
