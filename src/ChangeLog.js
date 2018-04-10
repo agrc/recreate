@@ -9,6 +9,12 @@ export default function ChangeLog() {
       <HeadingText>Change Log</HeadingText>
 
       <View style={styles.paragraph}>
+        <BoldText>v0.7.0</BoldText>
+        <BulletText>Convert to native application distributable via app stores (still some issues with Android OS) (<LinkText href='https://github.com/agrc/recreate/issues/44'>#44</LinkText>).</BulletText>
+        <BulletText>Convert home page city/place search to autocomplete dropdown (<LinkText href='https://github.com/agrc/recreate/issues/31'>#31</LinkText>).</BulletText>
+      </View>
+
+      <View style={styles.paragraph}>
         <BoldText>v0.6.0</BoldText>
         <BulletText>Fix styling of list table (<LinkText href='https://github.com/agrc/recreate-web/issues/30'>#30</LinkText>)</BulletText>
         <BulletText>Styling improvements for home page including switching text in GOED logo from black to white.</BulletText>
