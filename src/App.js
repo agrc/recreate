@@ -28,7 +28,7 @@ class App extends Component {
         <Container>
           <Header>
             <Left>
-              { this.props.history.index > 0 &&
+              { this.props.history.index > 0 && this.props.history.location.pathname !== '/' &&
                 <Button transparent onPress={this.goBack.bind(this)}>
                   <Icon name='arrow-back' style={{color: config.colors.white}} />
                 </Button>
