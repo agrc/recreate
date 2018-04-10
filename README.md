@@ -20,7 +20,7 @@ Lint (via eslint):
 `npm run lint`  
 
 ## Useful Tools
-[`react-devtools`](https://facebook.github.io/react-native/docs/debugging.html#react-developer-tools)
+[`react-native-debugger`](https://github.com/jhen0409/react-native-debugger)
 
 `⌘D` (iOS) & `⌘M` (Android) open the developer menu within the app. This can be used to enable live reload and remote debugging.
 

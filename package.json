@@ -3,7 +3,7 @@
   "version": "0.6.0",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start": "node node_modules/react-native/local-cli/cli.js start & open \"rndebugger://set-debugger-loc?host=localhost&port=8081\"",
     "test": "jest",
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "travis": "yarn run lint"
