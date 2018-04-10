@@ -11,6 +11,7 @@ import Collapsible from 'react-native-collapsible';
 import geoViewport from '@mapbox/geo-viewport';
 import { REACT_APP_AGRC_WEB_API_KEY } from 'react-native-dotenv';
 import Autocomplete from 'react-native-autocomplete-input';
+import 'abortcontroller-polyfill';
 
 
 const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
@@ -33,8 +34,16 @@ export default class Home extends Component {
     this.setState({ searchError: false });
 
     if (searchTerm.length === 0) {
+      this.setState({ searchResults: [] });
+
       return;
     }
+
+    if (typeof this.abortController !== 'undefined') {
+      this.abortController.abort();
+    }
+
+    this.abortController = new window.AbortController();
 
     const params = {
         predicate: `Name LIKE '${searchTerm}%'`,
@@ -43,7 +52,8 @@ export default class Home extends Component {
     };
 
     const headers = { Referer: 'https://recreate.utah.gov/' };
-    const response = await fetch(`${searchUrl}?${queryString.stringify(params)}`, { headers });
+    const response = await fetch(`${searchUrl}?${queryString.stringify(params)}`,
+      { headers, signal: this.abortController.signal });
     if (response.ok) {
       const responseJson = await response.json();
       if (responseJson.result.length) {
@@ -54,6 +64,8 @@ export default class Home extends Component {
     } else {
       this.setState({ searchError: true });
     }
+
+    delete this.abortController;
   }
 
   zoom(feature) {

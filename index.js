@@ -17,9 +17,10 @@ if (__DEV__) {
   //     outAndBack: true
   //   }
   // }];  // DetailMap
-  initialEntries = ['/map/-111.82,40.37,12'];  // map
+  // initialEntries = ['/map/-111.82,40.37,12'];  // map
   // initialEntries = ['/changelog'];  // ChangeLog
 }
+console.disableYellowBox = true;
 
 
 const RouterWrapper = function () {

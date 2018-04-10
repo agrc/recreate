@@ -12,6 +12,7 @@
     "@mapbox/geo-viewport": "^0.2.2",
     "@mapbox/react-native-mapbox-gl": "^6.1.0",
     "@turf/turf": "^5.1.6",
+    "abortcontroller-polyfill": "^1.1.8",
     "lodash.get": "^4.4.2",
     "lodash.isequal": "^4.5.0",
     "lodash.round": "^4.0.4",
