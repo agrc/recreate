@@ -52,6 +52,10 @@ export default class Home extends Component {
         apiKey: REACT_APP_AGRC_WEB_API_KEY
     };
 
+    const nothingFound = () => {
+      this.setState({ searchError: searchTerm, searchResults: [] });
+    };
+
     const headers = { Referer: 'https://recreate.utah.gov/' };
     const response = await fetch(`${searchUrl}?${queryString.stringify(params)}`,
       { headers, signal: this.abortController.signal });
@@ -60,10 +64,10 @@ export default class Home extends Component {
       if (responseJson.result.length) {
         this.setState({ searchResults: responseJson.result });
       } else {
-        this.setState({ searchError: true });
+        nothingFound();
       }
     } else {
-      this.setState({ searchError: true });
+      nothingFound();
     }
 
     delete this.abortController;
@@ -135,7 +139,7 @@ export default class Home extends Component {
                       <Text style={styles.itemText}>{feature.attributes.name}</Text>
                     </TouchableOpacity>
                   )} />
-                <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.cityPlace}!</WhiteText>
+                <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.searchError}!</WhiteText>
               </Collapsible>
             </View>
             <Image source={require('./images/outdoorlogo.png')} style={styles.goedLogo}/>
