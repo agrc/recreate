@@ -1,14 +1,27 @@
-# recreate-web [![Build Status](https://travis-ci.org/agrc/recreate-web.svg?branch=master)](https://travis-ci.org/agrc/recreate-web)
-Web app for recreation locations
+# recreate [![Build Status](https://travis-ci.org/agrc/recreate.svg?branch=master)](https://travis-ci.org/agrc/recreate)
+React native app for recreation locations
 
 ## Development
-This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app).
+This project was bootstrapped with [react-native-cli](https://github.com/facebook/react-native).
 
-`package.json` includes the following scripts:
-  - `yarn start` (Runs the app in development mode)
-  - `yarn test` (Runs tests)
-  - `yarn test-debug` (Runs tests with option to debug using `chrome://inspect/` (requires node v8.x to use breakpoints))
-  - `yarn build` (Builds the app for production to the `build` folder)
-  - `yarn deploy stage|prod` (Copies the `build` folder to the server)
+Run project in simulators:  
+`react-native run-ios` && `react-native run-android`
 
-You can go to [docs/create-react-app.md](docs/create-react-app.md) for more documentation.
+Note: Android emulator needs to be started manually.
+
+Run project in production:  
+`react-native run-ios --configuration Release`
+
+Run project on connected device:  
+`react-native run-ios --device`  
+**Note:** Running this command requires [this change](https://github.com/facebook/react-native/pull/17983/files) in the react-native package. This needs to be done manually in `node_modules` until `v0.55` is cut.
+
+Lint (via eslint):
+`npm run lint`  
+
+## Useful Tools
+[`react-native-debugger`](https://github.com/jhen0409/react-native-debugger)
+
+`⌘D` (iOS) & `⌘M` (Android) open the developer menu within the app. This can be used to enable live reload and remote debugging.
+
+List of native-base icons: https://oblador.github.io/react-native-vector-icons/

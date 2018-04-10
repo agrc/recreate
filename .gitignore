@@ -1,4 +1,49 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
+# --- IMPORTED FROM REACT NATIVE TEMPLATE ---
+# Xcode
+#
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.moved-aside
+DerivedData
+*.hmap
+*.ipa
+*.xcuserstate
+project.xcworkspace
+
+# Android/IntelliJ
+#
+build/
+.idea
+.gradle
+local.properties
+*.iml
+
+# BUCK
+buck-out/
+\.buckd/
+*.keystore
+
+# fastlane
+#
+# It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
+# screenshots whenever they are needed.
+# For more information about the recommended setup visit:
+# https://docs.fastlane.tools/best-practices/source-control/
+
+*/fastlane/report.xml
+*/fastlane/Preview.html
+*/fastlane/screenshots
+# --- END ---
+
 
 # dependencies
 /node_modules
@@ -32,8 +77,6 @@ api/secrets.yml
 # secrets
 /.env
 
-# storybook
-.storybook/
 *.pyc
 RecreateSecrets.py
 maps/Index/

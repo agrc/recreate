@@ -1,47 +1,53 @@
 import React, { Component } from 'react';
-import { Button, Collapse, Input } from 'reactstrap';
-import { Link } from 'react-router-dom';
+import { Button, Container, Text } from 'native-base';
+import { Dimensions, ImageBackground, StyleSheet, Image, TouchableOpacity, View } from 'react-native';
+import { Link } from 'react-router-native';
 import queryString from 'query-string';
-import mapboxgl from 'mapbox-gl';
 import { version } from '../package.json';
 import config from './config';
-
-import outdoorLogo from './css/images/outdoorlogo.png';
+import { WhiteText } from './AppText';
+import LinkButton from './LinkButton';
+import Collapsible from 'react-native-collapsible';
+import geoViewport from '@mapbox/geo-viewport';
+import { REACT_APP_AGRC_WEB_API_KEY } from 'react-native-dotenv';
+import Autocomplete from 'react-native-autocomplete-input';
 
 
 const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
 
-class Home extends Component {
+export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
       searchError: false,
-      searchTerm: '',
       searchFormOpen: false,
-      cityPlace: ''
+      searchResults: []
     };
-
-    this.toggleSearchForm = this.toggleSearchForm.bind(this);
-    this.search = this.search.bind(this);
-    this.handleCityPlaceChange = this.handleCityPlaceChange.bind(this);
-    this.handleSearchKeyDown = this.handleSearchKeyDown.bind(this);
   }
+
   toggleSearchForm() {
     this.setState({searchFormOpen: !this.state.searchFormOpen});
   }
-  async search() {
+
+  async search(searchTerm) {
+    this.setState({ searchError: false });
+
+    if (searchTerm.length === 0) {
+      return;
+    }
+
     const params = {
-        predicate: `Name = '${this.state.cityPlace}'`,
+        predicate: `Name LIKE '${searchTerm}%'`,
         spatialReference: 4326,
-        apiKey: process.env.REACT_APP_AGRC_WEB_API_KEY
+        apiKey: REACT_APP_AGRC_WEB_API_KEY
     };
 
-    const response = await fetch(`${searchUrl}?${queryString.stringify(params)}`);
+    const headers = { Referer: 'https://recreate.utah.gov/' };
+    const response = await fetch(`${searchUrl}?${queryString.stringify(params)}`, { headers });
     if (response.ok) {
       const responseJson = await response.json();
       if (responseJson.result.length) {
-        const extent = this.getMapboxCentroid(responseJson.result[0].geometry);
-        this.props.history.push(`/map/${extent},11`);
+        this.setState({ searchResults: responseJson.result });
       } else {
         this.setState({ searchError: true });
       }
@@ -49,12 +55,14 @@ class Home extends Component {
       this.setState({ searchError: true });
     }
   }
-  getMapboxCentroid(esriGeometry) {
-    // returns a LngLat array that is the centroid of `esriGeometry`
+
+  zoom(feature) {
+    console.log('zoom', feature);
+
     let southwest;
     let northeast;
 
-    esriGeometry.rings[0].forEach((point) => {
+    feature.geometry.rings[0].forEach((point) => {
       const diviser = 1000;
       point = point.map((coord) => Math.round(coord * diviser)/diviser)
       if (!southwest || (point[0] < southwest[0] && point[1] < southwest[1])) {
@@ -64,44 +72,105 @@ class Home extends Component {
       }
     });
 
-    return new mapboxgl.LngLatBounds(southwest, northeast).getCenter().toArray();
-  }
-  handleCityPlaceChange(event) {
-    this.setState({cityPlace: event.target.value});
-  }
-  handleSearchKeyDown(event) {
-    this.setState({searchError: false});
+    const {height, width} = Dimensions.get('window');
 
-    if (event.key === config.enterKey) {
-      this.search();
-    }
+    const {center, zoom} = geoViewport.viewport([southwest[0], southwest[1], northeast[0], northeast[1]],
+                                [width, height],
+                                undefined,
+                                undefined,
+                                config.tileSize);
+
+    this.props.history.push(`/map/${center},${zoom}`);
   }
+
   render() {
     return (
-      <div className='home' alt='delicate arch'>
-        <div className='tagline'>
-          <h1 className='firstline'>RECREATION,</h1>
-          <h1 className='secondline'>Your Way</h1>
-        </div>
-        <div className='buttons'>
-          <Button color='primary' tag={Link} to='/map'>Explore Current Location</Button>
-          <Button color='primary' onClick={this.toggleSearchForm}>Search by City or Place</Button>
-          <Collapse isOpen={this.state.searchFormOpen} className='search-form'>
-            <Input type='text' placeholder='Enter City or Place' value={this.state.cityPlace}
-              onChange={this.handleCityPlaceChange}
-              onKeyDown={this.handleSearchKeyDown}/>
-            <div className='button-group'>
-              <Button color='primary' onClick={this.search}>Search</Button>
-              <Button color='warning' onClick={() => this.setState({searchFormOpen: false})}>Cancel</Button>
-            </div>
-            <span style={{display: (this.state.searchError) ? 'block': 'none'}}>No results found for {this.state.cityPlace}!</span>
-          </Collapse>
-        </div>
-        <img src={outdoorLogo} alt='goed logo'/>
-        <Link to='changelog' className='version'>{version}</Link>
-      </div>
+      <Container>
+        <ImageBackground source={require('./images/arches.jpg')} style={styles.backgroundImage}>
+          <View style={styles.content}>
+            <View style={styles.tagLineContainer}>
+              <WhiteText style={styles.tagLineFont}>RECREATION,</WhiteText>
+              <WhiteText style={styles.tagLineFont}>Your Way</WhiteText>
+            </View>
+            <View style={styles.buttonsContainer}>
+              <LinkButton primary block style={{marginBottom: padding}} to='/map'>
+                <Text>Explore Current Location</Text>
+              </LinkButton>
+              <Button primary block onPress={this.toggleSearchForm.bind(this)}>
+                <Text>Search by City or Place</Text>
+              </Button>
+              <Collapsible collapsed={!this.state.searchFormOpen}>
+                <Autocomplete
+                  data={this.state.searchResults}
+                  containerStyle={styles.autocompleteContainer}
+                  placeholder='Enter City or Place'
+                  onChangeText={this.search.bind(this)}
+                  renderItem={(feature) => (
+                    <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
+                      <Text style={styles.itemText}>{feature.attributes.name}</Text>
+                    </TouchableOpacity>
+                  )} />
+                <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.cityPlace}!</WhiteText>
+              </Collapsible>
+            </View>
+            <Image source={require('./images/outdoorlogo.png')} style={styles.goedLogo}/>
+            <Link to='changelog' style={styles.version}>
+              <WhiteText style={styles.versionText}>{version}</WhiteText>
+            </Link>
+          </View>
+        </ImageBackground>
+      </Container>
     );
   }
-};
+}
 
-export default Home;
+const padding = 10;
+const styles = StyleSheet.create({
+  autocompleteContainer: {
+    marginTop: padding
+  },
+  backgroundImage: {
+    height: '100%',
+    width: '100%'
+  },
+  buttonsContainer: {
+    backgroundColor: config.colors.transparent,
+    padding,
+    zIndex: 2
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'space-between',
+    padding
+  },
+  goedLogo: {
+    alignSelf: 'center'
+  },
+  hidden: {
+    display: 'none'
+  },
+  itemText: {
+    margin: 8
+  },
+  tagLineContainer: {
+    alignSelf: 'center'
+  },
+  tagLineFont: {
+    textShadowColor: config.colors.textShadow,
+    textShadowOffset: { width: 1, height: 1 },
+    shadowColor: config.colors.textShadow,
+    shadowOffset: { width: 1, height: 1 },
+    shadowOpacity: 1,
+    fontSize: 50,
+    fontWeight: 'bold',
+    textAlign: 'center'
+  },
+  version: {
+    position: 'absolute',
+    bottom: 3,
+    right: 3
+  },
+  versionText: {
+    fontSize: 10
+  }
+});

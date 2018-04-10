@@ -7,6 +7,7 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 export default {
+  mapExtent: [-111.8, 40.55, 10],  // long, lat, zoom
   poi_type_lookup: {
     p: 'Parks',
     y: 'Local Amenities (via Yelp)',
@@ -17,9 +18,8 @@ export default {
     p: aGOLServiceBase.replace(layerToken, `UtahParksAndMonuments${devPostfix}`),
     h: aGOLServiceBase.replace(layerToken, `RouteLines${devPostfix}`),
     w: aGOLServiceBase.replace(layerToken, `BoatRamps${devPostfix}`),
-    POI_DATA: `${process.env.PUBLIC_URL}/PointsOfInterest.json`,
     yelp: 'https://f0inm0pv3a.execute-api.us-east-1.amazonaws.com/dev/search',
-    yelpIcon: `${process.env.PUBLIC_URL}/Yelp_burst_positive_RGB.png`
+    yelpIcon: `Yelp_burst_positive_RGB.png`
   },
   fieldnames: {
     Name: 'Name',
@@ -48,8 +48,16 @@ export default {
     outdoors: 'mapbox://styles/mapbox/outdoors-v10'
   },
   colors: {
-    // these match values in index.scss
     blue: '#358EA6',
-    green: '#35a669'
-  }
+    green: '#35a669',
+    yellow: '#e7eb3f',
+    white: 'white',
+    transparent: 'rgba(0, 0, 0, 0.35)',
+    textShadow: '#4b4b4b',
+    borderColor: '#999999',
+    transparentWhite: 'rgba(255, 255, 255, 0.85)',
+    yelpRed: '#D32423'
+  },
+  tileSize: 512,
+  maxYelpRequestRadius: 15000  // meters
 };

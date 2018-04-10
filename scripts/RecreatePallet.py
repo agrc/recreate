@@ -58,7 +58,7 @@ class RecreatePallet(Pallet):
         elif config == 'Staging':
             output_folder = r'\\{}\c$\inetpub\wwwroot\recreate-web'.format(secrets.TEST_SERVER_IP)
         else:
-            output_folder = r'X:\recreate-web\public'
+            output_folder = r'X:\recreate\src'
 
         self.poi_json = join(output_folder, 'PointsOfInterest.json')
         self.poi = join(self.recreate, POI)

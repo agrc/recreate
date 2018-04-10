@@ -1,21 +1,22 @@
 import React, { Component } from 'react';
-import { Button } from 'reactstrap';
+import { Content, Text, View } from 'native-base';
 import ParksDetail from './ParksDetail';
 import HikingDetail from './HikingDetail';
 import BoatRampsDetail from './BoatRampsDetail';
 import config from './config';
 import get from 'lodash.get';
 import distance from '@turf/distance';
+import poiJson from './PointsOfInterest.json';
+import { HeadingText, NameText, SmallText } from './AppText';
+import { StyleSheet } from 'react-native';
 
 
-class FeatureDetails extends Component {
-  constructor(props) {
-    super(props);
-
-    if (get(props, 'location.state')) {
-      this.state = { ...props.location.state };
+export default class FeatureDetails extends Component {
+  componentDidMount() {
+    if (get(this.props, 'location.state')) {
+      this.setState({ ...this.props.location.state });
     } else {
-      this.fetchItemProps();
+      this.getItemProps();
     }
   }
 
@@ -28,28 +29,22 @@ class FeatureDetails extends Component {
     // don't worry about errors because we'll just hide the distance text
   }
 
-  async fetchItemProps() {
-    console.log('fetching item props');
-    const response = await fetch(config.urls.POI_DATA);
-    if (response.ok) {
-      const poiJson = await response.json();
+  getItemProps() {
+    const id = this.props.match.params.id;
+    const feature = poiJson.features.find(f => f.properties[config.fieldnames.ID] === id);
 
-      const id = this.props.match.params.id;
-      const feature = poiJson.features.find(f => f.properties[config.fieldnames.ID] === id);
-
-      if (feature) {
-        this.setState({ ...feature.properties });
-        this.getCurrentLocation(feature.geometry.coordinates);
-      } else {
-        // TODO: handle feature not found
-        console.error(`${id} not found!`);
-      }
+    if (feature) {
+      this.setState({ ...feature.properties });
+      this.getCurrentLocation(feature.geometry.coordinates);
+    } else {
+      // TODO: handle feature not found
+      console.error(`${id} not found!`);
     }
   }
 
   render() {
     let Details;
-    if (this.state) {
+    if (this.state && this.state.Type) {
       switch (config.poi_type_lookup[this.state.Type]) {
         case config.poi_type_lookup.p:
           Details = ParksDetail;
@@ -66,24 +61,30 @@ class FeatureDetails extends Component {
     }
 
     return (
-      <div className='feature-details scroller'>
+      <Content style={styles.padding}>
         {Details ? (
-          <div>
-            <div className='header padder'>
-              <Button color='link' onClick={() => this.props.history.goBack()}>Back</Button>
+          <View>
+            <View style={styles.headerContainer}>
+              <HeadingText>{config.poi_type_lookup[this.state.Type]}</HeadingText>
               {this.state.miles &&
-                <span className='distance'>Distance From You: {this.state.miles} miles</span>}
-            </div>
-            <div className='padder'>
-              <h4>{config.poi_type_lookup[this.state.Type]}</h4>
-              <h5>{this.state[config.fieldnames.Name]}</h5>
-            </div>
+                <SmallText>Distance From You: {this.state.miles} miles</SmallText>}
+            </View>
+            <NameText>{this.state[config.fieldnames.Name]}</NameText>
+
             <Details { ...this.state } />
-          </div>
-        ) : <span>loading data...</span>}
-      </div>
+          </View>
+        ) : <Text>loading data...</Text>}
+      </Content>
     );
   }
 }
 
-export default FeatureDetails;
+const styles = StyleSheet.create({
+  padding: {
+    padding: 8
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between'
+  }
+});
