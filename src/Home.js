@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Button, Container, Input, Item, Text } from 'native-base';
-import { Dimensions, ImageBackground, StyleSheet, Image, View } from 'react-native';
+import { Button, Container, Text } from 'native-base';
+import { Dimensions, ImageBackground, StyleSheet, Image, TouchableOpacity, View } from 'react-native';
 import { Link } from 'react-router-native';
 import queryString from 'query-string';
 import { version } from '../package.json';
@@ -10,6 +10,7 @@ import LinkButton from './LinkButton';
 import Collapsible from 'react-native-collapsible';
 import geoViewport from '@mapbox/geo-viewport';
 import { REACT_APP_AGRC_WEB_API_KEY } from 'react-native-dotenv';
+import Autocomplete from 'react-native-autocomplete-input';
 
 
 const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
@@ -19,27 +20,24 @@ export default class Home extends Component {
     super(props);
     this.state = {
       searchError: false,
-      searchTerm: '',
       searchFormOpen: false,
-      cityPlace: ''
+      searchResults: []
     };
-
-    this.toggleSearchForm = this.toggleSearchForm.bind(this);
-    this.search = this.search.bind(this);
-    this.handleCityPlaceChange = this.handleCityPlaceChange.bind(this);
   }
 
   toggleSearchForm() {
     this.setState({searchFormOpen: !this.state.searchFormOpen});
   }
 
-  async search() {
-    if (this.state.cityPlace.length === 0) {
+  async search(searchTerm) {
+    this.setState({ searchError: false });
+
+    if (searchTerm.length === 0) {
       return;
     }
 
     const params = {
-        predicate: `Name = '${this.state.cityPlace}'`,
+        predicate: `Name LIKE '${searchTerm}%'`,
         spatialReference: 4326,
         apiKey: REACT_APP_AGRC_WEB_API_KEY
     };
@@ -49,8 +47,7 @@ export default class Home extends Component {
     if (response.ok) {
       const responseJson = await response.json();
       if (responseJson.result.length) {
-        const {center, zoom} = this.getViewport(responseJson.result[0].geometry);
-        this.props.history.push(`/map/${center},${zoom}`);
+        this.setState({ searchResults: responseJson.result });
       } else {
         this.setState({ searchError: true });
       }
@@ -59,11 +56,13 @@ export default class Home extends Component {
     }
   }
 
-  getViewport(esriGeometry) {
+  zoom(feature) {
+    console.log('zoom', feature);
+
     let southwest;
     let northeast;
 
-    esriGeometry.rings[0].forEach((point) => {
+    feature.geometry.rings[0].forEach((point) => {
       const diviser = 1000;
       point = point.map((coord) => Math.round(coord * diviser)/diviser)
       if (!southwest || (point[0] < southwest[0] && point[1] < southwest[1])) {
@@ -75,15 +74,13 @@ export default class Home extends Component {
 
     const {height, width} = Dimensions.get('window');
 
-    return geoViewport.viewport([southwest[0], southwest[1], northeast[0], northeast[1]],
+    const {center, zoom} = geoViewport.viewport([southwest[0], southwest[1], northeast[0], northeast[1]],
                                 [width, height],
                                 undefined,
                                 undefined,
                                 config.tileSize);
-  }
 
-  handleCityPlaceChange(searchTerm) {
-    this.setState({ cityPlace: searchTerm, searchError: false });
+    this.props.history.push(`/map/${center},${zoom}`);
   }
 
   render() {
@@ -99,23 +96,20 @@ export default class Home extends Component {
               <LinkButton primary block style={{marginBottom: padding}} to='/map'>
                 <Text>Explore Current Location</Text>
               </LinkButton>
-              <Button primary block onPress={this.toggleSearchForm}>
+              <Button primary block onPress={this.toggleSearchForm.bind(this)}>
                 <Text>Search by City or Place</Text>
               </Button>
               <Collapsible collapsed={!this.state.searchFormOpen}>
-                <Item regular style={styles.textbox}>
-                  <Input placeholder='Enter City or Place'
-                    value={this.state.cityPlace}
-                    onChangeText={this.handleCityPlaceChange} />
-                </Item>
-                <View style={styles.searchButtonsContainer}>
-                  <Button primary onPress={this.search} style={styles.searchButton}>
-                    <Text>Search</Text>
-                  </Button>
-                  <Button warning onPress={() => this.setState({searchFormOpen: false})} style={styles.searchButton}>
-                    <Text>Cancel</Text>
-                  </Button>
-                </View>
+                <Autocomplete
+                  data={this.state.searchResults}
+                  containerStyle={styles.autocompleteContainer}
+                  placeholder='Enter City or Place'
+                  onChangeText={this.search.bind(this)}
+                  renderItem={(feature) => (
+                    <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
+                      <Text style={styles.itemText}>{feature.attributes.name}</Text>
+                    </TouchableOpacity>
+                  )} />
                 <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.cityPlace}!</WhiteText>
               </Collapsible>
             </View>
@@ -132,13 +126,17 @@ export default class Home extends Component {
 
 const padding = 10;
 const styles = StyleSheet.create({
+  autocompleteContainer: {
+    marginTop: padding
+  },
   backgroundImage: {
     height: '100%',
     width: '100%'
   },
   buttonsContainer: {
     backgroundColor: config.colors.transparent,
-    padding
+    padding,
+    zIndex: 2
   },
   content: {
     flex: 1,
@@ -151,12 +149,8 @@ const styles = StyleSheet.create({
   hidden: {
     display: 'none'
   },
-  searchButton: {
-    width: '25%'
-  },
-  searchButtonsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between'
+  itemText: {
+    margin: 8
   },
   tagLineContainer: {
     alignSelf: 'center'
@@ -170,15 +164,6 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: 'bold',
     textAlign: 'center'
-  },
-  textbox: {
-    borderColor: config.colors.transparent,
-    backgroundColor: config.colors.white,
-    borderRadius: 5,
-    marginTop: 10,
-    marginBottom: 10,
-    borderWidth: 0,
-    marginLeft: -1
   },
   version: {
     position: 'absolute',
