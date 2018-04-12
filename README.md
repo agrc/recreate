@@ -19,6 +19,9 @@ Run project on connected device:
 Lint (via eslint):
 `npm run lint`  
 
+### Deployment Steps
+1. Bump version number in `package.json`, `ios/RecreateNative/Info.plist`, and `android/app/build.gradle`.
+
 ## Useful Tools
 [`react-native-debugger`](https://github.com/jhen0409/react-native-debugger)
 
