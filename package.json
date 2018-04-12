@@ -3,10 +3,11 @@
   "version": "0.7.0",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start & open \"rndebugger://set-debugger-loc?host=localhost&port=8081\"",
+    "start": "node node_modules/react-native/local-cli/cli.js start",
     "test": "jest",
     "lint": "node node_modules/eslint/bin/eslint.js .",
-    "travis": "yarn run lint"
+    "travis": "yarn run lint",
+    "opendev": "open \"rndebugger://set-debugger-loc?host=localhost&port=8081\""
   },
   "dependencies": {
     "@mapbox/geo-viewport": "^0.2.2",
