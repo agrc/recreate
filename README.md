@@ -1,6 +1,13 @@
 # recreate [![Build Status](https://travis-ci.org/agrc/recreate.svg?branch=master)](https://travis-ci.org/agrc/recreate)
 React native app for recreation locations
 
+## Installation
+1. `git clone https://github.com/agrc/recreate && cd recreate`
+1. `npm install`
+1. Create a `.env` file in the root directory. Use `.env.sample` as an example.
+
+You can go to the [`react-native` docs](http://facebook.github.io/react-native/docs/getting-started.html) for more info.
+
 ## Development
 This project was bootstrapped with [react-native-cli](https://github.com/facebook/react-native).
 
