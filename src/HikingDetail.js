@@ -8,6 +8,7 @@ import StaticMap from './StaticMap';
 import { Link } from 'react-router-native';
 import { SmallText } from './AppText';
 import { Linking } from 'react-native';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 
 export default class HikingDetails extends DetailsBase {
@@ -47,7 +48,7 @@ export default class HikingDetails extends DetailsBase {
 
           { url &&
             (<Button transparent onPress={() => { Linking.openURL(url) }}>
-              <Text href={url}>Trail Details</Text>
+              <Text href={url}>Trail Details <FontAwesome name='external-link' size={16.5} /></Text>
             </Button>) }
         </View>
         <StaticMap geojson={this.state.geojson} outAndBack={this.state[config.fieldnames.trails.RouteType] === config.outAndBack} />
