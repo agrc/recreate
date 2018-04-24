@@ -6,6 +6,7 @@ import { Container, View } from 'native-base';
 import { Dimensions, StyleSheet } from 'react-native';
 import geoViewport from '@mapbox/geo-viewport';
 import platform from './native-base-theme/variables/platform';
+import mapStyles from './mapStyles';
 
 
 const LINE_STRING = 'LineString';
@@ -15,7 +16,9 @@ export default class DetailMap extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { chartData: null };
+    this.state = { chartData: null, styleLoaded: false };
+
+    mapStyles.getBasemapStyle(this);
   }
 
   componentWillMount() {
@@ -89,9 +92,9 @@ export default class DetailMap extends Component {
 
     return (
       <Container style={styles.container}>
-        <MapboxGL.MapView
+        { this.state.styleLoaded && (<MapboxGL.MapView
           style={styles.container}
-          styleURL={config.styles.outdoors}
+          styleURL={mapStyles.styleFileURI}
           ref={(map) => this.map = map}
           centerCoordinate={this.center}
           zoomLevel={this.zoom}
@@ -99,7 +102,7 @@ export default class DetailMap extends Component {
           <MapboxGL.ShapeSource id='TRAIL_SOURCE' shape={JSON.parse(this.props.location.state.geojson)}>
             <MapboxGL.LineLayer id='TRAIL_LAYER' style={layerStyles.trail} />
           </MapboxGL.ShapeSource>
-        </MapboxGL.MapView>
+        </MapboxGL.MapView>)}
         { this.state.chartData && (
           <View style={styles.chartContainer}>
             <YAxis

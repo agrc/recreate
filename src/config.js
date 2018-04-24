@@ -1,3 +1,6 @@
+import { REACT_APP_DISCOVER_QUAD_WORD } from 'react-native-dotenv';
+
+
 const layerToken = '{layer}';
 const aGOLServiceBase = `https://services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/rest/services/${layerToken}/FeatureServer/0/query`;
 
@@ -5,6 +8,7 @@ let devPostfix = '';
 if (process.env.NODE_ENV === 'development') {
   devPostfix = '_Dev';
 }
+const baseMapTiles = `https://wms.appgeo.com/login/path/${REACT_APP_DISCOVER_QUAD_WORD}/tiles/file/utah_terrain_vector_tiles_test/p12`
 
 export default {
   mapExtent: [-111.8, 40.55, 10],  // long, lat, zoom
@@ -19,7 +23,9 @@ export default {
     h: aGOLServiceBase.replace(layerToken, `RouteLines${devPostfix}`),
     w: aGOLServiceBase.replace(layerToken, `BoatRamps${devPostfix}`),
     yelp: 'https://f0inm0pv3a.execute-api.us-east-1.amazonaws.com/dev/search',
-    yelpIcon: `Yelp_burst_positive_RGB.png`
+    yelpIcon: `Yelp_burst_positive_RGB.png`,
+    baseMapTiles,
+    terrainStyleFile: `${baseMapTiles}/resources/styles/root.json`
   },
   fieldnames: {
     Name: 'Name',
@@ -44,9 +50,6 @@ export default {
   outAndBack: 'Out & Back',
   enterKey: 'Enter',
   elevationProfileResampleFactor: 50,
-  styles: {
-    outdoors: 'mapbox://styles/mapbox/outdoors-v10'
-  },
   colors: {
     blue: '#358EA6',
     green: '#35a669',

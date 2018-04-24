@@ -13,6 +13,7 @@ import geoViewport from '@mapbox/geo-viewport';
 import YelpPopup from './YelpPopup';
 import buttonTheme from './native-base-theme/components/Button';
 import isEqual from 'lodash.isequal';
+import mapStyles from './mapStyles';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -34,8 +35,11 @@ export default class MapView extends Component {
       yelpFeatureSet: null,
       showYelp: true,
       poiFilter: null,
-      selectedYelpGeoJSON: null
+      selectedYelpGeoJSON: null,
+      styleLoaded: null
     };
+
+    mapStyles.getBasemapStyle(this);
   }
 
   getClearFilter() {
@@ -280,11 +284,11 @@ export default class MapView extends Component {
         <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} locked={true}>
           <Tab heading='Map'>
             { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
-            <MapboxGL.MapView
+            { this.state.styleLoaded && (<MapboxGL.MapView
               onDidFinishRenderingMapFully={this.onMapLoad.bind(this)}
               onLayout={this.onMapViewLayout.bind(this)}
               ref={(ref) => (this.map = ref)}
-              styleURL={config.styles.outdoors}
+              styleURL={mapStyles.styleFileURI}
               zoomLevel={this.state.zoom}
               centerCoordinate={this.state.currentLocation}
               style={[styles.container, styles.mapView]}
@@ -308,7 +312,7 @@ export default class MapView extends Component {
                   <MapboxGL.CircleLayer id={LAYERS.YELP} style={layerStyles.yelp} />
                 </MapboxGL.ShapeSource>
               )}
-            </MapboxGL.MapView>
+            </MapboxGL.MapView>)}
             <Button onPress={this.onGPSButtonPress.bind(this)}
               light={!this.state.followUser}
               primary={this.state.followUser}
