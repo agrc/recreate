@@ -54,6 +54,7 @@ export default {
     blue: '#358EA6',
     green: '#35a669',
     yellow: '#e7eb3f',
+    lightBlue: '#B3E3F4',
     white: 'white',
     transparent: 'rgba(0, 0, 0, 0.35)',
     textShadow: '#4b4b4b',

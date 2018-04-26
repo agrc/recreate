@@ -5,37 +5,37 @@ import config from './config';
 
 const WhiteText = function (props) {
   return (
-    <Text style={[props.style, styles.whiteText]}>{props.children}</Text>
+    <Text style={[styles.whiteText, props.style]}>{props.children}</Text>
   );
 };
 
 const HeadingText = function (props) {
   return (
-    <Text style={[props.style, styles.headingText]}>{props.children}</Text>
+    <Text style={[styles.headingText, props.style]}>{props.children}</Text>
   );
 };
 
 const NameText = function (props) {
   return (
-    <Text style={[props.style, styles.nameText]}>{props.children}</Text>
+    <Text style={[styles.nameText, props.style]}>{props.children}</Text>
   );
 };
 
 const SmallText = function (props) {
   return (
-    <Text style={[props.style, styles.smallText]}>{props.children}</Text>
+    <Text style={[styles.smallText, props.style]}>{props.children}</Text>
   );
 };
 
 const LinkText = function (props) {
   return (
-    <Text style={[props.style, styles.linkText]} onPress={() => Linking.openURL(props.href)}>{props.children}</Text>
+    <Text style={[styles.linkText, props.style]} onPress={() => Linking.openURL(props.href)}>{props.children}</Text>
   );
 };
 
 const BoldText = function (props) {
   return (
-    <Text style={[props.style, styles.boldText]}>{props.children}</Text>
+    <Text style={[styles.boldText, props.style]}>{props.children}</Text>
   );
 };
 

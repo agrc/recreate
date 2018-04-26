@@ -115,8 +115,8 @@ export default class Home extends Component {
           <View style={styles.content}>
             { !this.state.hideTagLine && (
               <View style={styles.tagLineContainer}>
-                <WhiteText style={styles.tagLineFont}>RECREATION,</WhiteText>
-                <WhiteText style={styles.tagLineFont}>Your Way</WhiteText>
+                <WhiteText style={[styles.tagLineFont, styles.avenir]}>RECREATION,</WhiteText>
+                <WhiteText style={[styles.tagLineFont, styles.caveat]}>Your Way</WhiteText>
               </View>
             )}
             <View style={styles.buttonsContainer}>
@@ -184,13 +184,21 @@ const styles = StyleSheet.create({
   tagLineContainer: {
     alignSelf: 'center'
   },
+  avenir: {
+    fontFamily: 'Avenir Next Condensed Demi Bold',
+    fontSize: 48
+  },
+  caveat: {
+    fontFamily: 'Caveat-Regular',
+    fontSize: 64,
+    color: config.colors.lightBlue
+  },
   tagLineFont: {
     textShadowColor: config.colors.textShadow,
     textShadowOffset: { width: 1, height: 1 },
     shadowColor: config.colors.textShadow,
     shadowOffset: { width: 1, height: 1 },
     shadowOpacity: 1,
-    fontSize: 50,
     fontWeight: 'bold',
     textAlign: 'center'
   },

@@ -36,7 +36,7 @@
 		</dict>
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>Entypo.ttf</string>
@@ -53,6 +53,14 @@
 		<string>Zocial.ttf</string>
 		<string>Feather.ttf</string>
 		<string>MaterialCommunityIcons.ttf</string>
+		<string>Avenir Next Condensed Demi Bold.ttf</string>
+		<string>Helvetica Bold Oblique.ttf</string>
+		<string>Helvetica Bold.ttf</string>
+		<string>Helvetica Light Oblique.ttf</string>
+		<string>Helvetica Light.ttf</string>
+		<string>Helvetica Oblique.ttf</string>
+		<string>Helvetica.ttf</string>
+		<string>Caveat Regular.ttf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>

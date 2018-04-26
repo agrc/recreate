@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00AE6DC7EA654B61872C42F4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B4CFBC0E12774E028617EBAB /* MaterialIcons.ttf */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
@@ -56,6 +55,14 @@
 		D775A14DA5C34FB1801740F0 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AAE158327A9D445EB3B08A0A /* Entypo.ttf */; };
 		E37B09C54CFC4535BC0E12E4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8BBD05F0BD24119BAE1B22A /* MaterialIcons.ttf */; };
 		F3636E8928964675B6156831 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B247D79E7A9947D3861FDAD2 /* Octicons.ttf */; };
+		BAFA22D941994318A4DDA2F6 /* Avenir Next Condensed Demi Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98ADE700CBBC489993A48C30 /* Avenir Next Condensed Demi Bold.ttf */; };
+		856100212A0E4EAB8090D6CE /* Caveat Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = AF5BC82885974FC89C49EB7D /* Caveat Regular.ttf */; };
+		BD1DD0665FF542B58142281F /* Helvetica Bold Oblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73589D13BE794F63B5111C5D /* Helvetica Bold Oblique.ttf */; };
+		6F84F6EE62F342FCB81A31ED /* Helvetica Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8FBBA8CE2FEA4552AA615BF0 /* Helvetica Bold.ttf */; };
+		F0910936587B441A94E91DDC /* Helvetica Light Oblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DB49D7C571384BEE880C2270 /* Helvetica Light Oblique.ttf */; };
+		9CCBC4809E3441169AA6FBCE /* Helvetica Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1AF990589024474E9129E111 /* Helvetica Light.ttf */; };
+		2F7E1AC47C2F4AB98C2572B0 /* Helvetica Oblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4D38C894B94F4B46A15116A1 /* Helvetica Oblique.ttf */; };
+		179833EA45D042009DD7EA63 /* Helvetica.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61DD6683C56F4C188894F971 /* Helvetica.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -441,6 +448,14 @@
 		EA740979531B42E8B4D30043 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		EC23AA58D95F46DBB7FAC347 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		EC2C042DC22A4CDBB8F2A28B /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = file; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		98ADE700CBBC489993A48C30 /* Avenir Next Condensed Demi Bold.ttf */ = {isa = PBXFileReference; name = "Avenir Next Condensed Demi Bold.ttf"; path = "../assets/fonts/Avenir Next Condensed Demi Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		AF5BC82885974FC89C49EB7D /* Caveat Regular.ttf */ = {isa = PBXFileReference; name = "Caveat Regular.ttf"; path = "../assets/fonts/Caveat Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		73589D13BE794F63B5111C5D /* Helvetica Bold Oblique.ttf */ = {isa = PBXFileReference; name = "Helvetica Bold Oblique.ttf"; path = "../assets/fonts/Helvetica Bold Oblique.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8FBBA8CE2FEA4552AA615BF0 /* Helvetica Bold.ttf */ = {isa = PBXFileReference; name = "Helvetica Bold.ttf"; path = "../assets/fonts/Helvetica Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		DB49D7C571384BEE880C2270 /* Helvetica Light Oblique.ttf */ = {isa = PBXFileReference; name = "Helvetica Light Oblique.ttf"; path = "../assets/fonts/Helvetica Light Oblique.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1AF990589024474E9129E111 /* Helvetica Light.ttf */ = {isa = PBXFileReference; name = "Helvetica Light.ttf"; path = "../assets/fonts/Helvetica Light.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		4D38C894B94F4B46A15116A1 /* Helvetica Oblique.ttf */ = {isa = PBXFileReference; name = "Helvetica Oblique.ttf"; path = "../assets/fonts/Helvetica Oblique.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		61DD6683C56F4C188894F971 /* Helvetica.ttf */ = {isa = PBXFileReference; name = "Helvetica.ttf"; path = "../assets/fonts/Helvetica.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -631,6 +646,14 @@
 				D858F0DC1D954519969D65FF /* Zocial.ttf */,
 				098126277BE34ED9AD5BF1D2 /* Ionicons.ttf */,
 				8738D837295C4D3FAB5E9719 /* OFL.txt */,
+				98ADE700CBBC489993A48C30 /* Avenir Next Condensed Demi Bold.ttf */,
+				AF5BC82885974FC89C49EB7D /* Caveat Regular.ttf */,
+				73589D13BE794F63B5111C5D /* Helvetica Bold Oblique.ttf */,
+				8FBBA8CE2FEA4552AA615BF0 /* Helvetica Bold.ttf */,
+				DB49D7C571384BEE880C2270 /* Helvetica Light Oblique.ttf */,
+				1AF990589024474E9129E111 /* Helvetica Light.ttf */,
+				4D38C894B94F4B46A15116A1 /* Helvetica Oblique.ttf */,
+				61DD6683C56F4C188894F971 /* Helvetica.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -1252,6 +1275,14 @@
 				C5BF688CA10E40308E5024F6 /* Zocial.ttf in Resources */,
 				8439846502B34F09830336E3 /* Ionicons.ttf in Resources */,
 				5E2898DA29B646838C28B0CA /* OFL.txt in Resources */,
+				BAFA22D941994318A4DDA2F6 /* Avenir Next Condensed Demi Bold.ttf in Resources */,
+				856100212A0E4EAB8090D6CE /* Caveat Regular.ttf in Resources */,
+				BD1DD0665FF542B58142281F /* Helvetica Bold Oblique.ttf in Resources */,
+				6F84F6EE62F342FCB81A31ED /* Helvetica Bold.ttf in Resources */,
+				F0910936587B441A94E91DDC /* Helvetica Light Oblique.ttf in Resources */,
+				9CCBC4809E3441169AA6FBCE /* Helvetica Light.ttf in Resources */,
+				2F7E1AC47C2F4AB98C2572B0 /* Helvetica Oblique.ttf in Resources */,
+				179833EA45D042009DD7EA63 /* Helvetica.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
