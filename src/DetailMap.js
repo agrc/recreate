@@ -98,6 +98,8 @@ export default class DetailMap extends Component {
           ref={(map) => this.map = map}
           centerCoordinate={this.center}
           zoomLevel={this.zoom}
+          showUserLocation={true}
+          userTrackingMode={MapboxGL.UserTrackingModes.None}
           >
           <MapboxGL.ShapeSource id='TRAIL_SOURCE' shape={JSON.parse(this.props.location.state.geojson)}>
             <MapboxGL.LineLayer id='TRAIL_LAYER' style={layerStyles.trail} />
