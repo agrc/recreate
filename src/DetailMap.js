@@ -19,11 +19,9 @@ export default class DetailMap extends Component {
     this.state = { chartData: null, styleLoaded: false };
 
     mapStyles.getBasemapStyle(this);
-  }
 
-  componentWillMount() {
     // TODO: https://github.com/agrc/recreate/issues/32
-    const geometry = JSON.parse(this.props.location.state.geojson).geometry;
+    const geometry = JSON.parse(props.location.state.geojson).geometry;
 
     let coords = geometry.coordinates;
     if (geometry.type !== LINE_STRING) {
