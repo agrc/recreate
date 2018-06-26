@@ -1,9 +1,11 @@
 language: node_js
 node_js: 'lts/*'
-cache: yarn
 script:
-  - yarn run travis
+  - npm run travis
 notifications:
   email:
     on_success: change
     on_failure: change
+cache:
+  directories:
+    - node_modules
