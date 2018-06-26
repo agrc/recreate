@@ -1,14 +1,15 @@
-import { REACT_APP_DISCOVER_QUAD_WORD } from 'react-native-dotenv';
+import { REACT_APP_DISCOVER_QUAD_WORD_DEV, REACT_APP_DISCOVER_QUAD_WORD_PROD } from 'react-native-dotenv';
 
 
 const layerToken = '{layer}';
 const aGOLServiceBase = `https://services1.arcgis.com/99lidPhWCzftIe9K/ArcGIS/rest/services/${layerToken}/FeatureServer/0/query`;
 
 let devPostfix = '';
+let baseMapTiles = `https://discover.agrc.utah.gov/login/path/${REACT_APP_DISCOVER_QUAD_WORD_PROD}/tiles/file/terrain_vectortiles/p12`
 if (process.env.NODE_ENV === 'development') {
   devPostfix = '_Dev';
+  baseMapTiles = `https://wms.appgeo.com/login/path/${REACT_APP_DISCOVER_QUAD_WORD_DEV}/tiles/file/utah_terrain_vector_tiles_test/p12`
 }
-const baseMapTiles = `https://wms.appgeo.com/login/path/${REACT_APP_DISCOVER_QUAD_WORD}/tiles/file/utah_terrain_vector_tiles_test/p12`
 
 export default {
   mapExtent: [-111.8, 40.55, 10],  // long, lat, zoom
