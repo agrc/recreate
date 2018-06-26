@@ -8,7 +8,7 @@ import config from './config';
 import distance from '@turf/distance';
 import queryString from 'query-string';
 import { Button, Container, Icon, Tabs, Tab } from 'native-base';
-import poiJson from './PointsOfInterest.json';
+import poiJsonAll from './PointsOfInterest.json';
 import geoViewport from '@mapbox/geo-viewport';
 import YelpPopup from './YelpPopup';
 import buttonTheme from './native-base-theme/components/Button';
@@ -34,7 +34,7 @@ export default class MapView extends Component {
       currentTabPage: 0,
       yelpFeatureSet: null,
       showYelp: true,
-      poiFilter: null,
+      poiJson: poiJsonAll,
       selectedYelpGeoJSON: null,
       styleLoaded: null
     };
@@ -196,27 +196,32 @@ export default class MapView extends Component {
     console.log('updateLayerFilters', newFilter);
 
     let showYelp = true;
-
-    // can set this variable to null after https://github.com/mapbox/react-native-mapbox-gl/issues/1160 is solved
-    let poiFilter = ['has', config.fieldnames.Type];
+    let poiJson = poiJsonAll;
 
     if (!isEqual(newFilter, this.getClearFilter())) {
       if (!newFilter.y) {
         showYelp = false;
       }
 
-      const expressions = Object.keys(newFilter)
-        .filter(key => (newFilter[key] && key !== 'y'))
-        .map(key => ['==', config.fieldnames.Type, key]);
+      const keys = Object.keys(newFilter)
+        .filter(key => (newFilter[key] && key !== 'y'));
 
-      if (expressions.length > 0) {
-        poiFilter = ['any', ...expressions];
+      if (keys.length > 0) {
+        poiJson = {
+          type: poiJsonAll.type,
+          crs: poiJsonAll.crs,
+          features: poiJsonAll.features.filter(feature => keys.includes(feature.properties[config.fieldnames.Type]))
+        };
       } else {
-        poiFilter = ['has', 'a-key-that-no-features-have']
+        poiJson = {
+          type: poiJsonAll.type,
+          crs: poiJsonAll.crs,
+          features: []
+        };
       }
     }
 
-    await this.setState({ showYelp, poiFilter, filter: newFilter });
+    await this.setState({ showYelp, poiJson, filter: newFilter });
 
     this.updateFeaturesInCurrentExtent();
   }
@@ -248,12 +253,26 @@ export default class MapView extends Component {
   }
 
   onPOIPress(event) {
+    console.log('onPOIPress', event);
+
     const clickedFeature = event.nativeEvent.payload;
+    if (clickedFeature.properties.cluster) {
+      console.log(clickedFeature);
+
+      return;
+    }
 
     this.props.history.push(`/feature/${clickedFeature.properties[config.fieldnames.ID]}`);
   }
 
   onYelpPress(event) {
+    console.log('onYelpPress', event);
+
+    const clickedFeature = event.nativeEvent.payload;
+    if (clickedFeature.properties.cluster) {
+      return;
+    }
+
     const selectedYelpGeoJSON = {
       type: 'FeatureCollection',
       features: [event.nativeEvent.payload]
@@ -279,6 +298,9 @@ export default class MapView extends Component {
   }
 
   render() {
+    const clusterFilter = ['has', 'cluster'];
+    const nonClusterFilter = ['!has', 'cluster'];
+
     return (
       <Container style={styles.container}>
         <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} locked={true}>
@@ -297,19 +319,64 @@ export default class MapView extends Component {
               onRegionDidChange={(this.state.mapLoaded) ? this.onMapExtentChange.bind(this) : null }
               onPress={this.closeYelpPopup.bind(this)}
               >
-              <MapboxGL.ShapeSource id='POI_SOURCE' shape={poiJson} onPress={this.onPOIPress.bind(this)}>
-                <MapboxGL.CircleLayer id={LAYERS.POINTS_OF_INTEREST} style={layerStyles.poiLayer}
-                  filter={this.state.poiFilter} />
+              <MapboxGL.ShapeSource
+                id='POI_SOURCE'
+                shape={this.state.poiJson}
+                onPress={this.onPOIPress.bind(this)}
+                cluster
+                clusterRadius={40}
+                clusterMaxZoomLevel={11}>
+                <MapboxGL.SymbolLayer
+                  id='pointCount'
+                  style={layerStyles.clusterCount}
+                  filter={clusterFilter}
+                  />
+                <MapboxGL.CircleLayer
+                  id={LAYERS.POINTS_OF_INTEREST}
+                  style={layerStyles.poiLayer}
+                  filter={nonClusterFilter}
+                  />
+                <MapboxGL.CircleLayer
+                  id="clusteredPoi"
+                  belowLayerID='pointCount'
+                  style={layerStyles.clusteredPoi}
+                  filter={clusterFilter}
+                  />
               </MapboxGL.ShapeSource>
               { this.state.selectedYelpGeoJSON && (
-                <MapboxGL.ShapeSource id='YELP_SOURCE_SELECTED' shape={this.state.selectedYelpGeoJSON}>
-                  <MapboxGL.CircleLayer id={LAYERS.YELP + '_SELECTED'}
-                    style={[layerStyles.yelp, layerStyles.selected]} />
+                <MapboxGL.ShapeSource
+                  id='YELP_SOURCE_SELECTED'
+                  shape={this.state.selectedYelpGeoJSON}>
+                  <MapboxGL.CircleLayer
+                    id={LAYERS.YELP + '_SELECTED'}
+                    style={[layerStyles.yelp, layerStyles.selected]}
+                    />
                 </MapboxGL.ShapeSource>
               )}
               { this.state.yelpFeatureSet && this.state.showYelp && (
-                <MapboxGL.ShapeSource id='YELP_SOURCE' shape={this.state.yelpFeatureSet} onPress={this.onYelpPress.bind(this)}>
-                  <MapboxGL.CircleLayer id={LAYERS.YELP} style={layerStyles.yelp} />
+                <MapboxGL.ShapeSource
+                  id='YELP_SOURCE'
+                  shape={this.state.yelpFeatureSet}
+                  onPress={this.onYelpPress.bind(this)}
+                  cluster
+                  clusterRadius={40}
+                  clusterMaxZoomLevel={12}>
+                  <MapboxGL.SymbolLayer
+                    id='yelpPointCount'
+                    style={layerStyles.yelpClusterCount}
+                    filter={clusterFilter}
+                    />
+                  <MapboxGL.CircleLayer
+                    id={LAYERS.YELP}
+                    style={layerStyles.yelp}
+                    filter={nonClusterFilter}
+                    />
+                  <MapboxGL.CircleLayer
+                    id='yelpClusters'
+                    belowLayerID='yelpPointCount'
+                    style={layerStyles.clusteredYelp}
+                    filter={clusterFilter}
+                    />
                 </MapboxGL.ShapeSource>
               )}
             </MapboxGL.MapView>)}
@@ -365,6 +432,16 @@ const styles = StyleSheet.create({
   }
 });
 
+const clusterStyle = {
+  circleRadius: MapboxGL.StyleSheet.source(
+    [[0, 15], [100, 20], [750, 30]],
+    'point_count',
+    MapboxGL.InterpolationMode.Exponential,
+  ),
+  circleOpacity: 0.7,
+  circleStrokeWidth: 2,
+  circleStrokeColor: 'white',
+};
 const circleRadius = 8;
 const layerStyles = MapboxGL.StyleSheet.create({
   poiLayer: {
@@ -387,5 +464,25 @@ const layerStyles = MapboxGL.StyleSheet.create({
   },
   selected: {
     circleRadius: circleRadius + 4
-  }
+  },
+  clusterCount: {
+    textField: '{point_count}',
+    // this needs to be a font contained within the vector tiles base map
+    textFont: ['Tahoma Regular'],
+    textSize: 12,
+    textColor: 'black'
+  },
+  yelpClusterCount: {
+    textField: '{point_count}',
+    // this needs to be a font contained within the vector tiles base map
+    textFont: ['Tahoma Regular'],
+    textSize: 12,
+    textColor: 'black'
+  },
+  clusteredPoi: Object.assign({
+    circleColor: config.colors.orange
+  }, clusterStyle),
+  clusteredYelp: Object.assign({
+    circleColor: config.colors.yelpRed
+  }, clusterStyle)
 });

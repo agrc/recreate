@@ -60,7 +60,8 @@ export default {
     textShadow: '#4b4b4b',
     borderColor: '#999999',
     transparentWhite: 'rgba(255, 255, 255, 0.85)',
-    yelpRed: '#D32423'
+    yelpRed: '#D32423',
+    orange: '#f0ad4e'
   },
   tileSize: 512,
   maxYelpRequestRadius: 15000  // meters

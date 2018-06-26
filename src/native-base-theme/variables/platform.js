@@ -101,7 +101,7 @@ export default {
   brandInfo: "#62B1F6",
   brandSuccess: config.colors.green,
   brandDanger: "#d9534f",
-  brandWarning: "#f0ad4e",
+  brandWarning: config.colors.orange,
   brandDark: "#000",
   brandLight: "#f4f4f4",
 
