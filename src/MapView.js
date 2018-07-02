@@ -248,11 +248,6 @@ export default class MapView extends Component {
     console.log('onPOIPress', event);
 
     const clickedFeature = event.nativeEvent.payload;
-    if (clickedFeature.properties.cluster) {
-      console.log(clickedFeature);
-
-      return;
-    }
 
     this.props.history.push(`/feature/${clickedFeature.properties[config.fieldnames.ID]}`);
   }
