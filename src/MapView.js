@@ -14,6 +14,8 @@ import YelpPopup from './YelpPopup';
 import buttonTheme from './native-base-theme/components/Button';
 import isEqual from 'lodash.isequal';
 import mapStyles from './mapStyles';
+import pointsWithinPolygon from '@turf/points-within-polygon';
+import helpers from '@turf/helpers';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -148,25 +150,15 @@ export default class MapView extends Component {
   async updateFeaturesInCurrentExtent() {
     console.log('updateFeaturesInCurrentExtent', this.state.filter);
 
-    const layerIds = [LAYERS.POINTS_OF_INTEREST];
-    const bbox = [0, this.mapWidth, this.mapHeight, 0];
+    const [NE, SW] = await this.map.getVisibleBounds();
+    const [N, E] = NE;
+    const [S, W] = SW;
 
-    // this doesn't always appear to return all features immediately after updateLayerFilters
-    const featureSet = await this.map.queryRenderedFeaturesInRect(bbox, null, layerIds);
-
-    const keys = {};
-    // remove duplicates and apply current filter
-    let features = featureSet.features.filter((f) => {
-      const id = f.id || f.properties.id;
-      let isUnique = (keys[id] === undefined);
-      keys[id] = true;
-
-      if (isEqual(this.state.filter, this.getClearFilter())) {
-        return isUnique;
-      } else {
-        return (isUnique && this.state.filter[f.properties[config.fieldnames.Type]]);
-      }
-    });
+    let features = pointsWithinPolygon(this.state.poiJson, {
+      crs: this.state.poiJson.crs,
+      features: [helpers.polygon([[[N, W], [N, E], [S, E], [S, W], [N, W]]])],
+      type: 'FeatureCollection'
+    }).features;
 
     if (this.state.yelpFeatureSet && isEqual(this.state.filter, this.getClearFilter()) || this.state.filter.y) {
       features = features.concat(this.state.yelpFeatureSet.features);
