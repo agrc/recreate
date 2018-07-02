@@ -144,7 +144,7 @@ export default class Home extends Component {
             </View>
             <Image source={require('./images/outdoorlogo.png')} style={styles.goedLogo}/>
             <Link to='changelog' style={styles.version}>
-              <WhiteText style={styles.versionText}>{version}</WhiteText>
+              <WhiteText style={styles.versionText}>{(process.env.NODE_ENV === 'development') ? `${version}-dev` : version}</WhiteText>
             </Link>
           </View>
         </ImageBackground>
