@@ -25,6 +25,10 @@ Run project on connected device:
 Lint (via eslint):
 `npm run lint`  
 
+Upgrade react-native:
+`npm i -g react-native-git-upgrade`
+`react-native-git-upgrade`
+
 ### Deployment Steps
 1. Bump version number in `package.json`, `ios/RecreateNative/Info.plist`, and `android/app/build.gradle`.
 
