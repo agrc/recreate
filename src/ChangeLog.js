@@ -9,6 +9,17 @@ export default function ChangeLog() {
       <HeadingText>Change Log</HeadingText>
 
       <View style={styles.paragraph}>
+        <BoldText>v0.8.0</BoldText>
+        <BulletText>Fixed bug preventing the list from being populated when the Yelp data is not visible (<LinkText href='https://github.com/agrc/recreate/issues/36'>#36</LinkText>).</BulletText>
+        <BulletText>Added external link icon to trail Details link.</BulletText>
+        <BulletText>Switched to preliminary State of Utah vector base maps (<LinkText href='https://github.com/agrc/recreate/issues/33'>#33</LinkText>).</BulletText>
+        <BulletText>Add custom fonts to match mockups including banner text on home view (<LinkText href='https://github.com/agrc/recreate/issues/17'>#17</LinkText>).</BulletText>
+        <BulletText>Add GPS location to details map (<LinkText href='https://github.com/agrc/recreate/issues/49'>#49</LinkText>).</BulletText>
+        <BulletText>Implement point clustering (<LinkText href='https://github.com/agrc/recreate/issues/51'>#51</LinkText>).</BulletText>
+        <BulletText>Fix bug preventing clustered points from showing up in the list (<LinkText href='https://github.com/agrc/recreate/issues/52'>#52</LinkText>).</BulletText>
+      </View>
+
+      <View style={styles.paragraph}>
         <BoldText>v0.7.0</BoldText>
         <BulletText>Convert to native application distributable via app stores (still some issues with Android OS) (<LinkText href='https://github.com/agrc/recreate/issues/44'>#44</LinkText>).</BulletText>
         <BulletText>Convert home page city/place search to autocomplete dropdown (<LinkText href='https://github.com/agrc/recreate/issues/31'>#31</LinkText>).</BulletText>
