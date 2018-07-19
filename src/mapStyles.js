@@ -38,5 +38,5 @@ export default {
       }
     }
   },
-  styleFileURI: `${fs.DocumentDirectoryPath}/style.json`
+  styleFileURI: `file://${fs.DocumentDirectoryPath}/style.json`
 }
