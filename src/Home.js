@@ -12,6 +12,7 @@ import geoViewport from '@mapbox/geo-viewport';
 import { REACT_APP_AGRC_WEB_API_KEY } from 'react-native-dotenv';
 import Autocomplete from 'react-native-autocomplete-input';
 import 'abortcontroller-polyfill';
+import { Platform } from 'react-native';
 
 
 const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
@@ -29,9 +30,15 @@ export default class Home extends Component {
 
   toggleSearchForm() {
     this.setState({searchFormOpen: !this.state.searchFormOpen});
+
+    if (Platform.OS === 'android') {
+      this.onSearchFocus();
+    }
   }
 
   async search(searchTerm) {
+    console.log('search');
+
     this.setState({ searchError: false });
 
     if (searchTerm.length === 0) {
@@ -57,12 +64,16 @@ export default class Home extends Component {
     };
 
     const headers = { Referer: 'https://recreate.utah.gov/' };
+
+    console.log('fetch');
     const response = await fetch(`${searchUrl}?${queryString.stringify(params)}`,
       { headers, signal: this.abortController.signal });
+
     if (response.ok) {
       const responseJson = await response.json();
       if (responseJson.result.length) {
         this.setState({ searchResults: responseJson.result });
+        console.log('after fetch', responseJson);
       } else {
         nothingFound();
       }
@@ -126,21 +137,40 @@ export default class Home extends Component {
               <Button primary block onPress={this.toggleSearchForm.bind(this)}>
                 <Text>Search by City or Place</Text>
               </Button>
-              <Collapsible collapsed={!this.state.searchFormOpen}>
-                <Autocomplete
-                  data={this.state.searchResults}
-                  containerStyle={styles.autocompleteContainer}
-                  placeholder='Enter City or Place'
-                  onChangeText={this.search.bind(this)}
-                  onFocus={this.onSearchFocus.bind(this)}
-                  onBlur={this.onSearchBlur.bind(this)}
-                  renderItem={(feature) => (
-                    <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
-                      <Text style={styles.itemText}>{feature.attributes.name}</Text>
-                    </TouchableOpacity>
-                  )} />
-                <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.searchError}!</WhiteText>
-              </Collapsible>
+              {(Platform.OS === 'android' && this.state.searchFormOpen) ?
+                <View style={styles.autocompleteWrapper}>
+                  <Autocomplete
+                    data={this.state.searchResults}
+                    containerStyle={styles.autocompleteContainer}
+                    placeholder='Enter City or Place'
+                    onChangeText={this.search.bind(this)}
+                    onFocus={this.onSearchFocus.bind(this)}
+                    onBlur={this.onSearchBlur.bind(this)}
+                    listStyle={styles.autocompleteList}
+                    renderItem={(feature) => (
+                      <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
+                        <Text style={styles.itemText}>{feature.attributes.name}</Text>
+                      </TouchableOpacity>
+                    )} />
+                  <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.searchError}!</WhiteText>
+                </View>
+              :
+                <Collapsible collapsed={!this.state.searchFormOpen}>
+                  <Autocomplete
+                    data={this.state.searchResults}
+                    containerStyle={styles.autocompleteContainer}
+                    placeholder='Enter City or Place'
+                    onChangeText={this.search.bind(this)}
+                    onFocus={this.onSearchFocus.bind(this)}
+                    onBlur={this.onSearchBlur.bind(this)}
+                    renderItem={(feature) => (
+                      <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
+                        <Text style={styles.itemText}>{feature.attributes.name}</Text>
+                      </TouchableOpacity>
+                    )} />
+                  <WhiteText style={(this.state.searchError) ? null : styles.hidden}>No results found for {this.state.searchError}!</WhiteText>
+                </Collapsible>
+              }
             </View>
             <Image source={require('./images/outdoorlogo.png')} style={styles.goedLogo}/>
             <Link to='changelog' style={styles.version}>
@@ -155,8 +185,26 @@ export default class Home extends Component {
 
 const padding = 10;
 const styles = StyleSheet.create({
+  autocompleteWrapper: {
+    height: '100%',
+    width: '100%'
+  },
   autocompleteContainer: {
-    marginTop: padding
+    marginTop: padding,
+    ...Platform.select({
+      android: {
+        flex: 1,
+        left: 0,
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        zIndex: 2
+      }
+    })
+  },
+  autocompleteList: {
+    zIndex: 3,
+    position: 'absolute'
   },
   backgroundImage: {
     height: '100%',
