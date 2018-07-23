@@ -15,7 +15,7 @@ import 'abortcontroller-polyfill';
 import { Platform } from 'react-native';
 
 
-const searchUrl = 'https://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
+const searchUrl = 'http://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
 
 export default class Home extends Component {
   constructor(props) {
@@ -32,7 +32,11 @@ export default class Home extends Component {
     this.setState({searchFormOpen: !this.state.searchFormOpen});
 
     if (Platform.OS === 'android') {
-      this.onSearchFocus();
+      if (this.state.searchFormOpen) {
+        this.onSearchBlur();
+      } else {
+        this.onSearchFocus();
+      }
     }
   }
 
@@ -146,7 +150,6 @@ export default class Home extends Component {
                     onChangeText={this.search.bind(this)}
                     onFocus={this.onSearchFocus.bind(this)}
                     onBlur={this.onSearchBlur.bind(this)}
-                    listStyle={styles.autocompleteList}
                     renderItem={(feature) => (
                       <TouchableOpacity onPress={this.zoom.bind(this, feature)}>
                         <Text style={styles.itemText}>{feature.attributes.name}</Text>
@@ -201,10 +204,6 @@ const styles = StyleSheet.create({
         zIndex: 2
       }
     })
-  },
-  autocompleteList: {
-    zIndex: 3,
-    position: 'absolute'
   },
   backgroundImage: {
     height: '100%',
