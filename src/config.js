@@ -8,7 +8,7 @@ let devPostfix = '';
 let baseMapTiles = `https://discover.agrc.utah.gov/login/path/${REACT_APP_DISCOVER_QUAD_WORD_PROD}/tiles/file/terrain_vectortiles/p12`
 if (process.env.NODE_ENV === 'development') {
   devPostfix = '_Dev';
-  baseMapTiles = `https://wms.appgeo.com/login/path/${REACT_APP_DISCOVER_QUAD_WORD_DEV}/tiles/file/utah_terrain_vector_tiles_test/p12`
+  baseMapTiles = `https://wms.appgeo.com/login/path/${REACT_APP_DISCOVER_QUAD_WORD_DEV}/tiles/file/utah_vector/p12`
 }
 
 export default {
