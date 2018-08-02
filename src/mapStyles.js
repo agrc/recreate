@@ -20,7 +20,7 @@ export default {
       // replace relative URLs with absolute since mapbox doesn't support them
       style.sprite = style.sprite.replace('..', `${config.urls.baseMapTiles}/resources`);
       style.glyphs = style.glyphs.replace('..', `${config.urls.baseMapTiles}/resources`);
-      style.sources.esri.tiles[0] = style.sources.esri.tiles[0].replace('../..', `${config.urls.baseMapTiles}/tile`);
+      style.sources.esri.tiles[0] = style.sources.esri.tiles[0].replace('../..', `${config.urls.baseMapTiles}`);
       console.log(style);
 
       try {
