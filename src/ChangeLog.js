@@ -9,6 +9,13 @@ export default function ChangeLog() {
       <HeadingText>Change Log</HeadingText>
 
       <View style={styles.paragraph}>
+        <BoldText>v0.9.0</BoldText>
+        <BulletText>Fix base maps in Android (<LinkText href='https://github.com/agrc/recreate/issues/54'>#54</LinkText>).</BulletText>
+        <BulletText>Fix city/place search layout in Android (<LinkText href='https://github.com/agrc/recreate/issues/53'>#53</LinkText>).</BulletText>
+        <BulletText>Other fixes to enable building the app for Android.</BulletText>
+      </View>
+
+      <View style={styles.paragraph}>
         <BoldText>v0.8.0</BoldText>
         <BulletText>Fixed bug preventing the list from being populated when the Yelp data is not visible (<LinkText href='https://github.com/agrc/recreate/issues/36'>#36</LinkText>).</BulletText>
         <BulletText>Added external link icon to trail Details link.</BulletText>
