@@ -32,8 +32,8 @@ Upgrade react-native:
 
 ### Deployment Steps
 [DTS Mobile Application Deployment Doc](https://dts.utah.gov/mdm-mobile-device-management/mobile-application-deployment)
-1. Confirm that you can generate an archive in Xcode (Set to Generic iOS Device, Product -> Archive)
 1. Bump version number in `package.json`, `ios/RecreateNative/Info.plist`, and `android/app/build.gradle`.
+1. Confirm that you can generate an archive in Xcode (Set to Generic iOS Device, Product -> Archive) and APK in Android Studio (Build -> Build APKs)
 1. Update `src/ChangeLog.js`
 1. Commit and tag new version.
 1. Submit a [Mobile Application Deployment Form](https://utah.service-now.com/nav_to.do?uri=%2Fcom.glideapp.servicecatalog_cat_item_view.do%3Fv%3D1%26sysparm_id%3D360c377f13bcb640d6017e276144b056%26sysparm_link_parent%3D0b596c5c1321a240abab7e776144b056%26sysparm_catalog%3De0d08b13c3330100c8b837659bba8fb4%26sysparm_catalog_view%3Dcatalog_default)
