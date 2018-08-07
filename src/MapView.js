@@ -249,6 +249,11 @@ export default class MapView extends Component {
 
     const clickedFeature = event.nativeEvent.payload;
 
+    // skip cluster features
+    if (clickedFeature.properties.cluster) {
+      return;
+    }
+
     this.props.history.push(`/feature/${clickedFeature.properties[config.fieldnames.ID]}`);
   }
 
