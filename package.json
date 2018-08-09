@@ -8,7 +8,7 @@
     "lint": "node node_modules/eslint/bin/eslint.js .",
     "travis": "npm run lint",
     "opendev": "open \"rndebugger://set-debugger-loc?host=localhost&port=8081\"",
-    "postinstall": "postinstall.sh"
+    "postinstall": "bash postinstall.sh"
   },
   "dependencies": {
     "@mapbox/geo-viewport": "0.3.0",
