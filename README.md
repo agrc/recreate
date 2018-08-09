@@ -2,9 +2,7 @@
 React native app for recreation locations
 
 ## Installation
-1. `git clone https://github.com/agrc/recreate && cd recreate`
-1. `npm install`
-1. Create a `.env` file in the root directory. Use `.env.sample` as an example.
+`git clone https://github.com/agrc/recreate && cd recreate && npm install`
 
 You can go to the [`react-native` docs](http://facebook.github.io/react-native/docs/getting-started.html) for more info.
 
