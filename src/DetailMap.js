@@ -6,7 +6,6 @@ import { Container, View } from 'native-base';
 import { Dimensions, StyleSheet } from 'react-native';
 import geoViewport from '@mapbox/geo-viewport';
 import platform from './native-base-theme/variables/platform';
-import mapStyles from './mapStyles';
 import CustomMapView from './CustomMapView';
 
 
@@ -17,9 +16,7 @@ export default class DetailMap extends Component {
   constructor(props) {
     super(props);
 
-    this.state = { chartData: null, styleLoaded: false };
-
-    mapStyles.getBasemapStyle(this);
+    this.state = { chartData: null };
 
     // TODO: https://github.com/agrc/recreate/issues/32
     const geometry = JSON.parse(props.location.state.geojson).geometry;
@@ -91,10 +88,13 @@ export default class DetailMap extends Component {
 
     return (
       <Container style={styles.container}>
-        { this.state.styleLoaded && (<CustomMapView
+        <CustomMapView
           style={styles.container}
-          styleURL={mapStyles.styleFileURI}
-          ref={(map) => this.map = map}
+          ref={(ref) => {
+            if (ref) {
+              this.map = ref.map
+            }
+          }}
           centerCoordinate={this.center}
           zoomLevel={this.zoom}
           showUserLocation={true}
@@ -103,7 +103,7 @@ export default class DetailMap extends Component {
           <MapboxGL.ShapeSource id='TRAIL_SOURCE' shape={JSON.parse(this.props.location.state.geojson)}>
             <MapboxGL.LineLayer id='TRAIL_LAYER' style={layerStyles.trail} />
           </MapboxGL.ShapeSource>
-        </CustomMapView>)}
+        </CustomMapView>
         { this.state.chartData && (
           <View style={styles.chartContainer}>
             <YAxis

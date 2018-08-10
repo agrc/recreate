@@ -13,7 +13,6 @@ import geoViewport from '@mapbox/geo-viewport';
 import YelpPopup from './YelpPopup';
 import buttonTheme from './native-base-theme/components/Button';
 import isEqual from 'lodash.isequal';
-import mapStyles from './mapStyles';
 import pointsWithinPolygon from '@turf/points-within-polygon';
 import helpers from '@turf/helpers';
 import CustomMapView from './CustomMapView';
@@ -38,11 +37,8 @@ export default class MapView extends Component {
       yelpFeatureSet: null,
       showYelp: true,
       poiJson: poiJsonAll,
-      selectedYelpGeoJSON: null,
-      styleLoaded: null
+      selectedYelpGeoJSON: null
     };
-
-    mapStyles.getBasemapStyle(this);
   }
 
   getClearFilter() {
@@ -299,12 +295,14 @@ export default class MapView extends Component {
         <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} locked={true}>
           <Tab heading='Map'>
             { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
-            { this.state.styleLoaded && (<CustomMapView
-              pitchEnabled={false}
+            <CustomMapView
               onDidFinishRenderingMapFully={this.onMapLoad.bind(this)}
               onLayout={this.onMapViewLayout.bind(this)}
-              ref={(ref) => (this.map = ref)}
-              styleURL={mapStyles.styleFileURI}
+              ref={(ref) => {
+                if (ref) {
+                  this.map = ref.map
+                }
+              }}
               zoomLevel={this.state.zoom}
               centerCoordinate={this.state.currentLocation}
               style={[styles.container, styles.mapView]}
@@ -373,7 +371,7 @@ export default class MapView extends Component {
                     />
                 </MapboxGL.ShapeSource>
               )}
-            </CustomMapView>)}
+            </CustomMapView>
             <Button onPress={this.onGPSButtonPress.bind(this)}
               light={!this.state.followUser}
               primary={this.state.followUser}

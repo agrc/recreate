@@ -1,7 +1,6 @@
 import React from 'react';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import { Dimensions } from 'react-native';
-import mapStyles from './mapStyles';
 import CustomMapView from './CustomMapView';
 import config from './config';
 import bbox from '@turf/bbox';
@@ -49,7 +48,6 @@ export default function StaticMap(props) {
     <CustomMapView
       zoomEnabled={false}
       scrollEnabled={false}
-      styleURL={mapStyles.styleFileURI}
       zoomLevel={zoom}
       centerCoordinate={centerCoords}
       style={style}

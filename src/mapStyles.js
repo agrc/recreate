@@ -2,9 +2,16 @@ import config from './config';
 import fs from 'react-native-fs';
 
 
+let styleLoaded = false;
+
 export default {
   getBasemapStyle: async function(component) {
     console.log('getBasemapStyle');
+
+    if (styleLoaded) {
+      component.setState({ styleLoaded: true });
+      return;
+    }
 
     const response = await fetch(config.urls.terrainStyleFile);
 
@@ -32,6 +39,7 @@ export default {
         await fs.writeFile(this.styleFileURI, JSON.stringify(style));
 
         component.setState({ styleLoaded: true });
+        styleLoaded = true;
       }
       catch (error) {
         onError(error);
