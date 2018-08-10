@@ -1,43 +1,25 @@
 import React from 'react';
-import { Dimensions, Image } from 'react-native';
-import { REACT_APP_MAPBOX_TOKEN } from 'react-native-dotenv';
+import MapboxGL from '@mapbox/react-native-mapbox-gl';
+import { Dimensions } from 'react-native';
+import mapStyles from './mapStyles';
+import CustomMapView from './CustomMapView';
+import config from './config';
+import bbox from '@turf/bbox';
+import geoViewport from '@mapbox/geo-viewport';
 
 
 export default function StaticMap(props) {
-  let geojson = props.geojson;
+  console.log('StaticMap props: ', props);
 
-  if (!geojson) {
+  if (!props.geojson) {
     return null;
   }
 
-  // mapbox static api also doesn't like out and back lines
-  if (props.outAndBack) {
-    const parsedGeoJSON = JSON.parse(geojson);
-
-    parsedGeoJSON.geometry.coordinates = parsedGeoJSON.geometry.coordinates.slice(0, parsedGeoJSON.geometry.coordinates.length / 2);
-
-    geojson = JSON.stringify(parsedGeoJSON);
-  }
-
-  let zoom;
-  if (props.poitype === 'w') {
-    const coords = JSON.parse(geojson).geometry.coordinates;
-
-    zoom = `${coords.join(',')},10`;
-  } else {
-    zoom = 'auto';
-  }
+  const geojson = JSON.parse(props.geojson);
 
   const width = Math.round(Dimensions.get('window').width);
   const height = Math.round(width*0.62);
   const margin = -8;
-  const uri = [
-    'https://api.mapbox.com/styles/v1/mapbox/outdoors-v10/static/',
-    `geojson(${geojson})/`,
-    `${zoom}/`,
-    `${width}x${height}@2x`,
-    `?access_token=${REACT_APP_MAPBOX_TOKEN}`
-  ].join('');
 
   const style = {
     width,
@@ -47,7 +29,55 @@ export default function StaticMap(props) {
     marginTop: 10
   };
 
+  let centerCoords, zoom;
+  if (geojson.geometry.type === 'Point') {
+    centerCoords = geojson.geometry.coordinates;
+    zoom = 10;
+  } else {
+    const viewport = geoViewport.viewport(bbox(geojson.geometry), [width, height], undefined, undefined, config.tileSize);
+    centerCoords = viewport.center;
+    zoom = viewport.zoom;
+  }
+
+  const layers = {
+    Point: <MapboxGL.CircleLayer id='pointLayer' style={layerStyles.point}></MapboxGL.CircleLayer>,
+    Polygon: <MapboxGL.FillLayer id='polyLayer' style={layerStyles.polygon}></MapboxGL.FillLayer>,
+    LineString: <MapboxGL.LineLayer id='lineLayer' style={layerStyles.line}></MapboxGL.LineLayer>
+  };
+
   return (
-    <Image source={{ uri }} style={style} />
+    <CustomMapView
+      zoomEnabled={false}
+      scrollEnabled={false}
+      styleURL={mapStyles.styleFileURI}
+      zoomLevel={zoom}
+      centerCoordinate={centerCoords}
+      style={style}
+      >
+      <MapboxGL.ShapeSource
+        id='FEATURE'
+        shape={geojson}
+        >
+        {layers[geojson.geometry.type]}
+      </MapboxGL.ShapeSource>
+    </CustomMapView>
   );
 }
+
+const layerStyles = MapboxGL.StyleSheet.create({
+  point: {
+    circleRadius: 8,
+    circleColor: config.colors.blue,
+    circleStrokeWidth: 1
+  },
+  polygon: {
+    fillColor: config.colors.green,
+    fillOpacity: 0.6
+  },
+  line: {
+    lineColor: config.colors.blue,
+    lineWidth: 6,
+    lineJoin: MapboxGL.LineJoin.Round,
+    lineCap: MapboxGL.LineCap.Round
+  }
+});

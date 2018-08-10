@@ -16,6 +16,7 @@ import isEqual from 'lodash.isequal';
 import mapStyles from './mapStyles';
 import pointsWithinPolygon from '@turf/points-within-polygon';
 import helpers from '@turf/helpers';
+import CustomMapView from './CustomMapView';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -298,7 +299,8 @@ export default class MapView extends Component {
         <Tabs onChangeTab={this.onChangeTab.bind(this)} ref={(el) => this.tabs = el} locked={true}>
           <Tab heading='Map'>
             { this.state.findingCurrentLocation && <Text style={styles.findingText}>Finding your current location...</Text> }
-            { this.state.styleLoaded && (<MapboxGL.MapView
+            { this.state.styleLoaded && (<CustomMapView
+              pitchEnabled={false}
               onDidFinishRenderingMapFully={this.onMapLoad.bind(this)}
               onLayout={this.onMapViewLayout.bind(this)}
               ref={(ref) => (this.map = ref)}
@@ -371,7 +373,7 @@ export default class MapView extends Component {
                     />
                 </MapboxGL.ShapeSource>
               )}
-            </MapboxGL.MapView>)}
+            </CustomMapView>)}
             <Button onPress={this.onGPSButtonPress.bind(this)}
               light={!this.state.followUser}
               primary={this.state.followUser}

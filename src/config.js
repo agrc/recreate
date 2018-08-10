@@ -57,6 +57,7 @@ export default {
     yellow: '#e7eb3f',
     lightBlue: '#B3E3F4',
     white: 'white',
+    gray: 'gray',
     transparent: 'rgba(0, 0, 0, 0.35)',
     textShadow: '#4b4b4b',
     borderColor: '#999999',
