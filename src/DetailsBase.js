@@ -17,6 +17,8 @@ class DetailsBase extends Component {
   constructor(props) {
     super(props);
 
+    this.state = { waitingForResponse: true };
+
     this.fetchData();
   }
 
@@ -62,6 +64,8 @@ class DetailsBase extends Component {
     } else {
       // TODO: handle error in fetch request
     }
+
+    this.setState({ waitingForResponse: false });
   }
 }
 

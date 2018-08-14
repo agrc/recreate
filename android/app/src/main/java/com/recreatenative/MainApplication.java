@@ -3,6 +3,7 @@ package com.recreatenative;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.futurepress.staticserver.FPStaticServerPackage;
 import com.rnfs.RNFSPackage;
 import com.horcrux.svg.SvgPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FPStaticServerPackage(),
             new RNFSPackage(),
             new SvgPackage(),
             new VectorIconsPackage(),

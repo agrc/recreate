@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		00AE6DC7EA654B61872C42F4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B4CFBC0E12774E028617EBAB /* MaterialIcons.ttf */; };
 		00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 00C302AC1ABCB8CE00DB3ED1 /* libRCTActionSheet.a */; };
@@ -66,6 +65,7 @@
 		E37B09C54CFC4535BC0E12E4 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B8BBD05F0BD24119BAE1B22A /* MaterialIcons.ttf */; };
 		F0910936587B441A94E91DDC /* Helvetica Light Oblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DB49D7C571384BEE880C2270 /* Helvetica Light Oblique.ttf */; };
 		F3636E8928964675B6156831 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B247D79E7A9947D3861FDAD2 /* Octicons.ttf */; };
+		66BD550E69D24CF9BF5F8900 /* libFPStaticServer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DD099D79C1C44FBF8A7AE5E0 /* libFPStaticServer.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -461,6 +461,8 @@
 		EA740979531B42E8B4D30043 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		EC23AA58D95F46DBB7FAC347 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
 		EC2C042DC22A4CDBB8F2A28B /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = file; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		C0D5DBEEC29646779EBDF48A /* FPStaticServer.xcodeproj */ = {isa = PBXFileReference; name = "FPStaticServer.xcodeproj"; path = "../node_modules/react-native-static-server/ios/FPStaticServer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		DD099D79C1C44FBF8A7AE5E0 /* libFPStaticServer.a */ = {isa = PBXFileReference; name = "libFPStaticServer.a"; path = "libFPStaticServer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -495,6 +497,7 @@
 				73B6800C917F4C8C804A621B /* libRNVectorIcons.a in Frameworks */,
 				611463E0E94C4E7D92F23813 /* libRNSVG.a in Frameworks */,
 				41EDA54D88574EE697B31E45 /* libRNFS.a in Frameworks */,
+				66BD550E69D24CF9BF5F8900 /* libFPStaticServer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -704,6 +707,7 @@
 				0F33DEB4DDF147DFBF1B34A5 /* RNVectorIcons.xcodeproj */,
 				49468B419050443890D0A6FE /* RNSVG.xcodeproj */,
 				8F80B83EB3984C3292BD67CE /* RNFS.xcodeproj */,
+				C0D5DBEEC29646779EBDF48A /* FPStaticServer.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1390,12 +1394,14 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-static-server/ios/**",
 				);
 				INFOPLIST_FILE = RecreateNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1421,12 +1427,14 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-static-server/ios/**",
 				);
 				INFOPLIST_FILE = RecreateNativeTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
 					"\"$(SRCROOT)/$(TARGET_NAME)\"",
@@ -1454,6 +1462,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-static-server/ios/**",
 				);
 				INFOPLIST_FILE = RecreateNative/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1481,6 +1490,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-svg/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
+					"$(SRCROOT)/../node_modules/react-native-static-server/ios/**",
 				);
 				INFOPLIST_FILE = RecreateNative/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";

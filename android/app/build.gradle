@@ -162,6 +162,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-static-server')
     compile project(':react-native-fs')
     compile project(':react-native-svg')
     compile project(':react-native-vector-icons')

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import mapStyles from './mapStyles';
+import config from './config';
 
 
 export default class CustomMapView extends Component {
@@ -17,14 +18,15 @@ export default class CustomMapView extends Component {
   }
 
   render() {
-    return (
+    return this.state.styleLoaded && (
       <MapboxGL.MapView
           {...this.props}
           ref={(mapRef) => this.map = mapRef}
           pitchEnabled={false}
           rotateEnabled={false}
           logoEnabled={false}
-          styleURL={(this.state.styleLoaded) ? mapStyles.styleFileURI : null}
+          styleURL={mapStyles.styleFileURI}
+          maxZoomLevel={config.maxZoomLevel}
           >
       </MapboxGL.MapView>
     );

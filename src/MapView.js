@@ -16,6 +16,7 @@ import isEqual from 'lodash.isequal';
 import pointsWithinPolygon from '@turf/points-within-polygon';
 import helpers from '@turf/helpers';
 import CustomMapView from './CustomMapView';
+import mapStyles from './mapStyles';
 
 
 const LAYERS = { POINTS_OF_INTEREST: 'poi', YELP: 'yelp' };
@@ -116,7 +117,7 @@ export default class MapView extends Component {
     }
   }
 
-  initMap(long, lat, zoom) {
+  async initMap(long, lat, zoom) {
     console.log('initMap', arguments);
 
     this.setState({ currentLocation: [long, lat], zoom: zoom });
@@ -129,6 +130,8 @@ export default class MapView extends Component {
     if (!event) {
       return;
     }
+
+    console.log('zoom level', event.properties.zoomLevel);
 
     await this.updateYelpData();
 
@@ -239,6 +242,25 @@ export default class MapView extends Component {
       geometry: { coordinates },
       properties: { zoomLevel }
     });
+
+    const packName = 'mainMap';
+    const pack = await MapboxGL.offlineManager.getPack(packName);
+    if (!pack) {
+      const onProgress = (region, status) => {
+        console.log('onProgress', status);
+      };
+      const onError = (region, error) => {
+        console.log('onError', error);
+      };
+
+      await MapboxGL.offlineManager.createPack({
+        name: packName,
+        styleURL: mapStyles.styleFileURI,
+        minZoom: 5,
+        maxZoom: 10,
+        bounds: [[-108.16051, 42.33214], [-114.81823, 36.55156]]
+      }, onProgress, onError);
+    }
   }
 
   onPOIPress(event) {

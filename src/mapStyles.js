@@ -1,5 +1,6 @@
 import config from './config';
 import fs from 'react-native-fs';
+import StaticServer from 'react-native-static-server';
 
 
 let styleLoaded = false;
@@ -36,15 +37,20 @@ export default {
           await fs.unlink(this.styleFileURI);
         }
 
-        await fs.writeFile(this.styleFileURI, JSON.stringify(style));
+        await fs.writeFile(`file://${fs.DocumentDirectoryPath}/style.json`, JSON.stringify(style));
 
-        component.setState({ styleLoaded: true });
         styleLoaded = true;
       }
       catch (error) {
         onError(error);
       }
     }
+
+    // mapbox requires http(s) protocal for offline functionality so we have to spin up a server
+    const server = new StaticServer(8080, fs.DocumentDirectoryPath, {localOnly: true});
+    server.start();
+
+    component.setState({ styleLoaded: true });
   },
-  styleFileURI: `file://${fs.DocumentDirectoryPath}/style.json`
+  styleFileURI: `http://localhost:8080/style.json`
 }
