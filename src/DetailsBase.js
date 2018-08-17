@@ -58,14 +58,14 @@ class DetailsBase extends Component {
         }
 
         this.setState({...feature.properties, geojson: JSON.stringify(geojson)});
+
+        this.setState({ waitingForResponse: false });
       } else {
         // TODO: handle no features found
       }
     } else {
       // TODO: handle error in fetch request
     }
-
-    this.setState({ waitingForResponse: false });
   }
 }
 

@@ -4,6 +4,7 @@ import StaticServer from 'react-native-static-server';
 
 
 let styleLoaded = false;
+const PORT = 8004;
 
 export default {
   getBasemapStyle: async function(component) {
@@ -14,13 +15,19 @@ export default {
       return;
     }
 
-    const response = await fetch(config.urls.terrainStyleFile);
-
     const onError = (error) => {
       console.error(error.message);
     }
 
-    if (!response.ok) {
+    let response;
+    try {
+      response = await fetch(config.urls.terrainStyleFile);
+    } catch (error) {
+      response = { error };
+      onError(error);
+    }
+
+    if (!response || !response.ok) {
       onError(response.error);
     } else {
       let style = await response.json();
@@ -47,10 +54,10 @@ export default {
     }
 
     // mapbox requires http(s) protocal for offline functionality so we have to spin up a server
-    const server = new StaticServer(8080, fs.DocumentDirectoryPath, {localOnly: true});
+    const server = new StaticServer(PORT, fs.DocumentDirectoryPath, {localOnly: true});
     server.start();
 
     component.setState({ styleLoaded: true });
   },
-  styleFileURI: `http://localhost:8080/style.json`
+  styleFileURI: `http://localhost:${PORT}/style.json`
 }
