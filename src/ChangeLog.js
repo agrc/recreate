@@ -7,6 +7,13 @@ export default function ChangeLog() {
   return (
     <View style={styles.padded}>
       <HeadingText>Change Log</HeadingText>
+      <View style={styles.paragraph}>
+        <BoldText>v1.0.0-0</BoldText>
+        <BulletText>Finalize fixes for Android and deploy to Google Beta Test.</BulletText>
+        <BulletText>Make app work for iPads.</BulletText>
+        <BulletText>Implement offline functionality. You can now download hike maps one at a time and the main map will work offline at courser scale levels (<LinkText href='https://github.com/agrc/recreate/issues/43'>#43</LinkText>).</BulletText>
+        <BulletText></BulletText>
+      </View>
 
       <View style={styles.paragraph}>
         <BoldText>v0.9.0</BoldText>
