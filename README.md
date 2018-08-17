@@ -15,7 +15,8 @@ Run project in simulators:
 Note: Android emulator needs to be started manually.
 
 Run project in production:  
-`react-native run-ios --configuration Release`
+`react-native run-ios --configuration Release`  
+`react-native run-android --variant=release`
 
 Run project on connected device:  
 `react-native run-ios --device`  
