@@ -3,7 +3,7 @@ RecreatePallet.py
 
 A module that contains a pallet definition for data to support the recreate app.
 '''
-from os.path import basename, join
+from os.path import abspath, basename, dirname, join
 
 import arcpy
 import RecreateSecrets as secrets
@@ -44,21 +44,20 @@ TRAILS_POI_TYPE = 'h'
 class RecreatePallet(Pallet):
     def build(self, config):
         self.sgid = join(self.garage, 'SGID10.sde')
-        self.trails = join(self.garage, 'UtahTrails as TrailsViewer.sde')
+        self.trails = join(self.garage, 'UtahTrails as TrailsAdmin.sde')
         self.recreate = join(self.staging_rack, 'recreate.gdb')
         self.destination_coordinate_system = WGS
         self.geographic_transformation = 'WGS_1984_(ITRF00)_To_NAD_1983'
 
+        current_directory = abspath(dirname(__file__))
         self.add_crates(TRAILS_DATA, {'source_workspace': self.trails, 'destination_workspace': self.recreate})
         self.add_crates([BoatRamps], {'source_workspace': self.sgid, 'destination_workspace': self.recreate})
-        self.add_crates([UtahParksAndMonuments], {'source_workspace': secrets.KDRIVE, 'destination_workspace': self.recreate})
+        self.add_crates([UtahParksAndMonuments], {
+            'source_workspace': join(current_directory, '..', 'data', 'ParksAndMonuments.gdb'),
+            'destination_workspace': self.recreate
+        })
 
-        if config == 'Production':
-            output_folder = r'\\{}\c$\recreate-web'.format(secrets.PROD_SERVER_IP)
-        elif config == 'Staging':
-            output_folder = r'\\{}\c$\inetpub\wwwroot\recreate-web'.format(secrets.TEST_SERVER_IP)
-        else:
-            output_folder = r'X:\recreate\src'
+        output_folder = join(current_directory, '..', 'src')
 
         self.poi_json = join(output_folder, 'PointsOfInterest.json')
         self.poi = join(self.recreate, POI)
@@ -146,7 +145,7 @@ class RecreatePallet(Pallet):
         route_lines = join(self.trails, 'UtahTrails.TRAILSADMIN.' + RouteLines)
         dem = join(self.sgid, 'SGID10.RASTER.USGS_DEM_10Meter')
 
-        route_lines_layer = arcpy.management.MakeFeatureLayer(route_lines, ['OID@'], '{} IS NULL'.format(fldElevationProfile))
+        route_lines_layer = arcpy.management.MakeFeatureLayer(route_lines, '{} IS NULL'.format(fldElevationProfile))
         if int(arcpy.management.GetCount(route_lines_layer)[0]) > 0:
             if arcpy.Exists(interpolated):
                 self.log.info('cleaning up old interpolated output')
@@ -160,13 +159,14 @@ class RecreatePallet(Pallet):
                     interpolated_lookup[routeID] = shape
 
             self.log.info('updating elevation gains and profiles')
-            with arcpy.da.UpdateCursor(route_lines_layer, [fldRouteID, fldElevationGain, fldElevationProfile]) as cursor:
-                for routeID, gain, profile in cursor:
-                    interp_line = interpolated_lookup[routeID]
-                    gain = self.calculate_elevation_gain(interp_line)
-                    profile = self.generate_elevation_profile(interp_line)
+            with arcpy.da.Editor(self.trails):
+                with arcpy.da.UpdateCursor(route_lines_layer, [fldRouteID, fldElevationGain, fldElevationProfile]) as cursor:
+                    for routeID, gain, profile in cursor:
+                        interp_line = interpolated_lookup[routeID]
+                        gain = self.calculate_elevation_gain(interp_line)
+                        profile = self.generate_elevation_profile(interp_line)
 
-                    cursor.updateRow((routeID, gain, profile))
+                        cursor.updateRow((routeID, gain, profile))
 
     def calculate_elevation_gain(self, line):
         if line.partCount > 1:
