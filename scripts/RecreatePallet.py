@@ -3,6 +3,7 @@ RecreatePallet.py
 
 A module that contains a pallet definition for data to support the recreate app.
 '''
+from os import rename
 from os.path import abspath, basename, dirname, join
 
 import arcpy
@@ -117,7 +118,8 @@ class RecreatePallet(Pallet):
         if arcpy.Exists(self.poi_json):
             self.log.info('removing old poi geojson file')
             arcpy.management.Delete(self.poi_json)
-        arcpy.conversion.FeaturesToJSON(self.poi, self.poi_json, geoJSON='GEOJSON')
+        geojson_output = arcpy.conversion.FeaturesToJSON(self.poi, self.poi_json, geoJSON='GEOJSON')
+        rename(geojson_output[0], self.poi_json)
 
     def remove_previous_poi_data(self, poi_type):
         with arcpy.da.UpdateCursor(self.poi, [fldID], '{} = \'{}\''.format(fldType, poi_type)) as delete_cursor:
@@ -145,7 +147,7 @@ class RecreatePallet(Pallet):
         route_lines = join(self.trails, 'UtahTrails.TRAILSADMIN.' + RouteLines)
         dem = join(self.sgid, 'SGID10.RASTER.USGS_DEM_10Meter')
 
-        route_lines_layer = arcpy.management.MakeFeatureLayer(route_lines, '{} IS NULL'.format(fldElevationProfile))
+        route_lines_layer = arcpy.management.MakeFeatureLayer(route_lines, 'route_lines_layer', '{} IS NULL'.format(fldElevationProfile))
         if int(arcpy.management.GetCount(route_lines_layer)[0]) > 0:
             if arcpy.Exists(interpolated):
                 self.log.info('cleaning up old interpolated output')
