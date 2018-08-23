@@ -31,7 +31,7 @@ Upgrade react-native:
 
 ### Deployment Steps
 [DTS Mobile Application Deployment Doc](https://dts.utah.gov/mdm-mobile-device-management/mobile-application-deployment)
-1. Bump version number in `package.json`, `package-lock.json`, `ios/RecreateNative/Info.plist`, and `android/app/build.gradle` (`versionName`).
+1. Bump version number in `package.json`, `package-lock.json`, `ios/RecreateNative/Info.plist` (`CFBundleShortVersionString` & `CFBundleVersion`), and `android/app/build.gradle` (`versionName`).
 1. Increment `versionCode` in `android/app/build.gradle`.
 1. Confirm that you can generate an archive in Xcode (Set to Generic iOS Device, Product -> Archive) and APK in Android Studio (Build -> Build APKs)
 1. Update `src/ChangeLog.js`
