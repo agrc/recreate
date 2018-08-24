@@ -15,7 +15,7 @@ import 'abortcontroller-polyfill';
 import { Platform } from 'react-native';
 
 
-const searchUrl = 'http://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope';
+const searchUrl = `http${(Platform.OS === 'ios') ? 's': ''}://api.mapserv.utah.gov/api/v1/search/SGID10.Location.ZoomLocations/Name,shape@envelope`;
 
 export default class Home extends Component {
   constructor(props) {
