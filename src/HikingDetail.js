@@ -57,7 +57,7 @@ export default class HikingDetails extends DetailsBase {
           </CardItem>
         </Card>
         <View style={styles.row}>
-          {!this.state.waitingForReponse && <Button transparent>
+          {(!this.state.waitingForResponse || this.state.hasOfflineMap) && <Button transparent>
             <Link to={{
               pathname: `${this.props[config.fieldnames.ID]}/map`,
               state: {
