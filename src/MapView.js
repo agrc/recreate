@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import MapboxGL from '@mapbox/react-native-mapbox-gl';
 import List from './List';
 import CustomizeBtn from './CustomizeBtn';
