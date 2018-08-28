@@ -56,8 +56,6 @@
 		B9E8F5FD205AF2D3003CE8DA /* Mapbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E8F5C7205AF2D3003CE8DA /* Mapbox.framework */; };
 		B9E8F5FE205AF2D3003CE8DA /* Mapbox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = B9E8F5C7205AF2D3003CE8DA /* Mapbox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B9E8F606205AF31B003CE8DA /* libRCTMGL.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B9E8F605205AF2FA003CE8DA /* libRCTMGL.a */; };
-		B9F39EA0209220F40093426B /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9F39E9F209220F40093426B /* GameKit.framework */; };
-		B9F39EA2209220FB0093426B /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B9F39EA1209220FB0093426B /* StoreKit.framework */; };
 		BAFA22D941994318A4DDA2F6 /* Avenir Next Condensed Demi Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 98ADE700CBBC489993A48C30 /* Avenir Next Condensed Demi Bold.ttf */; };
 		BC7782DA32B2415FA17F2443 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EC23AA58D95F46DBB7FAC347 /* EvilIcons.ttf */; };
 		BD1DD0665FF542B58142281F /* Helvetica Bold Oblique.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 73589D13BE794F63B5111C5D /* Helvetica Bold Oblique.ttf */; };
@@ -456,8 +454,6 @@
 		B8BBD05F0BD24119BAE1B22A /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		B9E8F5C7205AF2D3003CE8DA /* Mapbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Mapbox.framework; path = "../node_modules/@mapbox/react-native-mapbox-gl/ios/Mapbox.framework"; sourceTree = "<group>"; };
 		B9E8F600205AF2FA003CE8DA /* RCTMGL.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTMGL.xcodeproj; path = "../node_modules/@mapbox/react-native-mapbox-gl/ios/RCTMGL.xcodeproj"; sourceTree = "<group>"; };
-		B9F39E9F209220F40093426B /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
-		B9F39EA1209220FB0093426B /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		BA63A3A2AE604B7194C84644 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		C0D5DBEEC29646779EBDF48A /* FPStaticServer.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = FPStaticServer.xcodeproj; path = "../node_modules/react-native-static-server/ios/FPStaticServer.xcodeproj"; sourceTree = "<group>"; };
 		C13A4B6E5F614117AEC168ED /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
@@ -489,14 +485,12 @@
 				B9E8F606205AF31B003CE8DA /* libRCTMGL.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				B9421D7920614E3F00A918A3 /* libRCTAnimation.a in Frameworks */,
-				B9F39EA2209220FB0093426B /* StoreKit.framework in Frameworks */,
 				146834051AC3E58100842450 /* libReact.a in Frameworks */,
 				00C302E51ABCBA2D00DB3ED1 /* libRCTActionSheet.a in Frameworks */,
 				00C302E71ABCBA2D00DB3ED1 /* libRCTGeolocation.a in Frameworks */,
 				00C302E81ABCBA2D00DB3ED1 /* libRCTImage.a in Frameworks */,
 				B9E8F5FD205AF2D3003CE8DA /* Mapbox.framework in Frameworks */,
 				133E29F31AD74F7200F7D852 /* libRCTLinking.a in Frameworks */,
-				B9F39EA0209220F40093426B /* GameKit.framework in Frameworks */,
 				00C302E91ABCBA2D00DB3ED1 /* libRCTNetwork.a in Frameworks */,
 				139105C61AF99C1200B5F7CC /* libRCTSettings.a in Frameworks */,
 				832341BD1AAA6AB300B99B32 /* libRCTText.a in Frameworks */,
@@ -631,8 +625,6 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				B9F39EA1209220FB0093426B /* StoreKit.framework */,
-				B9F39E9F209220F40093426B /* GameKit.framework */,
 				2D16E6891FA4F8E400B85C8A /* libReact.a */,
 			);
 			name = Frameworks;
@@ -876,10 +868,10 @@
 						DevelopmentTeam = YZTS24VVGR;
 						SystemCapabilities = {
 							com.apple.GameCenter.iOS = {
-								enabled = 1;
+								enabled = 0;
 							};
 							com.apple.InAppPurchase = {
-								enabled = 1;
+								enabled = 0;
 							};
 						};
 					};

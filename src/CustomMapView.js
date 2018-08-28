@@ -27,6 +27,7 @@ export default class CustomMapView extends Component {
           logoEnabled={false}
           styleURL={mapStyles.styleFileURI}
           maxZoomLevel={config.maxZoomLevel}
+          attributionEnabled={false}
           >
       </MapboxGL.MapView>
     );

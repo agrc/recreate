@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
   },
   locateButton: {
     position: 'absolute',
-    bottom: (Platform.OS === 'ios') ? 75 + padding : 45 + padding,
+    bottom: 45 + padding,
     right: padding,
     paddingTop: 3,
     height: 36,

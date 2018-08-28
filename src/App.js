@@ -17,6 +17,8 @@ import config from './config';
 
 
 MapboxGL.setAccessToken(REACT_APP_MAPBOX_TOKEN);
+MapboxGL.setTelemetryEnabled(false);
+
 class App extends Component {
   goBack() {
     this.props.history.goBack();
